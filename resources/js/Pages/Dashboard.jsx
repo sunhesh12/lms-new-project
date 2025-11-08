@@ -2,6 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
 import styles from "@/css/dashboard.module.css";
 import Notification from "@/components/notification";
+import DashboardCart from "@/components/DashboardCart";
 
 export default function Dashboard() {
     const User = usePage().props.auth.user;
@@ -44,7 +45,6 @@ export default function Dashboard() {
                     Welcome to your dashboard! Here you can manage your account and view your recent activities.
                 </p> */}
                 <div className={styles["dashboard-notifications-container"]}>
-
                     <Notification
                         message={"This is a success notification!"}
                         Link={"#"}
@@ -62,7 +62,13 @@ export default function Dashboard() {
                         type={"noting"}
                     ></Notification>
                 </div>
-                <div></div>
+                <div>
+                    <br></br>
+                    <h2 className={styles["dashboard-title"]}>
+                        Continue your journey of teaching
+                    </h2>
+                    <DashboardCart />
+                </div>
                 <div></div>
                 <div></div>
                 <div></div>

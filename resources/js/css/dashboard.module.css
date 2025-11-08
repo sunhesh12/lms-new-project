@@ -86,4 +86,95 @@
     z-index: 1000;
 }
 
+.dashboard-continue-journey-container{
+  padding-top: 20px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    gap: 50px;
+    /* background-color: red; */
+}
+
+/* .dashboard-continue-journey-card{
+    width: 500px;
+    height: 80px;
+    background-color: var(--white);
+    box-shadow: var(--boxShadow);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.dashboard-continue-journey-card-img{
+    width: 80px;
+    height: 80px;
+    padding: 20px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.dashboard-continue-journey-card-content{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+} */
+
+/* ======================================================= */
+.dashboard-continue-journey-container {
+  width: 100%;
+  padding: 20px;
+}
+
+/* 2 cards per row */
+.dashboard-grid-two-column {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ✅ two columns */
+  gap: 25px; 
+}
+
+.dashboard-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 18px 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #e4e4e4;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dashboard-card:hover {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-icon {
+  color: #111;
+  flex-shrink: 0;
+}
+
+.dashboard-text h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dashboard-text p {
+  font-size: 13px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* 📱 Responsive: stack cards vertically on small screens */
+@media (max-width: 768px) {
+  .dashboard-grid-two-column {
+    grid-template-columns: 1fr;
+  }
+}
 
