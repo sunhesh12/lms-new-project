@@ -13,3 +13,17 @@
     --sideNavBarWidth: 20%;
 
 }
+
+body {
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Pangolin';
+    src: url('/fonts/Pangolin-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Work Sans';
+    src: url('/fonts/WorkSans-VariableFont_wght.ttf');
+}

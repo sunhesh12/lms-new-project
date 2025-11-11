@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\LoginController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
