@@ -8,7 +8,7 @@ export default function AuthenticatedLayout({ header, children }) {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
   return (
-    <div>
+    <div className={style["dashboard-container1"]}>
       <SideNavBar
         isOpen={isSideBarOpen}
         toggleSidebar={() => setIsSideBarOpen(!isSideBarOpen)}
