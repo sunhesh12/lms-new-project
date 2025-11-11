@@ -1,31 +1,7 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import styles from "@/css/components/text-input.module.css";
 
-export default forwardRef(function TextInput(
-    { type = 'text', className = '', isFocused = false, ...props },
-    ref,
-) {
-    const localRef = useRef(null);
-
-    useImperativeHandle(ref, () => ({
-        focus: () => localRef.current?.focus(),
-    }));
-
-    useEffect(() => {
-        if (isFocused) {
-            localRef.current?.focus();
-        }
-    }, [isFocused]);
-
-    return (
-        <input
-            {...props}
-            type={type}
-            autoComplete='new-password'
-            className={
-                'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ' +
-                className
-            }
-            ref={localRef}
-        />
-    );
-});
+export default function TextInput({ className, ...props }) {
+  return (
+    <input className={className + " " + styles.input} {...props} />
+  );
+}

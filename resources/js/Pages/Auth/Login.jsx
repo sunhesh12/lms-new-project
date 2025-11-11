@@ -2,11 +2,10 @@ import Checkbox from "@/components/Checkbox";
 import InputError from "@/components/InputError";
 import InputLabel from "@/components/InputLabel";
 import PrimaryButton from "@/components/PrimaryButton";
-import TextInput from "@/components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import style from "@/css/login.module.css";
-import { Input } from "@/components/ui/input";
+import TextInput from "@/components/TextInput";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -39,7 +38,7 @@ export default function Login({ status, canResetPassword }) {
                     <div>
                         <InputLabel htmlFor="email" value="Email" />
 
-                        <Input
+                        <TextInput
                             id="email"
                             type="email"
                             name="email"
@@ -57,7 +56,7 @@ export default function Login({ status, canResetPassword }) {
                     <div className="mt-4">
                         <InputLabel htmlFor="password" value="Password" />
 
-                        <Input
+                        <TextInput
                             id="password"
                             type="password"
                             name="password"
