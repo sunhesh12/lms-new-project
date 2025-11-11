@@ -3,10 +3,10 @@ import { Link } from "@inertiajs/react";
 
 import styles from "@/css/components/button.module.css"
 
-const Button = forwardRef(({ className, variant, size, asChild = false, link, children, ...props }, ref) => {
-  if(link) {
+const Button = forwardRef(({ className, variant, size, asChild = false, href, children, ...props }, ref) => {
+  if(href) {
     return (
-      <Link ref={ref} className={className + " " + styles.button} href={link}>
+      <Link ref={ref} className={className + " " + styles.button} href={href}>
         {children}
       </Link>
     )

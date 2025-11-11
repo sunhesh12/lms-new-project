@@ -8,13 +8,13 @@ export default function AuthenticatedLayout({ header, children }) {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
   return (
-    <div className={style["Project-main-container"]}>
+    <div>
       <SideNavBar
         isOpen={isSideBarOpen}
         toggleSidebar={() => setIsSideBarOpen(!isSideBarOpen)}
       />
 
-      <div className={style["page-main-container"]}>
+      <div>
         <main>{children}</main>
       </div>
     </div>
