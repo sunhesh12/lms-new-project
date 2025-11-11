@@ -21,10 +21,6 @@ return new class extends Migration
         //     $table->renameColumn('Password', 'password');
         //     $table->renameColumn('Role', 'role');
         //     $table->renameColumn('Status', 'status');
-<<<<<<< HEAD
-=======
-
->>>>>>> 909ce1b850bb004a7d6b50e236bc460b96a12e2b
         // });
     }
 
