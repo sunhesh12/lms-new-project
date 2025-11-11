@@ -36,10 +36,14 @@ export default function Welcome() {
                                 of the <b>University of Sri Jayawardenepura.</b>
                             </p>
                             <div className={styles.buttonGroup}>
-                                <a href={route("login")}><button>Login</button></a>
-                                <button href={route("register")}>
-                                    Register
-                                </button>
+                                <a href={route("login")}>
+                                    <button>Login</button>
+                                </a>
+                                <a href={route("register")}>
+                                    <button href={route("register")}>
+                                        Register
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </article>
