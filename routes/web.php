@@ -19,6 +19,7 @@ Route::get('/', function () {
 // Route::get('/login', [LoginController::class, 'index'])->name('login.show');
 
 
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

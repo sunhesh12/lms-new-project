@@ -1,6 +1,6 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import Button from "@/components/button";
+// import Button from "@/components/button";
 // import '@/../css/app.css';
 
 // Styles
@@ -36,10 +36,10 @@ export default function Welcome() {
                                 of the <b>University of Sri Jayawardenepura.</b>
                             </p>
                             <div className={styles.buttonGroup}>
-                                <Button href={route("login")}>Login</Button>
-                                <Button href={route("register")}>
+                                <a href={route("login")}><button>Login</button></a>
+                                <button href={route("register")}>
                                     Register
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </article>
