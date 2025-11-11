@@ -1,0 +1,75 @@
+@import url("@/css/root.module.css");
+
+.sideNavBar-header-container {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.sideNavBar-header-logo {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+}
+
+.sideNavBar-header-title {
+    width: 100%;
+    min-width: max-content;
+    color: var(--white);
+    font-size: 12px;
+}
+
+.sideNavBar-header-sub-title {
+    width: 100%;
+    min-width: max-content;
+    color: var(--white);
+    font-size: 10px;
+}
+
+.sideNavBar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    /* border-bottom: 1px solid var(--white); */
+}
+
+.sideNavBar-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.sideNavBar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+
+.sideNavBar-footer {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 12px;
+}
+
+.sideNavBar-footer-settings{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.sideNavBar-footer-logout{
+    display: flex;
+    min-width: max-content;
+    align-items: center;
+    gap: 8px;
+}
+
+.sideNavBar-footer-logout span{
+    min-width: max-content;
+}

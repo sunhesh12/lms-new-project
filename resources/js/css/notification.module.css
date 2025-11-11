@@ -1,0 +1,62 @@
+@import url("@/css/root.module.css");
+
+.dashboard-notification{
+    top: 20px;
+    right: 20px;
+    background-color: var(--whiteop);
+    border: 1px solid var(--white);
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+}
+
+.dashboard-notification {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-weight: 500;
+    /* color: #fff; */
+}
+
+.dashboard-notification-success {
+    background-color: var(--successNotify); /* green */
+}
+
+.dashboard-notification-fail {
+    background-color: var(--errorNotify); /* red */
+    color: var(--white);
+}
+
+.notification-link {
+    margin-left: 8px;
+    /* color: #fff; */
+    text-decoration: underline;
+}
+
+
+.notificationIconContent{
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.notification-icon-container{
+    width: max-content;
+    height: 100%;
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+}
+
+.notificationIconContent h1{
+    font-size: large;
+}
+
+.notificationIconContent p{
+    font-size: small;
+}

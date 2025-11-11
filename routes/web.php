@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\LoginController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -28,5 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/Courses', function () {
+    return Inertia::render('Course');
+})->middleware(['auth', 'verified'])->name('Courses');
 
 require __DIR__.'/auth.php';
