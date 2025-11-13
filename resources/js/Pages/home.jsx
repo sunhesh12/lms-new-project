@@ -1,6 +1,6 @@
 import React from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-// import Button from "@/components/button";
+import Button from "@/components/Button";
 // import '@/../css/app.css';
 
 // Styles
