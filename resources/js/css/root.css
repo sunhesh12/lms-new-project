@@ -1,0 +1,29 @@
+:root{
+    --red:red;
+    --green:green;
+    --white:rgb(230, 230, 230);
+    --whiteop:rgb(255, 255, 255);
+    --black:black;
+    --poppinsFont: 'poppins';
+    --successNotify: #c0eab4;
+    --errorNotify: #ff4242;
+
+
+    /* side nav bar from Authenticate Layoute */
+    --sideNavBarWidth: 20%;
+
+}
+
+body {
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Pangolin';
+    src: url('/fonts/Pangolin-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Work Sans';
+    src: url('/fonts/WorkSans-VariableFont_wght.ttf');
+}

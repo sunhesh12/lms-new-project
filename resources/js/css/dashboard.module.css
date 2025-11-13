@@ -1,8 +1,5 @@
 
-@import url('@/css/root.module.css');
 /* @import url('@/css/welcome.module.css'); */
-
-
 .dashboard-container1{
   display: flex;
   height: 100vh;
