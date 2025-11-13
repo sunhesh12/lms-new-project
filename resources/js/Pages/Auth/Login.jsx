@@ -5,7 +5,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import style from "@/css/login.module.css";
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/text-input";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
