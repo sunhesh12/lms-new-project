@@ -11,6 +11,51 @@ export default function Welcome() {
     return (
         <main>
             <GuestLayout>
+                <div className={styles["landing-NavBar"]}>
+                    <div className={styles["landing-NavBar-first-Container"]}>
+                        <div className={styles["landing-NavBar-Elements"]}>
+                            <img
+                                src="@/../icons/home.ico"
+                                alt="LMS Logo"
+                                height="50px"
+                            />
+                            <h1>Home</h1>
+                        </div>
+                        <div className={styles["landing-NavBar-Elements"]}>
+                            <img
+                                src="@/../icons/contact.ico"
+                                alt="LMS Logo"
+                                height="50px"
+                            />
+                            <h1>Contact</h1>
+                        </div>
+
+                        <div className={styles["landing-NavBar-Elements"]}>
+                            <img
+                                src="@/../icons/help.ico"
+                                alt="LMS Logo"
+                                height="50px"
+                            />
+                            <h1>Need Help</h1>
+                        </div>
+                    </div>
+                    <div className={styles["landing-NavBar-Second-Container"]}>
+                        <div className={styles["Landing-NavBar-logo"]}>
+                            <div>
+                                <img
+                                    src="@/../images/usjp-logo.png"
+                                    alt="LMS Logo"
+                                    height="70px"
+                                />
+                            </div>
+                            <div className={styles["Landing-NavBar-logo-Text"]}>
+                                <h1>University of Sri Jayawardenepura</h1>
+                                <p>Learning Management System</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
                 <div className={styles.heroContainer}>
                     <article className={styles.hero}>
                         <div>
@@ -36,14 +81,10 @@ export default function Welcome() {
                                 of the <b>University of Sri Jayawardenepura.</b>
                             </p>
                             <div className={styles.buttonGroup}>
-                                <a href={route("login")}>
-                                    <button>Login</button>
-                                </a>
-                                <a href={route("register")}>
-                                    <button href={route("register")}>
-                                        Register
-                                    </button>
-                                </a>
+                                <Button href={route("login")}>Login</Button>
+                                <Button href={route("register")}>
+                                    Register
+                                </Button>
                             </div>
                         </div>
                     </article>
