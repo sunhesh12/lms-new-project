@@ -111,18 +111,23 @@ export default function Login({ status, canResetPassword }) {
                             </label>
                         </div>
                         {canResetPassword && (
-
-                                <CustomLink
-                                    href={route("password.request")}
-                                >
-                                    Forgot your password ?
-                                </CustomLink>
+                            <CustomLink href={route("password.request")}>
+                                Forgot your password ?
+                            </CustomLink>
                         )}
 
                         <div>
                             <Button disabled={processing}>Login</Button>
                         </div>
-                        <span>New to the LMS ? {" "}<CustomLink href={route("register")} className={styles.registerLink}>Register</CustomLink></span>
+                        <span>
+                            New to the LMS ?{" "}
+                            <CustomLink
+                                href={route("register")}
+                                className={styles.registerLink}
+                            >
+                                Register
+                            </CustomLink>
+                        </span>
                     </form>
                 </div>
             </div>
