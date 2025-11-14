@@ -1,19 +1,29 @@
-@import url('@/css/root.module.css');
-
-
-.Login-Container-wrapper{
+.loginPage{
     width: 100vw;
-    height: 100%;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--white);
 }
-.Login-Container{
-    width: 30%;
+
+.loginFormContainer{
     height:400px;
     background-color: var(--whiteop);
     display: flex;
+    flex-direction: column;
+    border-radius: 10px;;
     align-items: center;
-    justify-content: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;;
+    padding: 40px;
+    gap:10px;
+    width: 50%;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    border-radius: 10px;
+    width: 60%;
 }

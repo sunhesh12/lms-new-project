@@ -16,6 +16,8 @@
 
 body {
     margin: 0;
+    font-family: "Work Sans";
+    accent-color: var(--black);
 }
 
 @font-face {
