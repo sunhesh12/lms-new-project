@@ -8,6 +8,7 @@
 .input {
     font-family: "Work Sans";
     font-size: 1.1em;
+    width: 100%;
     background-color: transparent;
     border: none;
 }
