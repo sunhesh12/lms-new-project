@@ -120,10 +120,9 @@ export default function Login({ status, canResetPassword }) {
                         )}
 
                         <div>
-                        
-
                             <Button disabled={processing}>Login</Button>
                         </div>
+                        <CustomLink href={route("register")}>Register with LMS instead</CustomLink>
                     </form>
                 </div>
             </div>

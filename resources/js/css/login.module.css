@@ -8,14 +8,14 @@
 }
 
 .loginFormContainer{
-    height:400px;
+    height:auto;
     background-color: var(--whiteop);
     display: flex;
     flex-direction: column;
     border-radius: 10px;;
     align-items: center;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;;
-    padding: 40px;
+    padding: 40px 40px;
     gap:10px;
     width: 50%;
 }
