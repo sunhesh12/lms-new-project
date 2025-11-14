@@ -27,3 +27,8 @@
     border-radius: 10px;
     width: 60%;
 }
+
+.registerLink {
+    font-weight: bold;
+    color: black;
+}

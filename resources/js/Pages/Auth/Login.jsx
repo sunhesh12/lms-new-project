@@ -122,7 +122,7 @@ export default function Login({ status, canResetPassword }) {
                         <div>
                             <Button disabled={processing}>Login</Button>
                         </div>
-                        <CustomLink href={route("register")}>Register with LMS instead</CustomLink>
+                        <span>New to the LMS ? {" "}<CustomLink href={route("register")} className={styles.registerLink}>Register</CustomLink></span>
                     </form>
                 </div>
             </div>

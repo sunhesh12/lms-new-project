@@ -13,7 +13,17 @@ export default function TextInput({ className, label, error, icon, ...props }) {
             </label>
             <div className={styles.inputWrapper}>
                 {icon && <FontAwesomeIcon icon={icon} />}
-                <input  {...props} type={props.type === "password" ? (isPasswordVisible ? "text" : "password") : props.type} className={className + " " + styles.input} />
+                <input
+                    {...props}
+                    type={
+                        props.type === "password"
+                            ? isPasswordVisible
+                                ? "text"
+                                : "password"
+                            : props.type
+                    }
+                    className={className + " " + styles.input}
+                />
                 {props.type === "password" && (
                     <div className={styles.eye}>
                         {isPasswordVisible ? (
