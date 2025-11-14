@@ -1,4 +1,4 @@
-@import url('root.module.css');
+/* @import url('root.module.css'); */
 
 .landing-NavBar{
     width: 100%;
@@ -45,13 +45,13 @@
 }
 
 .Landing-NavBar-logo-Text h1{
-    font-size: 1.6em;
+    font-size: 1.2em;
     margin: 0;
     padding: 0;
 }
 
 .Landing-NavBar-logo-Text p{
-    font-size: 1.2em;
+    font-size: 1em;
     margin: 0;
     padding: 0;
 }
@@ -62,7 +62,7 @@
     align-items: center;
     justify-content: center;
     gap:20px;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .hero {
