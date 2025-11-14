@@ -6,6 +6,7 @@ import CustomLink from "@/components/Link";
 import styles from "@/css/login.module.css";
 import TextInput from "@/components/Input/TextInput";
 import Button from "@/components/Button";
+import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -55,6 +56,7 @@ export default function Login({ status, canResetPassword }) {
                             type="email"
                             name="email"
                             label="Email"
+                            icon={faEnvelope}
                             error=""
                             value={data.email}
                             placeholder="Enter your Email"
@@ -85,6 +87,7 @@ export default function Login({ status, canResetPassword }) {
                             type="password"
                             name="password"
                             label="Password"
+                            icon={faKey}
                             error=""
                             value={data.password}
                             placeholder="Enter your Password"
