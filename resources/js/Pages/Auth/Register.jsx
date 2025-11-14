@@ -1,142 +1,112 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Checkbox from "@/components/Checkbox";
+import PrimaryButton from "@/components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import style from "@/css/login.module.css";
+import { Head, useForm } from "@inertiajs/react";
+import CustomLink from "@/components/Link";
+import styles from "@/css/login.module.css";
+import TextInput from "@/components/Input/TextInput";
+import Button from "@/components/Button";
+import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
-export default function Register() {
+export default function register({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
         email: "",
         password: "",
-        password_confirmation: "",
+        remember: false,
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("register"), {
-            onFinish: () => reset("password", "password_confirmation"),
+        post(route("login"), {
+            onFinish: () => reset("password"),
         });
     };
 
     return (
         <GuestLayout>
-            <div className={style["Login-Container-wrapper"]}>
-                <div className={style["Login-Container"]}>
-                    <Head title="Register" />
+            <div className={styles.loginPage}>
+                <div className={styles.loginFormContainer}>
+                    <h1>Sign Up</h1>
 
-                    <form onSubmit={submit}>
+                    {status && (
+                        <div className="mb-4 text-sm font-medium text-green-600">
+                            {status}
+                        </div>
+                    )}
+
+                    <form onSubmit={submit} className={styles.loginForm}>
+                        <TextInput
+                            id="name"
+                            type="text"
+                            name="name"
+                            label="Name"
+                            // icon={faEnvelope}
+                            error=""
+                            value={data.name}
+                            placeholder="Enter your Name"
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData("name", e.target.value)}
+                        />
+                        <TextInput
+                            id="email"
+                            type="email"
+                            name="email"
+                            label="Email"
+                            // icon={faEnvelope}
+                            error=""
+                            value={data.email}
+                            placeholder="Enter your Email"
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData("email", e.target.value)}
+                        />
+
+                        <TextInput
+                            id="password"
+                            type="password"
+                            name="password"
+                            label="Password"
+                            // icon={faKey}
+                            error=""
+                            value={data.password}
+                            placeholder="Enter your Password"
+                            className="mt-1 block w-full"
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                        />
+                        <div className="mt-4 block">
+                            <label className="flex items-center">
+                                <Checkbox
+                                    name="remember"
+                                    checked={data.remember}
+                                    onChange={(e) =>
+                                        setData("remember", e.target.checked)
+                                    }
+                                />
+                                <span className="ms-2 text-sm text-gray-600">
+                                    Remember me
+                                </span>
+                            </label>
+                        </div>
+                        {canResetPassword && (
+                            <CustomLink href={route("password.request")}>
+                                Forgot your password ?
+                            </CustomLink>
+                        )}
+
                         <div>
-                            <InputLabel htmlFor="name" value="Name" />
-
-                            <input
-                                id="name"
-                                name="name"
-                                value={data.name}
-                                className="mt-1 block w-full"
-                                autoComplete="name"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("name", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.name}
-                                className="mt-2"
-                            />
+                            <Button disabled={processing}>Login</Button>
                         </div>
-
-                        <div className="mt-4">
-                            <InputLabel htmlFor="email" value="Email" />
-
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value={data.email}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
-                                onChange={(e) =>
-                                    setData("email", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.email}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <InputLabel htmlFor="password" value="Password" />
-
-                            <input
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={data.password}
-                                className="mt-1 block w-full"
-                                autoComplete="new-password"
-                                onChange={(e) =>
-                                    setData("password", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.password}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <InputLabel
-                                htmlFor="password_confirmation"
-                                value="Confirm Password"
-                            />
-
-                            <input
-                                id="password_confirmation"
-                                type="password"
-                                name="password_confirmation"
-                                value={data.password_confirmation}
-                                className="mt-1 block w-full"
-                                autoComplete="new-password"
-                                onChange={(e) =>
-                                    setData(
-                                        "password_confirmation",
-                                        e.target.value
-                                    )
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.password_confirmation}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4 flex items-center justify-end">
-                            <Link
-                                href={route("login")}
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Already registered?
-                            </Link>
-
-                            <PrimaryButton
-                                className="ms-4"
-                                disabled={processing}
+                        <span>
+                            New to the LMS ?{" "}
+                            <CustomLink
+                                href={route("register")}
+                                className={styles.registerLink}
                             >
                                 Register
-                            </PrimaryButton>
-                        </div>
+                            </CustomLink>
+                        </span>
                     </form>
                 </div>
             </div>
