@@ -25,12 +25,12 @@ use App\Http\Controllers\LoginController;
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-// // All the routes related modules
-// Route::prefix('modules')->group(function () {
-//     Route::get('/{id}', function ($id) {
-//         return Inertia::render('Modules/ModuleDetail', ['moduleId' => $id]);
-//     });
-// });
+// All the routes related modules
+Route::prefix('modules')->group(function () {
+    Route::get('/{id}', function ($id) {
+        return Inertia::render('Modules/ModuleDetail', ['moduleId' => $id]);
+    });
+});
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
