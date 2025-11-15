@@ -1,0 +1,35 @@
+.topic {
+    background-color: #f3f3f3;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.topicName {
+    font-size: 18px;
+}
+
+.collapseContent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+.collapse {
+    margin-left: auto;
+}
+
+.topicContent {
+    display: flex;
+}
+
+.expandedContent {
+    margin-top: 15px;
+    padding-left: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}

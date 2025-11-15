@@ -1,0 +1,36 @@
+.topicItemContainer {
+    display: flex;
+}
+
+.verticalLine {
+    position: relative;
+    left:10px;
+    width: 2px;
+    height: 200px;
+    background-color: #000000;
+}
+
+.itemList {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 20px 1fr; /* bullet | text */
+    row-gap: 10px;
+}
+
+.itemList li {
+    display: contents;
+}
+
+.itemList li::before {
+    position: relative;
+    left:0px;
+    content: '•'; /* bullet point */
+    color: #000000;
+    font-size: 40px;
+    line-height: 1;
+    grid-column: 1;
+    grid-row: auto;
+    align-self:start;
+    top: -9px;
+}

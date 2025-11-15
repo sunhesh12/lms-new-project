@@ -18,8 +18,6 @@ Route::get('/', function () {
 //login routes
 // Route::get('/login', [LoginController::class, 'index'])->name('login.show');
 
-
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -27,7 +25,7 @@ Route::get('/dashboard', function () {
 // All the routes related modules
 Route::prefix('modules')->group(function () {
     Route::get('/{id}', function ($id) {
-        return Inertia::render('Modules/ModuleDetail', ['moduleId' => $id]);
+        return Inertia::render('Modules/Main', ['moduleId' => $id]);
     });
 });
 

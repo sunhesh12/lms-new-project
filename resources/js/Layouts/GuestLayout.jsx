@@ -1,11 +1,12 @@
 import React from "react";
+import styles from "@/css/layout.module.css";
 
 export default function GuestLayout({children}) {
     return (
         <>
-            <div>
+            <main className={styles.main}>
                 {children}
-            </div>
+            </main>
         </>
     );
 }
