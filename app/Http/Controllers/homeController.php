@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\In;
 use Inertia\Inertia;
 
-class LoginController extends Controller
+class homeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Register');
     }
 }

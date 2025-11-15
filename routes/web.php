@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\homeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -45,13 +46,10 @@ use App\Http\Controllers\LoginController;
 
 // ===========================New controllers for the project==============================================
 
-Route::get ('/',function(){
-    return  Inertia::render('home');
-});
+Route::get ('/',[homeController::class, 'index'])->name('home');
 
-Route::get('/login',function(){
-    return Inertia::render('Auth/Login')->name('login');
-});
+Route::get('/login', [LoginController::class,'index'])->name('login');
+
 
 Route::get('/register',function(){
     return Inertia::render('Auth/Register')->name('register');
