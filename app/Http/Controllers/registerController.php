@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class LoginController extends Controller
+class registerController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Register');
     }
 }
