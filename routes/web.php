@@ -45,6 +45,12 @@ Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
 });
 
+Route::prefix('users')->group(function () {
+    Route::get('/{id}', function ($id) {
+        return Inertia::render('Users/Main', ['userId' => $id]);
+    });
+});
+
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
