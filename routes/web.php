@@ -49,7 +49,11 @@ use App\Http\Controllers\LoginController;
 Route::get ('/',[homeController::class, 'index'])->name('home');
 
 Route::get('/login', [LoginController::class,'index'])->name('login');
-Route::post('/login', [LoginController::class,'login'])->name('login.post');
+Route::post('/login', [LoginController::class,'login'])->name('login.submit');
+
+Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+
+
 
 
 

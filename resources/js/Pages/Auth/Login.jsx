@@ -35,7 +35,7 @@ export default function Login({ status, canResetPassword }) {
                         </div>
                     )}
 
-                    <form onSubmit={submit} className={styles.loginForm} post={route("login")}>
+                    <form onSubmit={submit} className={styles.loginForm}>
                         {/* <InputLabel htmlFor="email" value="Email" />
 
                         <TextInput
