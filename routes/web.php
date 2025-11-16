@@ -30,6 +30,10 @@ Route::prefix('modules')->group(function () {
     Route::get('/{id}', function ($id) {
         return Inertia::render('Modules/Main', ['moduleId' => $id]);
     });
+
+    Route::get('/assignments/{id}/', function($id) {
+        return Inertia::render('Module/Assignment', ['assignmentId' => $id]);
+    });
 });
 
 // Route::middleware('auth')->group(function () {
