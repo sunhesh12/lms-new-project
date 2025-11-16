@@ -27,12 +27,17 @@ use App\Http\Controllers\LoginController;
 
 // All the routes related modules
 Route::prefix('modules')->group(function () {
-    Route::get('/{id}', function ($id) {
-        return Inertia::render('Modules/Main', ['moduleId' => $id]);
-    });
+    Route::prefix('/{moduleId}')->group(function () {
+        Route::get('/', function ($moduleId) {
+            return Inertia::render('Modules/Main', ['moduleId' => $moduleId]);
+        });
 
-    Route::get('/assignments/{id}/', function($id) {
-        return Inertia::render('Module/Assignment', ['assignmentId' => $id]);
+        Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
+            return Inertia::render('Modules/Assignment', [
+                'moduleId' => $moduleId,
+                'assignmentId' => $assignmentId
+            ]);
+        });
     });
 });
 
@@ -50,14 +55,14 @@ Route::prefix('modules')->group(function () {
 
 // ===========================New controllers for the project==============================================
 
-Route::get ('/',[homeController::class, 'index'])->name('home');
+Route::get('/', [homeController::class, 'index'])->name('home');
 
-Route::get('/login', [LoginController::class,'index'])->name('login');
+Route::get('/login', [LoginController::class, 'index'])->name('login');
 
 
-Route::get('/register',function(){
+Route::get('/register', function () {
     return Inertia::render('Auth/Register')->name('register');
 });
-    
 
-require __DIR__.'/auth.php';
+
+require __DIR__ . '/auth.php';
