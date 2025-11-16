@@ -45,10 +45,8 @@ Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
 });
 
-Route::prefix('users')->group(function () {
-    Route::get('/{id}', function ($id) {
-        return Inertia::render('Users/Main', ['userId' => $id]);
-    });
+Route::get('/account', function () {
+    return Inertia::render('Users/Main');
 });
 
 // Route::middleware('auth')->group(function () {
