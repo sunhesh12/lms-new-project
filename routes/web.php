@@ -57,7 +57,18 @@ Route::prefix('modules')->group(function () {
 
 Route::get('/', [homeController::class, 'index'])->name('home');
 
+
 Route::get('/login', [LoginController::class, 'index'])->name('login');
+
+Route::get('/login', [LoginController::class,'index'])->name('login');
+Route::post('/login', [LoginController::class,'login'])->name('login.submit');
+
+Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+
+
+
+
+
 
 
 Route::get('/register', function () {

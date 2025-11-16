@@ -10,16 +10,17 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            CourseSeeder::class,
-            PortalUserSeeder::class,
-            ModuleSeeder::class,
-            TopicSeeder::class,
-            LectureMaterialSeeder::class,
+            UsersTableSeeder::class
+            // CourseSeeder::class,
+            // PortalUserSeeder::class,
+            // ModuleSeeder::class,
+            // TopicSeeder::class,
+            // LectureMaterialSeeder::class,
         ]);
 
-        $this->call(QuizSeeder::class);
-        $this->call(QuestionSeeder::class);
-        $this->call(AnswerSeeder::class);
-        $this->call(QuizSubmissionSeeder::class);
+        // $this->call(QuizSeeder::class);
+        // $this->call(QuestionSeeder::class);
+        // $this->call(AnswerSeeder::class);
+        // $this->call(QuizSubmissionSeeder::class);
     }
 }
