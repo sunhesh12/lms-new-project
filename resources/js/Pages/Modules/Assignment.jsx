@@ -3,7 +3,7 @@ import Button from "@/components/Button";
 import Card from "@/components/Card";
 import UploadBox from "@/components/UploadBox";
 import styles from "@/css/assignment.module.css";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export default function Assignment({ moduleId, assignmentId }) {
     return (
@@ -34,7 +34,7 @@ export default function Assignment({ moduleId, assignmentId }) {
             <UploadBox />
             <div className={styles.buttons}>
                 <Button icon={faCheck}>Complete Assignment</Button>
-                <Button noBackground={true} href={`/modules/${moduleId}`}>
+                <Button icon={faArrowLeft} noBackground={true} href={`/modules/${moduleId}`}>
                     Go Back to module
                 </Button>
             </div>
