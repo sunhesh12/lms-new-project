@@ -20,6 +20,10 @@ export default function ModuleMain() {
                 <Shade height="300px" />
             </header>
             <div id="module-content" className={styles.moduleContent}>
+                <div id="module-toolbar" style={{ position: "sticky", top: 0 }}>
+                    <h1>Module Toolbar</h1>
+                    <p>This is module</p>
+                </div>
                 <h2>Module Content</h2>
                 <article
                     id="topics-container"

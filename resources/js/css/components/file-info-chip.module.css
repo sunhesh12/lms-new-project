@@ -1,0 +1,13 @@
+.fileInfoChip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 20px;
+  gap:10px;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}

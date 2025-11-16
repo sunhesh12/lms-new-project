@@ -6,7 +6,7 @@
     position: relative;
     left:10px;
     width: 2px;
-    height: 200px;
+    min-height: 400px;
     background-color: #000000;
 }
 
@@ -15,7 +15,7 @@
     padding: 0;
     display: grid;
     grid-template-columns: 20px 1fr; /* bullet | text */
-    row-gap: 10px;
+    row-gap: 40px;
 }
 
 .itemList li {
