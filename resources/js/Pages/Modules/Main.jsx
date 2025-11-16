@@ -1,4 +1,3 @@
-import Shade from "@/components/Shade";
 import GuestLayout from "@/Layouts/GuestLayout";
 import styles from "@/css/modules.module.css";
 import Topic from "@/components/Topic";

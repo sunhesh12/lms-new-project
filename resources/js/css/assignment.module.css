@@ -1,0 +1,9 @@
+.date {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.date .caption {
+    font-weight: bold;
+}
