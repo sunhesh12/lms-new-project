@@ -28,7 +28,7 @@ use App\Http\Controllers\LoginController;
 // All the routes related modules
 Route::prefix('modules')->group(function () {
     Route::get('/{id}', function ($id) {
-        return Inertia::render('Modules/ModuleDetail', ['moduleId' => $id]);
+        return Inertia::render('Modules/Main', ['moduleId' => $id]);
     });
 });
 
