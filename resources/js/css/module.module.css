@@ -1,21 +1,3 @@
-.header-container{
-    width: 100%;
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.header-container button{
-    width: auto;
-    padding: 10px;
-    height: 40px;
-    background-color: var(--black);
-    color: var(--white);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 .course-container{
     width: 100%;
     height: 100px;
@@ -48,6 +30,4 @@
     background-color: transparent;
     border: none;
     outline: none;
-    
-
 }

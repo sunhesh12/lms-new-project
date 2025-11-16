@@ -2,35 +2,26 @@ import Shade from "@/components/Shade";
 import GuestLayout from "@/Layouts/GuestLayout";
 import styles from "@/css/modules.module.css";
 import Topic from "@/components/Topic";
+import ModuleHeader from "@/components/ModuleHeader";
+import ModuleToolbar from "@/components/ModuleToolbar";
 
-export default function ModuleMain() {
+export default function ModuleMain({ moduleId }) {
     return (
         <GuestLayout>
-            <header id="module-header" className={styles.moduleHeader}>
-                <div id="module-cover" className={styles.moduleCoverContainer}>
-                    <img
-                        className={styles.coverImage}
-                        src="/images/default-cover.webp"
-                    />
-                </div>
-                <div id="module-info" className={styles.moduleInfo}>
-                    <h1>Module Name</h1>
-                    <p>Some other info about the course</p>
-                </div>
-                <Shade height="300px" />
-            </header>
+            <ModuleHeader
+                moduleName={`Module ${moduleId}`}
+                subTitle="Module subtitle"
+                coverImage="/images/default-cover.webp"
+            />
             <div id="module-content" className={styles.moduleContent}>
-                <div id="module-toolbar" style={{ position: "sticky", top: 0 }}>
-                    <h1>Module Toolbar</h1>
-                    <p>This is module</p>
-                </div>
+                <ModuleToolbar />
                 <h2>Module Content</h2>
                 <article
                     id="topics-container"
                     className={styles.topicsContainer}
                 >
                     <p>Pinned</p>
-                    <section id="pinned"></section>
+                    <section id="pinned"></section> 
                     <Topic />
                     <Topic />
                 </article>
