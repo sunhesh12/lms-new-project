@@ -32,3 +32,25 @@
     font-weight: bold;
     color: black;
 }
+
+.errorBox {
+    background: #ffe5e5;
+    border-left: 4px solid #ff3b3b;
+    color: #b80000;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.inputError {
+    color: #d60000;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.inputErrorBorder {
+    border-color: #ff3b3b !important;
+}
+

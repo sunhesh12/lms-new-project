@@ -30,6 +30,7 @@ class UsersTableSeeder extends Seeder
                 // store dob as Y-m-d (string column in your migration)
                 'user_dob' => $faker->date('Y-m-d'),
                 'address' => $faker->address(),
+                'status' => ($i % 2) == 0 ? 'blocked' : 'active',
                 // use a known password for all seeded users (hashed)
                 'password' => Hash::make('password123'),
                 'created_at' => now(),

@@ -39,3 +39,61 @@
     margin-left: auto;
     cursor: pointer;
 }
+
+.inputContainer {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.errorText {
+    color: #d60000;
+    font-size: 13px;
+}
+
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 10px;
+    background: #fff;
+    transition: border 0.2s ease;
+}
+
+.inputErrorBorder {
+    border-color: #ff3b3b !important;
+    background: #fff7f7;
+}
+
+.icon {
+    margin-right: 10px;
+    opacity: 0.7;
+}
+
+.input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 5px 0;
+}
+
+.eye {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.eye:hover {
+    color: #000;
+}

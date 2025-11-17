@@ -3,16 +3,25 @@ import styles from "@/css/components/text-input.module.css";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function TextInput({ className, label, error, icon, ...props }) {
+export default function TextInput({ className = "", label, error, icon, ...props }) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
     return (
         <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor={props.name}>
+            {/* Label + Error */}
+            <label className={styles.label} htmlFor={props.id || props.name}>
                 <span>{label}</span>
-                <span>{error}</span>
+                {error && <span className={styles.errorText}>{error}</span>}
             </label>
-            <div className={styles.inputWrapper}>
-                {icon && <FontAwesomeIcon icon={icon} />}
+
+            {/* Input box container */}
+            <div
+                className={`${styles.inputWrapper} ${
+                    error ? styles.inputErrorBorder : ""
+                }`}
+            >
+                {icon && <FontAwesomeIcon icon={icon} className={styles.icon} />}
+
                 <input
                     {...props}
                     type={
@@ -22,25 +31,16 @@ export default function TextInput({ className, label, error, icon, ...props }) {
                                 : "password"
                             : props.type
                     }
-                    className={className + " " + styles.input}
+                    className={`${styles.input} ${className}`}
                 />
+
+                {/* Password Eye Icon */}
                 {props.type === "password" && (
                     <div className={styles.eye}>
-                        {isPasswordVisible ? (
-                            <FontAwesomeIcon
-                                icon={faEyeSlash}
-                                onClick={() => {
-                                    setIsPasswordVisible(!isPasswordVisible);
-                                }}
-                            />
-                        ) : (
-                            <FontAwesomeIcon
-                                icon={faEye}
-                                onClick={() => {
-                                    setIsPasswordVisible(!isPasswordVisible);
-                                }}
-                            />
-                        )}
+                        <FontAwesomeIcon
+                            icon={isPasswordVisible ? faEyeSlash : faEye}
+                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                        />
                     </div>
                 )}
             </div>

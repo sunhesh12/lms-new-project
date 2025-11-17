@@ -17,7 +17,7 @@ function formatName(name) {
 }
   return (
     <div className={style["sideNavBar-footer"]}>
-      <Link href="/settings">
+      <Link href={route("logout")} method="post">
       <div className={style["sideNavBar-footer-settings"]}>
         <Settings size={20} />
         {!isOpen && <span>Settings</span>}
