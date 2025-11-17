@@ -122,7 +122,7 @@ export default function Login({ status, canResetPassword }) {
                         <span>
                             New to the LMS ?{" "}
                             <CustomLink
-                                href={route("register")}
+                                href={route("login")}
                                 className={styles.registerLink}
                             >
                                 Register
