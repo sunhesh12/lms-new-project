@@ -7,3 +7,9 @@
 .date .caption {
     font-weight: bold;
 }
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

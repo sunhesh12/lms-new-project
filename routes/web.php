@@ -28,6 +28,26 @@ Route::prefix('modules')->group(function () {
 
 
 
+Route::get('/calendar', function () {
+    return Inertia::render('Calendar/Main');
+});
+
+Route::get('/account', function () {
+    return Inertia::render('Users/Main');
+});
+
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+
+// Route::get('/Courses', function () {
+//     return Inertia::render('Course');
+// })->middleware(['auth', 'verified'])->name('Courses');
+
+
+
 
 // ===========================New controllers for the project==============================================
 
