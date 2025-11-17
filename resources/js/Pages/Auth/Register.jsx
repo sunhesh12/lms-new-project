@@ -8,17 +8,18 @@ import TextInput from "@/components/Input/TextInput";
 import Button from "@/components/Button";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
-export default function register({ status, canResetPassword }) {
+export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
+        name: "",
         email: "",
         password: "",
+        password_confirmation: "",
         remember: false,
     });
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route("login"), {
+        post(route("register.submit"), {
             onFinish: () => reset("password"),
         });
     };
@@ -29,32 +30,25 @@ export default function register({ status, canResetPassword }) {
                 <div className={styles.loginFormContainer}>
                     <h1>Sign Up</h1>
 
-                    {status && (
-                        <div className="mb-4 text-sm font-medium text-green-600">
-                            {status}
-                        </div>
-                    )}
-
                     <form onSubmit={submit} className={styles.loginForm}>
                         <TextInput
                             id="name"
                             type="text"
                             name="name"
                             label="Name"
-                            // icon={faEnvelope}
-                            error=""
+                            error={errors.name}
                             value={data.name}
                             placeholder="Enter your Name"
                             className="mt-1 block w-full"
                             onChange={(e) => setData("name", e.target.value)}
                         />
+
                         <TextInput
                             id="email"
                             type="email"
                             name="email"
                             label="Email"
-                            // icon={faEnvelope}
-                            error=""
+                            error={errors.email}
                             value={data.email}
                             placeholder="Enter your Email"
                             className="mt-1 block w-full"
@@ -66,8 +60,7 @@ export default function register({ status, canResetPassword }) {
                             type="password"
                             name="password"
                             label="Password"
-                            // icon={faKey}
-                            error=""
+                            error={errors.password}
                             value={data.password}
                             placeholder="Enter your Password"
                             className="mt-1 block w-full"
@@ -75,6 +68,21 @@ export default function register({ status, canResetPassword }) {
                                 setData("password", e.target.value)
                             }
                         />
+
+                        <TextInput
+                            id="password_confirmation"
+                            type="password"
+                            name="password_confirmation"
+                            label="Confirm Password"
+                            error={errors.password_confirmation}
+                            value={data.password_confirmation}
+                            placeholder="Confirm your Password"
+                            className="mt-1 block w-full"
+                            onChange={(e) =>
+                                setData("password_confirmation", e.target.value)
+                            }
+                        />
+
                         <div className="mt-4 block">
                             <label className="flex items-center">
                                 <Checkbox
@@ -89,22 +97,18 @@ export default function register({ status, canResetPassword }) {
                                 </span>
                             </label>
                         </div>
-                        {canResetPassword && (
-                            <CustomLink href={route("password.request")}>
-                                Forgot your password ?
-                            </CustomLink>
-                        )}
 
-                        <div>
+                        <div className="mt-4">
                             <Button disabled={processing}>Sign Up</Button>
                         </div>
+
                         <span>
-                            Already have an account ?{" "}
+                            Already have an account?{" "}
                             <CustomLink
                                 href={route("login")}
                                 className={styles.registerLink}
                             >
-                                Log in
+                                Log In
                             </CustomLink>
                         </span>
                     </form>
