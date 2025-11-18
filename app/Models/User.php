@@ -28,4 +28,9 @@ class User extends Authenticatable
     return $this->hasOne(Student::class);
 }
 
+public function lecture()
+{
+    return $this->hasOne(Lecture::class);
+
+}
 }
