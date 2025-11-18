@@ -19,5 +19,11 @@ class Faculty extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    
+
+    public function user_facluties()
+    {
+        return $this->hasMany(user_facluty::class);
+    }
+
+
 }

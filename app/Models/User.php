@@ -37,5 +37,10 @@ public function lecture()
 public function system_admin()
 {
     return $this->hasOne(System_admin::class);
+} 
+
+public function user_faculty(){
+    return $this->hasOne(user_facluty::class);
 }
+
 }
