@@ -25,12 +25,17 @@ class User extends Authenticatable
 
     public function student()
 {
-    return $this->hasOne(Student::class);
+    return $this->hasOne(student::class);
 }
 
 public function lecture()
 {
-    return $this->hasOne(Lecture::class);
+    return $this->hasOne(lecture::class);
 
+}
+
+public function system_admin()
+{
+    return $this->hasOne(System_admin::class);
 }
 }
