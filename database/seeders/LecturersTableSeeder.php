@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 
-class LecturesTableSeeder extends Seeder
+class LecturersTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

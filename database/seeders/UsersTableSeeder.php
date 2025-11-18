@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Faker\Factory as Faker;
 
 class UsersTableSeeder extends Seeder
@@ -19,22 +18,19 @@ class UsersTableSeeder extends Seeder
 
         $users = [];
         for ($i = 0; $i < 10; $i++) {
-            $name = $faker->name();
-            $email = $faker->unique()->safeEmail();
+
             $users[] = [
-                'name' => $name,
-                'email' => $email,
-                'user_Phone_No' => $faker->phoneNumber(),
-                // you can use faker->imageUrl() or set a default placeholder
-                'profile_pic' => 'profile/default.png',
-                // store dob as Y-m-d (string column in your migration)
-                'user_dob' => $faker->date('Y-m-d'),
-                'address' => $faker->address(),
-                'status' => ($i % 2) == 0 ? 'blocked' : 'active',
-                // use a known password for all seeded users (hashed)
-                'password' => Hash::make('password123'),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name'            => $faker->name(),
+                'email'           => $faker->unique()->safeEmail(),
+                'user_Phone_No'   => $faker->numerify('07########'), // SL-style phone number
+                'profile_pic'     => 'profile/default.png',
+                'user_dob'        => $faker->date('Y-m-d'),
+                'address'         => $faker->address(),
+                'status'          => $i % 2 == 0 ? 'blocked' : 'active',
+                'faculty_id'      => rand(1, 4),   // Assuming faculties table has IDs 1–4
+                'password'        => Hash::make('password123'),
+                'created_at'      => now(),
+                'updated_at'      => now(),
             ];
         }
 

@@ -39,8 +39,8 @@ public function system_admin()
     return $this->hasOne(System_admin::class);
 } 
 
-public function user_faculty(){
-    return $this->hasOne(user_facluty::class);
+public function faculty(){
+    return $this->hasOne(Faculty::class);
 }
 
 }

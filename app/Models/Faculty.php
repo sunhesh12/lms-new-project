@@ -20,9 +20,9 @@ class Faculty extends Model
     ];
 
 
-    public function user_facluties()
+    public function user()
     {
-        return $this->hasMany(user_facluty::class);
+        return $this->hasMany(user::class);
     }
 
 
