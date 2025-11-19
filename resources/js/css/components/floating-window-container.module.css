@@ -1,0 +1,24 @@
+.floatContainer {
+    display:flex;
+    flex-direction: center;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.544);
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 40px 20px;
+    border-radius: 10px;
+    width: 50%;
+    min-height: 400px;
+}

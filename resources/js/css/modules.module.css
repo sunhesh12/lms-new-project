@@ -1,34 +1,33 @@
-.moduleHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: 300px;
+.course-container{
     width: 100%;
-}
-
-.coverImage {
-    height: 300px;
-    width: 100%;
-    object-fit: cover;
-    z-index: 0;
-}
-
-.moduleInfo {
-    position: relative;
-    bottom: 180px;
-    z-index: 20;
-    color: white;
-    padding: 30px;
-}
-
-.topicsContainer {
+    height: 100px;
     display: flex;
-    flex-direction: column;
     gap: 20px;
+    /* background-color: red; */
 }
 
-.moduleContent {
+.search-box{
+    background-color: var(--white);
+    width: 300px;
+    height: 40px;
     display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.search-box img{
+    width: 30px;
+    height: 30px;
+    /* padding: 5px; */
+    margin-right: 10px;
+}
+
+.search-box input{
+    width: 100%;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    outline: none;
 }

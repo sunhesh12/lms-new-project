@@ -1,5 +1,5 @@
 import Shade from "@/components/Shade";
-import styles from "@/css/modules.module.css";
+import styles from "@/css/module.module.css";
 
 export default function ModuleHeader({moduleName, subTitle, coverImage}) {
     return (

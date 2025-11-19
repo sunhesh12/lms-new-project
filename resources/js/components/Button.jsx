@@ -3,7 +3,7 @@ import styles from "@/css/components/button.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMemo } from "react";
 
-export default function Button({ children, href, icon, noBackground }) {
+export default function Button({ children, href, icon, noBackground, ...props }) {
     const computedStyle = useMemo(() => {
         return noBackground
             ? {
@@ -19,7 +19,7 @@ export default function Button({ children, href, icon, noBackground }) {
 
     if (href) {
         return (
-            <Link className={styles.button} href={href} style={computedStyle}>
+            <Link className={styles.button} href={href} style={computedStyle} {...props}>
                 {icon && <FontAwesomeIcon icon={icon} />}{" "}
                 <span>{children}</span>
             </Link>
@@ -27,8 +27,8 @@ export default function Button({ children, href, icon, noBackground }) {
     }
 
     return (
-        <button className={styles.button} style={computedStyle}>
+        <button className={styles.button} style={computedStyle} {...props}>
             {icon && <FontAwesomeIcon icon={icon} />} <span>{children}</span>
         </button>
     );
-}
+} 
