@@ -17,12 +17,12 @@ class LecturersTableSeeder extends Seeder
 
         $lectures = [];
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 6; $i <=10; $i++) {
             $lectures[] = [
                 'academic_level' => $faker->randomElement(['Undergraduate', 'Postgraduate', 'Diploma']),
                 'research_area'  => $faker->words(3, true),
                 'lecture_type'   => $faker->randomElement(['Full-time', 'Part-time']),
-                'user_id'        => rand(1, 10),  // assuming you have 10 users
+                'user_id'        => $i,  // assuming you have 10 users
                 'created_at'     => now(),
                 'updated_at'     => now(),
             ];
