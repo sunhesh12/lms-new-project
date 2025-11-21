@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             StudentsTableSeeder::class,
             LecturersTableSeeder::class,
             NewModuleSeeder::class,
+            NewTopicSeeder::class,
             // CourseSeeder::class,
             // PortalUserSeeder::class,
             // ModuleSeeder::class,
