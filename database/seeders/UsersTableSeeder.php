@@ -51,7 +51,7 @@ class UsersTableSeeder extends Seeder
             'profile_pic' => 'profile/default.png',
             'user_dob' => $faker->date('Y-m-d'),
             'address' => $faker->address(),
-            'status' => $i % 2 == 0 ? 'blocked' : 'active',
+            'status' => 'active',
             'faculty_id' => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
             'password' => Hash::make('password123'),
             'created_at' => now(),
