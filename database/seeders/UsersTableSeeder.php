@@ -46,6 +46,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('users')->insert([
             'name' => 'Test User',
+            'email' => 'abc@gmail.com',
             'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
             'profile_pic' => 'profile/default.png',
             'user_dob' => $faker->date('Y-m-d'),
