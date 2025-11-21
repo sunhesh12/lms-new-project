@@ -15,6 +15,7 @@ class PortalUserSeeder extends Seeder
 
         for ($i = 1; $i <= 10; $i++) {
             PortalUser::create([
+                'id' => Str::uuid(),
                 'full_name' => fake()->name(),
                 'age' => rand(18, 35),
                 'email' => fake()->unique()->safeEmail(),
@@ -29,6 +30,7 @@ class PortalUserSeeder extends Seeder
         }
             // The student that we are going to test
             PortalUser::create([
+                'id' => Str::uuid(),
                 'full_name' => 'Rasuwan Kalhara',
                 'age' => 21,
                 'email' => 'kalharaweragala@gmail.com',
@@ -44,6 +46,7 @@ class PortalUserSeeder extends Seeder
             // The teacher that we are going to test
             // The student that we are going to test
             PortalUser::create([
+                'id' => Str::uuid(),
                 'full_name' => 'Kamal Perera',
                 'age' => 40,
                 'email' => 'kamalperera@gmail.com',
@@ -58,6 +61,7 @@ class PortalUserSeeder extends Seeder
 
             // This is the admin that we are going to test
             PortalUser::create([
+                'id' => Str::uuid(),
                 'full_name' => 'Sam Perera',
                 'age' => 46,
                 'email' => 'sam@gmail.com',

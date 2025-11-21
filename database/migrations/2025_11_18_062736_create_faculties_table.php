@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('faculties', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->string('fac_name');
             $table->string('theme');
             $table->timestamps();

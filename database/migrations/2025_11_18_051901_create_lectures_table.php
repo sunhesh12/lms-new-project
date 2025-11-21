@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lectures', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->string('academic_level');
             $table->string('research_area');
             $table->string('lecture_type');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

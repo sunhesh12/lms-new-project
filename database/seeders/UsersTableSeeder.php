@@ -16,21 +16,29 @@ class UsersTableSeeder extends Seeder
     {
         $faker = Faker::create();
 
+        // Get all course UUIDs from the courses table
+        $courseIds = DB::table('courses')->pluck('id')->toArray();
+
+        // Get all course UUIDs from the courses table
+        $facultysIds = DB::table('faculties')->pluck('id')->toArray();
+
+
         $users = [];
         for ($i = 0; $i < 10; $i++) {
 
             $users[] = [
                 'name'            => $faker->name(),
                 'email'           => $faker->unique()->safeEmail(),
-                'user_Phone_No'   => $faker->numerify('07########'), // SL-style phone number
+                'user_phone_no'   => $faker->numerify('07########'), // SL-style phone number
                 'profile_pic'     => 'profile/default.png',
                 'user_dob'        => $faker->date('Y-m-d'),
                 'address'         => $faker->address(),
                 'status'          => $i % 2 == 0 ? 'blocked' : 'active',
-                'faculty_id'      => rand(1, 4),   // Assuming faculties table has IDs 1–4
+                'faculty_id'      => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
                 'password'        => Hash::make('password123'),
                 'created_at'      => now(),
                 'updated_at'      => now(),
+                'course_id'       => $faker->randomElement($courseIds), // Assuming courses table has IDs 1–3
             ];
         }
 

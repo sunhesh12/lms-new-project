@@ -6,6 +6,7 @@ use App\Models\Module;
 use App\Models\Course;
 use App\Models\PortalUser;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ModuleSeeder extends Seeder
 {
@@ -26,6 +27,7 @@ class ModuleSeeder extends Seeder
             $course = $courses->random(); // Random course
 
             $module = Module::create([
+                'id' => Str::uuid(),
                 'module_name' => 'Module ' . $i,
                 'description' => 'This is the description for Module ' . $i,
                 'credit_value' => rand(2, 5),

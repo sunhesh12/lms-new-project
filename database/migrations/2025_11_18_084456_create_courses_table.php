@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->string('name');
             $table->string('credit_value');
+            $table->integer('maximum_students');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

@@ -11,10 +11,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             FacultySeeder::class,
+            CourseSeeder::class,
             UsersTableSeeder::class,
             StudentsTableSeeder::class,
             LecturersTableSeeder::class,
-
             // CourseSeeder::class,
             // PortalUserSeeder::class,
             // ModuleSeeder::class,
