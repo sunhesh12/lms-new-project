@@ -20,6 +20,8 @@ class Topic extends Model
         'module_id',
         'topic_name',
         'description',
+        'is_deleted',
+        'is_announcement'
     ];
 
     protected static function boot()

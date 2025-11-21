@@ -14,7 +14,9 @@ class TopicFactory extends Factory
             'id' => Str::uuid(),
             'module_id' => Module::inRandomOrder()->first()->id ?? null,
             'topic_name' => $this->faker->sentence(3),
-            'description' => $this->faker->paragraph()
+            'description' => $this->faker->paragraph(),
+            'is_deleted'=> false,
+            'is_announcement'=> false
         ];
     }
 }

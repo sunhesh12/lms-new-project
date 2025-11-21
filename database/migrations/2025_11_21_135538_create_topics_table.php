@@ -17,6 +17,8 @@ return new class extends Migration
             $table->uuid('module_id');
             $table->string('topic_name');
             $table->string('description');
+            $table->boolean('is_announcement')->default(false);
+            $table->boolean('is_deleted')->default(false);
             $table->foreign('module_id')->references('id')->on('modules')->onDelete('cascade');
             $table->timestamps();
         });
