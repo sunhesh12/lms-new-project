@@ -15,14 +15,14 @@ Route::prefix('modules')->group(function () {
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', function ($moduleId) {
             return Inertia::render('Modules/Main', ['moduleId' => $moduleId]);
-        })->middleware('auth');
+        }); //->middleware('auth');
 
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
             return Inertia::render('Modules/Assignment', [
                 'moduleId' => $moduleId,
                 'assignmentId' => $assignmentId
             ]);
-        })->middleware('auth');
+        }); //->middleware('auth');
     });
 })->middleware('auth');
 
