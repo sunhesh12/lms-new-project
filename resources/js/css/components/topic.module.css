@@ -33,3 +33,8 @@
     display: flex;
     flex-direction: column;
 }
+
+.topicToolbar {
+    display: flex;
+    gap: 10px;
+}

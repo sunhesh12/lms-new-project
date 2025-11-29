@@ -1,0 +1,273 @@
+/* table.module.css */
+
+.tableContainer {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  overflow-y: scroll;
+}
+
+/* Table Header */
+.table thead {
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table thead tr th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.table thead tr th:first-child {
+  padding-left: 24px;
+}
+
+.table thead tr th:last-child {
+  padding-right: 24px;
+  text-align: center;
+}
+
+/* Sortable header indicator */
+.table thead tr th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.table thead tr th.sortable:hover {
+  color: #374151;
+}
+
+/* Table Body */
+.table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody tr td {
+  padding: 16px;
+  font-size: 14px;
+  color: #111827;
+  vertical-align: middle;
+}
+
+.table tbody tr td:first-child {
+  padding-left: 24px;
+}
+
+.table tbody tr td:last-child {
+  padding-right: 24px;
+  text-align: center;
+}
+
+/* Checkbox Column */
+.checkboxCell {
+  width: 48px;
+  padding-right: 0 !important;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  background: #ffffff;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.checkbox:hover {
+  border-color: #9ca3af;
+}
+
+.checkbox:checked {
+  background: #1f2937;
+  border-color: #1f2937;
+}
+
+.checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Name Column */
+.nameCell {
+  font-weight: 500;
+  color: #111827;
+  min-width: 200px;
+}
+
+/* Date Column */
+.dateCell {
+  color: #6b7280;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Number Columns */
+.numberCell {
+  color: #374151;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* CTR Column */
+.ctrCell {
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Status Column */
+.statusCell {
+  min-width: 100px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.statusBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.statusPending {
+  color: #f59e0b;
+  background: #fef3c7;
+}
+
+.statusPending::before {
+  background: #f59e0b;
+}
+
+.statusActive {
+  color: #10b981;
+  background: #d1fae5;
+}
+
+.statusActive::before {
+  background: #10b981;
+}
+
+.statusCancelled {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+.statusCancelled::before {
+  background: #ef4444;
+}
+
+.statusDelay {
+  color: #f59e0b;
+  background: #fef3c7;
+}
+
+.statusDelay::before {
+  background: #f59e0b;
+}
+
+/* Actions Column */
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.actionButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.15s ease;
+}
+
+.actionButton:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.downloadButton:hover {
+  color: #3b82f6;
+  background: #dbeafe;
+}
+
+.deleteButton:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .table {
+    font-size: 13px;
+  }
+  
+  .table tbody tr td,
+  .table thead tr th {
+    padding: 12px;
+  }
+  
+  .table tbody tr td:first-child,
+  .table thead tr th:first-child {
+    padding-left: 16px;
+  }
+  
+  .table tbody tr td:last-child,
+  .table thead tr th:last-child {
+    padding-right: 16px;
+  }
+}

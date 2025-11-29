@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Topic;
 use App\Models\Module;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TopicSeeder extends Seeder
 {
@@ -52,6 +53,7 @@ class TopicSeeder extends Seeder
 
         for ($i = 1; $i <= 10; $i++) {
             Topic::create([
+                'id' => Str::uuid(),
                 'title' => fake()->unique()->randomElement($sampleTitles),
                 'description' => fake()->sentence(8),
                 'type' => fake()->randomElement($types),

@@ -1,6 +1,6 @@
 .floatContainer {
     display:flex;
-    flex-direction: center;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: fixed;
@@ -15,10 +15,14 @@
 .formContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     background-color: white;
-    padding: 40px 20px;
     border-radius: 10px;
-    width: 50%;
+    padding: 15px;
+    padding-bottom: 30px;
+    /*overflow-y:scroll;*/
     min-height: 400px;
+    max-height: 90vh;
+    max-width: 90vw;
+    min-width: 500px;
 }

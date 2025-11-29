@@ -3,7 +3,13 @@ import styles from "@/css/components/text-input.module.css";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function TextInput({ className = "", label, error, icon, ...props }) {
+export default function TextInput({
+    className = "",
+    label,
+    error,
+    icon,
+    ...props
+}) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     return (
@@ -14,36 +20,53 @@ export default function TextInput({ className = "", label, error, icon, ...props
                 {error && <span className={styles.errorText}>{error}</span>}
             </label>
 
-            {/* Input box container */}
-            <div
-                className={`${styles.inputWrapper} ${
-                    error ? styles.inputErrorBorder : ""
-                }`}
-            >
-                {icon && <FontAwesomeIcon icon={icon} className={styles.icon} />}
+            {props.type === "textarea" ? (
+                <div
+                    className={`${styles.inputWrapper} ${
+                        error ? styles.inputErrorBorder : ""
+                    
+                    }`}
+                >
+                    <textarea
+                        {...props}
+                        className={`${styles.input} ${className}`}
+                    ></textarea>
+                </div>
+            ) : (
+                <div
+                    className={`${styles.inputWrapper} ${
+                        error ? styles.inputErrorBorder : ""
+                    }`}
+                >
+                    {icon && (
+                        <FontAwesomeIcon icon={icon} className={styles.icon} />
+                    )}
 
-                <input
-                    {...props}
-                    type={
-                        props.type === "password"
-                            ? isPasswordVisible
-                                ? "text"
-                                : "password"
-                            : props.type
-                    }
-                    className={`${styles.input} ${className}`}
-                />
+                    <input
+                        {...props}
+                        type={
+                            props.type === "password"
+                                ? isPasswordVisible
+                                    ? "text"
+                                    : "password"
+                                : props.type
+                        }
+                        className={`${styles.input} ${className}`}
+                    />
 
-                {/* Password Eye Icon */}
-                {props.type === "password" && (
-                    <div className={styles.eye}>
-                        <FontAwesomeIcon
-                            icon={isPasswordVisible ? faEyeSlash : faEye}
-                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                        />
-                    </div>
-                )}
-            </div>
+                    {/* Password Eye Icon */}
+                    {props.type === "password" && (
+                        <div className={styles.eye}>
+                            <FontAwesomeIcon
+                                icon={isPasswordVisible ? faEyeSlash : faEye}
+                                onClick={() =>
+                                    setIsPasswordVisible(!isPasswordVisible)
+                                }
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

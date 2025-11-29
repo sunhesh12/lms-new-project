@@ -1,21 +1,22 @@
 <?php
 
 use App\Http\Controllers\homeController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\ModuleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\TopicController;
 
 
 
 // All the routes related modules
 Route::prefix('modules')->group(function () {
+    Route::post('/', [ModuleController::class, 'create'])->name('module.create'); //->middleware('auth');
     Route::prefix('/{moduleId}')->group(function () {
-        Route::get('/', function ($moduleId) {
-            return Inertia::render('Modules/Main', ['moduleId' => $moduleId]);
-        }); //->middleware('auth');
+        Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
+        Route::patch('/', [ModuleController::class, 'update'])->name('module.update');
+        Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
             return Inertia::render('Modules/Assignment', [
@@ -23,10 +24,14 @@ Route::prefix('modules')->group(function () {
                 'assignmentId' => $assignmentId
             ]);
         }); //->middleware('auth');
+
+        // For creating new topics for a module
+        Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create"); //->middleware('auth
+        Route::patch('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
+        Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete"); //->middleware('auth
+        Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset"); //->middleware('auth
     });
-})->middleware('auth');
-
-
+});//->middleware('auth');
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
@@ -56,11 +61,11 @@ Route::get('/', [homeController::class, 'index'])->name('home');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 
-Route::get('/login', [LoginController::class,'index'])->name('login');
-Route::post('/login', [LoginController::class,'login'])->name('login.submit');
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
 
-Route::post('/logout', [LoginController::class,'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 Route::get('/register', [RegisterController::class, 'showForm'])->name('register');

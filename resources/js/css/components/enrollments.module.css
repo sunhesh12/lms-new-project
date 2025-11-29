@@ -1,0 +1,16 @@
+.enrollments {
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.tableToolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}

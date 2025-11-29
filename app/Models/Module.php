@@ -35,4 +35,9 @@ class Module extends Model
             }
         });
     }
+
+    public function topics()
+    {
+        return $this->hasMany(Topic::class, 'module_id', 'id');
+    }
 }

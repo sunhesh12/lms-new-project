@@ -1,0 +1,7 @@
+.moduleEditForm {
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    gap: 15px;
+    overflow-y: scroll;
+}

@@ -12,6 +12,10 @@
     /* side nav bar from Authenticate Layoute */
     --sideNavBarWidth: 20%;
 
+    /* Official color scheme */
+    --black: #001219;
+    --blue: #00AFC0;
+    --orange: ##2596be;
 }
 
 html {
@@ -30,7 +34,7 @@ h1 {
 
 p {
     font-size: 1.1rem;
-}
+}   
 
 @font-face {
     font-family: 'Pangolin';

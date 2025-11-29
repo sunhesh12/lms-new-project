@@ -1,18 +1,70 @@
-import styles from "@/css/components/topic-form.module.css"
-import TextInput from "./Input/TextInput"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBook, faPlus } from "@fortawesome/free-solid-svg-icons"
-import Button from "./Button"
+import styles from "@/css/components/topic-form.module.css";
+import TextInput from "./Input/TextInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBook, faPlus } from "@fortawesome/free-solid-svg-icons";
+import Button from "./Button";
 
-export default function TopicForm() {
+export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (isUpdate) {
+            formProps.patch(
+                route("topic.update", {
+                    moduleId: moduleId,
+                    topicId: topicId,
+                }),
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        console.log("Topic updated");
+                        formProps.reset();
+                    },
+                }
+            );
+        } else {
+            formProps.post(route("topic.create", { moduleId }), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    console.log("Topic created");
+                    formProps.reset();
+                },
+            });
+        }
+    };
+
     return (
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
             <header>
-                <h2><FontAwesomeIcon icon={faBook} /> Create your topic</h2>
-                <p>Add the necessary details of the topic to create the topic.</p>
+                <h2>
+                    <FontAwesomeIcon icon={faBook} /> Create your topic
+                </h2>
+                <p>
+                    Add the necessary details of the topic to create the topic.
+                </p>
             </header>
-            <TextInput label="Topic Name" />
-            <Button type="submit" icon={faPlus}>Create topic</Button>
+            <TextInput
+                label="Topic Name"
+                value={formProps.data.topic_name}
+                name="topic_name"
+                max="50"
+                onChange={(e) => {
+                    formProps.setData("topic_name", e.target.value);
+                }}
+            />
+            <TextInput
+                type="textarea"
+                value={formProps.data.description}
+                label="Description"
+                name="description"
+                max="100"
+                onChange={(e) => {
+                    formProps.setData("description", e.target.value);
+                }}
+            />
+            <Button type="submit" icon={faPlus}>
+                Create topic
+            </Button>
         </form>
-    )
+    );
 }
