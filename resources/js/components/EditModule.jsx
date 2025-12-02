@@ -16,9 +16,10 @@ export default function EditModule({
         console.log(formProps.data);
         console.log(moduleId);  
 
-        formProps.patch(route("module.update", {moduleId}), {
+        formProps.post(route("module.update", {moduleId}), {
             preserveScroll: true,
             forceFormData: true,
+            method: "__PATCH",
             onSuccess: () => {
                 console.log("Module Updated");
             },
@@ -39,7 +40,6 @@ export default function EditModule({
                 caption="Change the module cover image"
                 fileTypesCaption="JPEG, PNG file types upto 50MB"
                 onUpload={(e) => {
-                    console.log(e.target.files[0]);
                     formProps.setData("cover_image_url", e.target.files[0]);
                 }}
                 defaultImage={defaultCoverImage}
@@ -74,10 +74,6 @@ export default function EditModule({
                 }}
                 value={formProps.data.maximum_students}
             />
-
-            <Button type="reset" onClick={() => {
-                formProps.reset()
-            }} noBackground={true}>Reset</Button>
             <Button type="submit">Save</Button>
         </form>
     );
