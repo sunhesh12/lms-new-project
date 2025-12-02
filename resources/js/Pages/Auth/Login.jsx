@@ -1,10 +1,10 @@
-import Checkbox from "@/components/Checkbox";
+import Checkbox from "@/components/Input/Checkbox";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
-import CustomLink from "@/components/Link";
+import CustomLink from "@/components/Links/Link";
 import styles from "@/css/login.module.css";
 import TextInput from "@/components/Input/TextInput";
-import Button from "@/components/Button";
+import Button from "@/components/Input/Button";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login({ status, canResetPassword }) {

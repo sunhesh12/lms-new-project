@@ -1,15 +1,15 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import styles from "@/css/module.module.css";
-import Topic from "@/components/Topic";
-import ModuleHeader from "@/components/ModuleHeader";
-import ModuleToolbar from "@/components/ModuleToolbar";
+import Topic from "@/components/Accordion/Topic";
+import ModuleHeader from "@/components/Module/ModuleHeader";
+import ModuleToolbar from "@/components/Module/ModuleToolbar";
 import { useRef, useState } from "react";
-import TopicForm from "@/components/TopicForm";
-import FloatingWindowContainer from "@/components/FloatingWindowContainer";
-import AssignmentForm from "@/components/AssignmentForm";
+import TopicForm from "@/components/Forms/TopicForm";
+import FloatingWindowContainer from "@/Dialog/FloatingWindowContainer";
+import AssignmentForm from "@/components/Forms/AssignmentForm";
 import Enrollments from "@/components/Enrollments";
 import { useForm } from "@inertiajs/react";
-import EditModule from "@/components/EditModule";
+import EditModule from "@/components/Forms/EditModule";
 
 export default function ModuleMain({ module }) {
     // Saving the visibility of each floating window

@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "@/components/Button";
+import Button from "@/components/Input/Button";
 
 // Styles
 import styles from "@/css/home.module.css";

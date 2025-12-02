@@ -1,7 +1,7 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import Button from "@/components/Button";
+import Button from "@/components/Input/Button";
 import Card from "@/components/Card";
-import UploadBox from "@/components/UploadBox";
+import UploadBox from "@/components/Input/UploadBox";
 import styles from "@/css/assignment.module.css";
 import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 

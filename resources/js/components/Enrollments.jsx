@@ -1,8 +1,8 @@
 import styles from "@/css/components/enrollments.module.css";
 import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Table from "@/components/Table";
-import Button from "@/components/Button";
+import Table from "@/components/Tables/Table";
+import Button from "@/components/Input/Button";
 
 export default function Enrollments() {
     const handleEdit = (topic) => {

@@ -5,8 +5,8 @@
 .verticalLine {
     position: relative;
     left:10px;
-    width: 2px;
-    min-height: 400px;
+    width: 1px;
+    opacity: 0.2;
     background-color: #000000;
 }
 
@@ -24,9 +24,9 @@
 
 .itemList li::before {
     position: relative;
-    left:0px;
+    left:1px;
     content: '•'; /* bullet point */
-    color: #000000;
+    color: #919191;
     font-size: 40px;
     line-height: 1;
     grid-column: 1;

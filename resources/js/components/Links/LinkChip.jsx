@@ -1,5 +1,5 @@
 import styles from "@/css/components/topic-item.module.css";
-import FileInfoChip from "@/components/FileInfoChip";
+import FileInfoChip from "@/components/Links/FileInfoChip";
 import { Link } from "@inertiajs/react";
 
 export default function ChipLink({ fileIcon, fileName, url }) {

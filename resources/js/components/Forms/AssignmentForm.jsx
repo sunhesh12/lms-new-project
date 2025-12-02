@@ -1,8 +1,8 @@
 import styles from "@/css/components/topic-form.module.css"
-import TextInput from "./Input/TextInput"
+import TextInput from "../Input/TextInput"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock, faPlus } from "@fortawesome/free-solid-svg-icons"
-import Button from "./Button"
+import Button from "../Input/Button"
 
 export default function AssignmentForm() {
     return (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ItemList from "@/components/ItemList";
+import ItemList from "@/components/Lists/ItemList";
 import {
     faAngleDown,
     faAngleUp,
@@ -10,8 +10,8 @@ import {
     faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "@/css/components/topic.module.css";
-import Button from "./Button";
-import LinkChip from "./LinkChip";
+import Button from "../Input/Button";
+import LinkChip from "../Links/LinkChip";
 
 export default function Topic({ topicName, description, formToggle }) {
     const [expanded, setExpanded] = useState(false);

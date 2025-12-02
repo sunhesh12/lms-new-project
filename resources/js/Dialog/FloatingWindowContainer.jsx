@@ -1,5 +1,5 @@
 import styles from "@/css/components/floating-window-container.module.css";
-import CloseButton from "./CloseButton";
+import CloseButton from "../components/Input/CloseButton";
 
 export default function FloatingWindowContainer({
     children,

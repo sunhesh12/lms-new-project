@@ -1,5 +1,5 @@
 import styles from "@/css/components/module-toolbar.module.css";
-import Button from "@/components/Button";
+import Button from "@/components/Input/Button";
 import {
     faBook,
     faClock,
