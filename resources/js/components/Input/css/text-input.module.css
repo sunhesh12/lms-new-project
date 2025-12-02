@@ -45,19 +45,6 @@
     margin-bottom: 18px;
 }
 
-.label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.errorText {
-    color: #d60000;
-    font-size: 13px;
-}
-
 .inputWrapper {
     display: flex;
     align-items: center;

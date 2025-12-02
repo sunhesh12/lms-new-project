@@ -1,12 +1,14 @@
+import styles from "./css/input-label.module.css";
+
 export default function InputLabel({
-    value,
-    className = '',
-    children,
+    label,
+    htmlFor,
+    error
 }) {
     return (
-        <label className={styles.label} htmlFor={props.id || props.name}>
+        <label className={styles.label} htmlFor={htmlFor}>
                 <span>{label}</span>
                 {error && <span className={styles.errorText}>{error}</span>}
-            </label>
+        </label>
     );
 }

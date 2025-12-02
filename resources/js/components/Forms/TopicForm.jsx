@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../Input/Button";
 import ItemList from "../Lists/ItemList";
+import InputLabel from "../Input/InputLabel";
 
 export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     const handleSubmit = (e) => {
@@ -63,6 +64,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     formProps.setData("description", e.target.value);
                 }}
             />
+            <InputLabel label="Resources" />
             <ItemList items={[{itemName: "This is one"}]} render={({itemName}) => {
                 return (
                     <TextInput type="text" label="" />

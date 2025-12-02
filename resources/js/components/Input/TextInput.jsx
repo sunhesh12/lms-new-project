@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "./css/text-input.module.css";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import InputLabel from "./InputLabel";
 
 export default function TextInput({
     className = "",
@@ -14,11 +15,7 @@ export default function TextInput({
 
     return (
         <div className={styles.inputContainer}>
-            {/* Label + Error */}
-            <label className={styles.label} htmlFor={props.id || props.name}>
-                <span>{label}</span>
-                {error && <span className={styles.errorText}>{error}</span>}
-            </label>
+            <InputLabel label={label} htmlFor={props.id || props.name} error={error} />
 
             {props.type === "textarea" ? (
                 <div
