@@ -28,6 +28,7 @@ export default function ModuleMain({ module }) {
     const topicFormProps = useForm({
         topic_name: "",
         description: "",
+        resources: [],
     });
 
     // Module Edit form
@@ -53,10 +54,7 @@ export default function ModuleMain({ module }) {
                         topicId.current = null;
 
                         // Clearing form state such that new creation has no previous values
-                        topicFormProps.setData({
-                            topic_name: "",
-                            description: "",
-                        });
+                        topicFormProps.reset();
                     }}
                 >
                     <TopicForm
