@@ -96,6 +96,7 @@ class ModuleController extends Controller
 
         }
 
+        // Conditionally updating each field
         if(empty($validatedData)) {
             return redirect()->route("module.show", $moduleId)->with('message', 'No changes made for module');
         }
@@ -115,6 +116,12 @@ class ModuleController extends Controller
         if(isset($validatedData['description'])) {
             $module->description = $validatedData['description'];
         }
+
+        if(isset($validatedData['cover_image_url'])) {
+            $module->cover_image_url = $validatedData['cover_image_url'];
+        }
+
+        $module->save();
 
         return redirect()->route("module.show", $moduleId)->with('message', 'Module updated successfully');
     }
