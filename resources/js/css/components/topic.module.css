@@ -38,3 +38,10 @@
     display: flex;
     gap: 10px;
 }
+
+.topicItemContent {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    gap: 10px;
+}
