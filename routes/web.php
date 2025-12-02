@@ -15,7 +15,7 @@ Route::prefix('modules')->group(function () {
     Route::post('/', [ModuleController::class, 'create'])->name('module.create'); //->middleware('auth');
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
-        Route::patch('/', [ModuleController::class, 'update'])->name('module.update');
+        Route::post('/', [ModuleController::class, 'update'])->name('module.update');
         Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
@@ -27,7 +27,7 @@ Route::prefix('modules')->group(function () {
 
         // For creating new topics for a module
         Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create"); //->middleware('auth
-        Route::patch('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
+        Route::post('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
         Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete"); //->middleware('auth
         Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset"); //->middleware('auth
     });
