@@ -14,8 +14,13 @@
 
     /* Official color scheme */
     --black: #001219;
-    --blue: #00AFC0;
-    --orange: ##2596be;
+    --blue: #005063;
+    --orange: #F7931E;
+    --red: #880808;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 html {
