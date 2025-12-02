@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TopicItemList from "@/components/TopicItemList";
+import ItemList from "@/components/ItemList";
 import {
     faAngleDown,
     faAngleUp,
     faBookOpen,
     faEdit,
+    faFile,
     faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "@/css/components/topic.module.css";
 import Button from "./Button";
+import LinkChip from "./LinkChip";
 
 export default function Topic({ topicName, description, formToggle }) {
     const [expanded, setExpanded] = useState(false);
@@ -50,7 +52,56 @@ export default function Topic({ topicName, description, formToggle }) {
                         </Button>
                     </div>
                     <p>{description}</p>
-                    <TopicItemList />
+                    <ItemList
+                        items={[
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                            {
+                                caption: "Use this resource",
+                                fileIcon: faFile,
+                                fileName: "Test URL",
+                                url: "http://www.testingmcafeesites.com/index.html",
+                            },
+                        ]}
+                        render={({ fileIcon, fileName, url, caption }) => (
+                            <div className={styles.topicItemContent}>
+                                <span>{caption}</span>
+                                <LinkChip
+                                    fileIcon={fileIcon}
+                                    url={url}
+                                    fileName={fileName}
+                                />
+                            </div>
+                        )}
+                    />
                 </div>
             )}
         </section>

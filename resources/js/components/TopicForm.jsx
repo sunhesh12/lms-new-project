@@ -9,7 +9,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
         e.preventDefault();
 
         if (isUpdate) {
-            formProps.patch(
+            formProps.post(
                 route("topic.update", {
                     moduleId: moduleId,
                     topicId: topicId,
@@ -62,6 +62,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     formProps.setData("description", e.target.value);
                 }}
             />
+            
             <Button type="submit" icon={faPlus}>
                 Create topic
             </Button>
