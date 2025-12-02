@@ -1,4 +1,4 @@
-import styles from "@/css/components/topic-item.module.css";
+import styles from "./css/link-chip.module.css";
 import FileInfoChip from "@/components/Links/FileInfoChip";
 import { Link } from "@inertiajs/react";
 

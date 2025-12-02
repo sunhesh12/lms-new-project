@@ -1,4 +1,4 @@
-import styles from "@/css/components/module-toolbar.module.css";
+import styles from "./css/module-toolbar.module.css";
 import Button from "@/components/Input/Button";
 import {
     faBook,

@@ -1,6 +1,6 @@
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import style from "@/css/components/module-edit.module.css";
+import style from "./css/module-edit.module.css";
 import UploadBox from "../Input/UploadBox";
 import TextInput from "../Input/TextInput";
 import Button from "../Input/Button";

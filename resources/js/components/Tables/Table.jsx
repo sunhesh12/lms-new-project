@@ -1,4 +1,4 @@
-import styles from '@/css/components/table.module.css';
+import styles from './css/table.module.css';
 
 export default function Table({ columns, data, onRowClick, className = '' }) {
     const renderCell = (row, column) => {

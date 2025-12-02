@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import styles from "@/css/components/button.module.css";
+import styles from "./css/button.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMemo } from "react";
 

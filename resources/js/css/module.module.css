@@ -1,26 +1,3 @@
-.moduleHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: 300px;
-    width: 100%;
-}
-
-.coverImage {
-    height: 300px;
-    width: 100%;
-    object-fit: cover;
-    z-index: 0;
-}
-
-.moduleInfo {
-    position: relative;
-    bottom: 180px;
-    z-index: 20;
-    color: white;
-    padding: 30px;
-}
-
 .topicsContainer {
     display: flex;
     flex-direction: column;

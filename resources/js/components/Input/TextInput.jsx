@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "@/css/components/text-input.module.css";
+import styles from "./css/text-input.module.css";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

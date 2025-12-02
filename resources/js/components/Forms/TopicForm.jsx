@@ -1,4 +1,4 @@
-import styles from "@/css/components/topic-form.module.css";
+import styles from "./css/topic-form.module.css";
 import TextInput from "../Input/TextInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";

@@ -1,4 +1,4 @@
-import style from "@/css/components/upload-box.module.css";
+import style from "./css/upload-box.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import styles from "@/css/components/topic-item-list.module.css";
+import styles from "./css/topic-item-list.module.css";
 
 export default function ItemList({ items, render }) {
     return (

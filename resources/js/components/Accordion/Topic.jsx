@@ -9,7 +9,7 @@ import {
     faFile,
     faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import styles from "@/css/components/topic.module.css";
+import styles from "./css/topic.module.css";
 import Button from "../Input/Button";
 import LinkChip from "../Links/LinkChip";
 
