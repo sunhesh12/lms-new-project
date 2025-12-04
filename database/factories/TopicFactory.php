@@ -42,11 +42,11 @@ class TopicFactory extends Factory
 
         return [
             'id' => Str::uuid(),
-            'title' => $this->faker->unique()->randomElement($sampleTitles),
+            'topic_name' => $this->faker->randomElement($sampleTitles),
             'description' => $this->faker->sentence(8),
-            'type' => $this->faker->randomElement($types),
-            'is_visible' => $this->faker->boolean(80),
-            'is_complete' => $this->faker->boolean(50),
+            //'type' => $this->faker->randomElement($types),
+            'is_deleted' => 0,
+            //'is_complete' => $this->faker->boolean(50),
 
             // Use an existing module OR create a new one
             'module_id' => Module::query()->inRandomOrder()->value('id') ?? Module::factory(),
