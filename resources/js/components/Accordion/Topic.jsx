@@ -13,7 +13,12 @@ import styles from "./css/topic.module.css";
 import Button from "../Input/Button";
 import LinkChip from "../Links/LinkChip";
 
-export default function Topic({ topicName, description, formToggle }) {
+export default function Topic({
+    topicName,
+    description,
+    formToggle,
+    resources,
+}) {
     const [expanded, setExpanded] = useState(false);
     return (
         <section id="topic" className={styles.topic}>
@@ -47,60 +52,29 @@ export default function Topic({ topicName, description, formToggle }) {
                         >
                             Edit Topic
                         </Button>
-                        <Button backgroundColor="#880808" icon={faTrashCan}>
+                        <Button backgroundColor="delete" icon={faTrashCan}>
                             Delete Topic
                         </Button>
                     </div>
                     <p>{description}</p>
                     <ItemList
-                        items={[
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                            {
-                                caption: "Use this resource",
-                                fileIcon: faFile,
-                                fileName: "Test URL",
-                                url: "http://www.testingmcafeesites.com/index.html",
-                            },
-                        ]}
-                        render={({ fileIcon, fileName, url, caption }) => (
-                            <div className={styles.topicItemContent}>
+                        items={resources}
+                        render={({ id, url, caption }) => (
+                            <div
+                                className={styles.topicItemContent}
+                                key={id ?? ""}
+                            >
                                 <span>{caption}</span>
                                 <LinkChip
-                                    fileIcon={fileIcon}
+                                    fileIcon={faFile}
                                     url={url}
-                                    fileName={fileName}
+                                    fileName={url.split("/").at(-1)}
                                 />
                             </div>
                         )}
+                        fallback={() => {
+                            return <div>No resources available</div>;
+                        }}
                     />
                 </div>
             )}
