@@ -38,7 +38,15 @@ class ModuleController extends Controller
      */
     public function show($id)
     {
-        $module = Module::with('topics')->find($id);
+        $module = Module::with([
+            'topics' => function ($topicQuery) {
+                $topicQuery->where('is_deleted', false)->with([
+                    'resources' => function ($resourcesQuery) {
+                        $resourcesQuery->where('is_deleted', false);
+                    }
+                ]);
+            }
+        ])->where('is_deleted', 'false')->find($id);
 
 
         if (!$module) {
@@ -97,27 +105,27 @@ class ModuleController extends Controller
         }
 
         // Conditionally updating each field
-        if(empty($validatedData)) {
+        if (empty($validatedData)) {
             return redirect()->route("module.show", $moduleId)->with('message', 'No changes made for module');
         }
 
-        if(isset($validatedData['name'])) {
+        if (isset($validatedData['name'])) {
             $module->name = $validatedData['name'];
         }
 
-        if(isset($validatedData['credit_value'])) {
+        if (isset($validatedData['credit_value'])) {
             $module->credit_value = $validatedData['credit_value'];
         }
 
-        if(isset($validatedData['maximum_students'])) {
+        if (isset($validatedData['maximum_students'])) {
             $module->maximum_students = $validatedData['maximum_students'];
         }
 
-        if(isset($validatedData['description'])) {
+        if (isset($validatedData['description'])) {
             $module->description = $validatedData['description'];
         }
 
-        if(isset($validatedData['cover_image_url'])) {
+        if (isset($validatedData['cover_image_url'])) {
             $module->cover_image_url = $validatedData['cover_image_url'];
         }
 
