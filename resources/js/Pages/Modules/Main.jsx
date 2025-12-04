@@ -22,6 +22,8 @@ export default function ModuleMain({ module }) {
     const topicId = useRef(null);
     const isTopicUpdate = useRef(false);
 
+    console.log(module);
+
     // Form states
 
     // Topic Form
@@ -39,6 +41,8 @@ export default function ModuleMain({ module }) {
         credit_value: module.credit_value,
         cover_image_url: null,
     });
+
+    console.log(module.topics[0].resources);
 
     return (
         <GuestLayout>
@@ -152,7 +156,7 @@ export default function ModuleMain({ module }) {
                                         "resources",
                                         topic.resources.map(resource => {
                                             return {
-                                                id: resource.topic_id,
+                                                id: resource.id,
                                                 caption: resource.caption,
                                                 is_deleted: resource.is_deleted,
                                                 file: null,

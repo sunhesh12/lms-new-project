@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Module;
+use App\Models\Resource;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -116,8 +117,6 @@ class TopicController extends Controller
             'resources.*.caption' => 'string|max:100',
         ]);
 
-        dd($validatedData);
-
         $topic = Topic::where('module_id', $moduleId)
             ->where('id', $topicId)
             ->first();
@@ -132,50 +131,56 @@ class TopicController extends Controller
             'description' => $validatedData['description'] ?? null,
         ]);
 
+        //dd($validatedData);
 
         // Update / delete / add resources
         if (!empty($validatedData['resources'])) {
 
             foreach ($validatedData['resources'] as $resource) {
 
-                // Update existing resource
+                // 
+
                 if (isset($resource['id'])) {
-                    $resource = $topic->resources()->where('id', $resource['id'])->first();
 
-                    if ($resource) {
+                    // Resource update
 
-                        // Soft delete
-                        if (isset($resource['delete']) && $resource['delete']) {
-                            $resource->update(['is_deleted' => true]);
-                            continue;
-                        }
+                    $existingResource = Resource::where('id', $resource['id'])->first();
 
-                        // Update caption
-                        if (isset($resource['caption'])) {
-                            $resource->update(['caption' => $resource['caption']]);
-                        }
+                    if (!$existingResource) {
+                        // Create the new resource
 
-                        // Replace file if uploaded
-                        if (isset($resource['file'])) {
-                            $filePath = $resource['file']->store('resources', 'public');
-                            $resource->update(['url' => $filePath]);
+
+                    }
+
+                    if (isset($resource['is_deleted'])) {
+                        if ($resource['is_deleted'] == true) {
+                            $existingResource->is_deleted = true;
                         }
                     }
-                }
-                // Create new resource
-                else if (isset($resource['file'])) {
 
-                    $filePath = $resource['file']->store('resources', 'public');
+                    if (isset($resource['caption'])) {
+                        $existingResource->caption = $resource['caption'];
+                    }
 
-                    $topic->resources()->create([
-                        'url' => $filePath,
-                        'caption' => $resource['caption'] ?? null
-                    ]);
+                    if (isset($existingResource['file'])) {
+                        // TODO: Please make the existing file deleted after the file update. Current method only update file path on the DB
+                        if (file_exists(public_path('/uploads/resources' . $resource['file']))) {
+                            unlink(public_path('/uploads/resources' . $resource['file']));
+                        }
+
+                        $fileName = time() . '_' . $resource['file']->getClientOriginalName();
+
+                        // Saving the file
+                        $resource['file']->move(public_path('/uploads/resources'), $fileName);
+
+                        $resource['file'] = $fileName;
+
+                    }
+
+                    $existingResource->save();
                 }
             }
         }
-
-
 
         return redirect()->back()->with('message', 'Topic updated successfully');
     }

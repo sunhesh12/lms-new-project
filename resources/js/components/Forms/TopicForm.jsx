@@ -14,10 +14,8 @@ import UploadBox from "../Input/UploadBox";
 
 export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     console.log(formProps.errors);
-    console.log(formProps.data);
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formProps.data);
 
         if (isUpdate) {
             formProps.post(
@@ -61,7 +59,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     formProps.setData("resources", [
                         ...formProps.data.resources,
                         {
-                            id: id ?? "-1", // id -1 for newly added resources
+                            id: crypto.randomUUID(),
                             caption: "",
                             is_deleted: 0,
                             file: null,
@@ -75,27 +73,51 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
         );
     };
 
-    const updateFile = (index, file) => {
-        const updated = [...formProps.data.resources];
-        updated[index].file = file;
+    const updateFile = (id, file) => {
+        const updated = formProps.data.resources.updated.map((resource) => {
+            return resource.id === id
+                ? {
+                      ...resource,
+                      file,
+                  }
+                : resource;
+        });
         formProps.setData("resources", updated);
     };
 
-    const resetFile = (index) => {
-        const updated = [...formProps.data.resources];
-        updated[index].file = null;
+    const resetFile = (id) => {
+        const updated = formProps.data.resources.updated.map((resource) => {
+            return resource.id === id
+                ? {
+                      ...resource,
+                      file: null,
+                  }
+                : resource;
+        });
         formProps.setData("resources", updated);
     };
 
-    const updateCaption = (index, caption) => {
-        const updated = [...formProps.data.resources];
-        updated[index].caption = caption;
+    const updateCaption = (id, caption) => {
+        const updated = formProps.data.resources.updated.map((resource) => {
+            return resource.id === id
+                ? {
+                      ...resource,
+                      caption,
+                  }
+                : resource;
+        });
         formProps.setData("resources", updated);
     };
 
-    const removeResource = (index) => {
-        const updated = [...formProps.data.resources];
-        updated[index].is_deleted = 1;
+    const removeResource = (id) => {
+        const updated = formProps.data.resources.map((resource) => {
+            return resource.id === id
+                ? {
+                      ...resource,
+                      is_deleted: 1,
+                  }
+                : resource;
+        });
         formProps.setData("resources", updated);
     };
 
@@ -138,7 +160,15 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                         <InputLabel label="No resources have added. Include any resource to be available in the topic" />
                     </div>
                 )}
-                render={({ id }, index) => {
+                render={({ id, caption }, index) => {
+                    console.log(
+                        "id: ",
+                        id,
+                        " index: ",
+                        index,
+                        " caption: ",
+                        caption
+                    );
                     return (
                         <div key={index} className={styles.resourceInput}>
                             <input
@@ -151,29 +181,29 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                                 type="text"
                                 name="caption"
                                 label="Resource Caption"
-                                value={formProps.data.resources[index].caption}
+                                value={
+                                    formProps.data.resources.find(
+                                        (resource) => id == resource.id
+                                    ).caption
+                                }
                                 onChange={(e) => {
-                                    console.log(
-                                        index,
-                                        formProps.data.resources
-                                    );
-                                    updateCaption(index, e.target.value);
+                                    updateCaption(id, e.target.value);
                                 }}
                             />
                             <UploadBox
                                 caption="Upload your materials"
                                 name="file"
                                 onUpload={(e) => {
-                                    updateFile(index, e.target.files[0]);
+                                    updateFile(id, e.target.files[0]);
                                 }}
-                                onReset={() => resetFile(index)}
+                                onReset={() => resetFile(id)}
                                 fileTypesCaption="Images, Pdfs, Word Documents"
                             />
                             <Button
                                 type="button"
                                 icon={faTrash}
                                 size="small"
-                                onClick={() => removeResource(index)}
+                                onClick={() => removeResource(id)}
                                 noBackground={true}
                                 backgroundColor="delete"
                             >
