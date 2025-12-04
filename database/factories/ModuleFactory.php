@@ -18,6 +18,7 @@ class ModuleFactory extends Factory
                 'Human Computer Interaction',
                 'Web Application Development'
             ]),
+            'is_deleted' => 0,
             'credit_value' => $this->faker->randomElement(['2', '3', '4']),
             'maximum_students' => $this->faker->numberBetween(50, 200),
             'description' => $this->faker->sentence(8),
