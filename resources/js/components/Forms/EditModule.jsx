@@ -12,10 +12,6 @@ export default function EditModule({
 }) {
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        console.log(formProps.data);
-        console.log(moduleId);  
-
         formProps.post(route("module.update", {moduleId}), {
             preserveScroll: true,
             forceFormData: true,
@@ -28,6 +24,8 @@ export default function EditModule({
             }
         });
     }
+
+    console.log(defaultCoverImage);
     return (
         <form id="module-edit-form" onSubmit={handleSubmit} className={style.moduleEditForm}>
             <header>
@@ -42,7 +40,10 @@ export default function EditModule({
                 onUpload={(e) => {
                     formProps.setData("cover_image_url", e.target.files[0]);
                 }}
-                defaultImage={defaultCoverImage}
+                onReset={() => {
+                    formProps.setData("cover_image_url", null);
+                }}
+                imagePreview={defaultCoverImage}
             />
             <TextInput type="text" label="Module Name" name="name" onChange={(e) => {
                 formProps.setData("name", e.target.value);
