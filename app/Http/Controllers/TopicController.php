@@ -25,6 +25,11 @@ class TopicController extends Controller
         $validatedData = $request->validate([
             'topic_name' => 'required|string|max:50',
             'description' => 'nullable|string|max:100',
+            'resources' => 'array|nullable',
+            'resources.*.id' => 'string|nullable', // Only required for updating a module (hidden input)
+            'resources.*.is_deleted' => 'required|boolean',
+            'resources.*.file' => 'file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
+            'resources.*.caption' => 'string|max:100',
         ]);
 
         $module = Module::find($moduleId);
@@ -38,6 +43,27 @@ class TopicController extends Controller
             'description' => $validatedData['description'] ?? null,
         ]);
 
+        if (!empty($validatedData['resources'])) {
+            foreach ($validatedData['resources'] as $resource) {
+                if (isset($resource['file'])) {
+                    if (file_exists(public_path('/uploads/resources' . $resource['file']))) {
+                        unlink(public_path('/uploads/resources' . $resource['file']));
+                    }
+
+                    $fileName = time() . '_' . $resource['file']->getClientOriginalName();
+
+                    // Saving the file
+                    $resource['file']->move(public_path('/uploads/resources'), $fileName);
+
+                    $resource['file'] = $fileName;
+
+                    $topic->resources()->create([
+                        'url' => $resource['file'],
+                        'caption' => $resource['caption'] ?? null
+                    ]);
+                }
+            }
+        }
 
         return redirect()->back()->with('message', 'Topic created successfully');
     }
@@ -83,7 +109,14 @@ class TopicController extends Controller
         $validatedData = $request->validate([
             'topic_name' => 'required|string|max:50',
             'description' => 'nullable|string|max:100',
+            'resources' => 'array|nullable',
+            'resources.*.id' => 'string', // Only required for updating a module (hidden input)
+            'resources.*.is_deleted' => 'boolean',
+            'resources.*.file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
+            'resources.*.caption' => 'string|max:100',
         ]);
+
+        dd($validatedData);
 
         $topic = Topic::where('module_id', $moduleId)
             ->where('id', $topicId)
@@ -93,10 +126,56 @@ class TopicController extends Controller
             return redirect()->back()->with('message', 'Topic isnt available');
         }
 
+        // Updating topic details
         $topic->update([
             'topic_name' => $validatedData['topic_name'],
             'description' => $validatedData['description'] ?? null,
         ]);
+
+
+        // Update / delete / add resources
+        if (!empty($validatedData['resources'])) {
+
+            foreach ($validatedData['resources'] as $resource) {
+
+                // Update existing resource
+                if (isset($resource['id'])) {
+                    $resource = $topic->resources()->where('id', $resource['id'])->first();
+
+                    if ($resource) {
+
+                        // Soft delete
+                        if (isset($resource['delete']) && $resource['delete']) {
+                            $resource->update(['is_deleted' => true]);
+                            continue;
+                        }
+
+                        // Update caption
+                        if (isset($resource['caption'])) {
+                            $resource->update(['caption' => $resource['caption']]);
+                        }
+
+                        // Replace file if uploaded
+                        if (isset($resource['file'])) {
+                            $filePath = $resource['file']->store('resources', 'public');
+                            $resource->update(['url' => $filePath]);
+                        }
+                    }
+                }
+                // Create new resource
+                else if (isset($resource['file'])) {
+
+                    $filePath = $resource['file']->store('resources', 'public');
+
+                    $topic->resources()->create([
+                        'url' => $filePath,
+                        'caption' => $resource['caption'] ?? null
+                    ]);
+                }
+            }
+        }
+
+
 
         return redirect()->back()->with('message', 'Topic updated successfully');
     }
