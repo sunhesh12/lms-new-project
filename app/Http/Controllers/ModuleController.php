@@ -42,12 +42,13 @@ class ModuleController extends Controller
             'topics' => function ($topicQuery) {
                 $topicQuery->where('is_deleted', false)->with([
                     'resources' => function ($resourcesQuery) {
-                        $resourcesQuery->where('is_deleted', false);
+                        $resourcesQuery->where('is_deleted', false)->select('id', 'caption', 'url', 'topic_id', 'is_deleted');
                     }
                 ]);
             }
         ])->where('is_deleted', 'false')->find($id);
 
+        //dd($module->toArray());
 
         if (!$module) {
             return Inertia::render('404');
