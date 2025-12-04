@@ -3,6 +3,7 @@ import styles from "./css/button.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMemo } from "react";
 import colors from "@/lib/colors";
+import { color } from "motion";
 
 export default function Button({
     children,
@@ -23,11 +24,11 @@ export default function Button({
             : backgroundColor === "tertiary"
             ? colors.orange
             : backgroundColor === "delete"
-            ? colors.red
+            ? colors.red : backgroundColor === "white" ? colors.white
             : colors.black;
 
         const fgColor = noBackground
-            ? backgroundColor === "primary"
+            ? (backgroundColor === "primary"
                 ? colors.black
                 : backgroundColor === "secondary"
                 ? colors.blue
@@ -35,7 +36,7 @@ export default function Button({
                 ? colors.orange
                 : backgroundColor === "delete"
                 ? colors.red
-                : colors.black
+                : backgroundColor === "white" ? colors.white : colors.black)
             : backgroundColor === "primary"
             ? colors.white
             : backgroundColor === "secondary"
@@ -55,7 +56,7 @@ export default function Button({
                 ? colors.orange
                 : backgroundColor === "delete"
                 ? colors.red
-                : colors.black;
+                : backgroundColor === "white" ? colors.white : colors.black;
 
         const fontSize =
             size === "large" ? "1.25rem" : size === "small" ? "0.8rem" : "1rem";

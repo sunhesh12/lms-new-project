@@ -131,6 +131,7 @@ export default function ModuleMain({ module }) {
                         module.topics.map((topic, index) => (
                             <Topic
                                 key={topic.id}
+                                resources={topic.resources}
                                 topicName={topic.topic_name}
                                 description={topic.description}
                                 /* Toggling topic form with some initial values */
@@ -145,6 +146,18 @@ export default function ModuleMain({ module }) {
                                     topicFormProps.setData(
                                         "description",
                                         topic.description
+                                    );
+
+                                    topicFormProps.setData(
+                                        "resources",
+                                        topic.resources.map(resource => {
+                                            return {
+                                                id: resource.topic_id,
+                                                caption: resource.caption,
+                                                is_deleted: resource.is_deleted,
+                                                file: null,
+                                            }
+                                        })
                                     );
 
                                     // Since the topic form is an update
