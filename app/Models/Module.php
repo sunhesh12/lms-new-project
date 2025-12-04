@@ -21,6 +21,7 @@ class Module extends Model
         'name',
         'credit_value',
         'maximum_students',
+        'is_deleted',
         'description',
     ];
 
