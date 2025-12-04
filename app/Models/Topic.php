@@ -21,7 +21,8 @@ class Topic extends Model
         'topic_name',
         'description',
         'is_deleted',
-        'is_announcement'
+        'is_announcement',
+        'type'
     ];
 
     protected static function boot()
@@ -29,7 +30,7 @@ class Topic extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (! $model->id) {
+            if (!$model->id) {
                 $model->id = (string) Str::uuid();
             }
         });
@@ -39,4 +40,10 @@ class Topic extends Model
     {
         return $this->belongsTo(Module::class);
     }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class);
+    }
+
 }

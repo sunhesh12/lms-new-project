@@ -16,6 +16,11 @@ class User extends Authenticatable
         'email',
         'password',
         'status',
+        'address',
+        'user_phone_no',
+        'profile_pic',
+        'user_dob',
+        'status',
     ];
 
     protected $hidden = [
@@ -24,23 +29,24 @@ class User extends Authenticatable
     ];
 
     public function student()
-{
-    return $this->hasOne(student::class);
-}
+    {
+        return $this->hasOne(student::class);
+    }
 
-public function lecture()
-{
-    return $this->hasOne(lecture::class);
+    public function lecture()
+    {
+        return $this->hasOne(lecture::class);
 
-}
+    }
 
-public function system_admin()
-{
-    return $this->hasOne(System_admin::class);
-} 
+    public function system_admin()
+    {
+        return $this->hasOne(System_admin::class);
+    }
 
-public function faculty(){
-    return $this->hasOne(Faculty::class);
-}
+    public function faculty()
+    {
+        return $this->hasOne(Faculty::class);
+    }
 
 }
