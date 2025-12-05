@@ -42,8 +42,6 @@ export default function ModuleMain({ module }) {
         cover_image_url: null,
     });
 
-    console.log(module.topics[0].resources);
-
     return (
         <GuestLayout>
             {topicFormVisible && (

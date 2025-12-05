@@ -23,15 +23,18 @@ class TopicController extends Controller
      */
     public function create(Request $request, $moduleId)
     {
+
         $validatedData = $request->validate([
             'topic_name' => 'required|string|max:50',
             'description' => 'nullable|string|max:100',
-            'resources' => 'array|nullable',
+            //'resources' => 'array|nullable',
             'resources.*.id' => 'string|nullable', // Only required for updating a module (hidden input)
-            'resources.*.is_deleted' => 'required|boolean',
-            'resources.*.file' => 'file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
-            'resources.*.caption' => 'string|max:100',
+            'resources.*.is_deleted' => 'boolean',
+            'resources.*.file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
+            'resources.*.caption' => 'nullable|string|max:100',
         ]);
+
+        //dd($validatedData);
 
         $module = Module::find($moduleId);
 
@@ -47,19 +50,13 @@ class TopicController extends Controller
         if (!empty($validatedData['resources'])) {
             foreach ($validatedData['resources'] as $resource) {
                 if (isset($resource['file'])) {
-                    if (file_exists(public_path('/uploads/resources' . $resource['file']))) {
-                        unlink(public_path('/uploads/resources' . $resource['file']));
-                    }
-
                     $fileName = time() . '_' . $resource['file']->getClientOriginalName();
 
                     // Saving the file
                     $resource['file']->move(public_path('/uploads/resources'), $fileName);
 
-                    $resource['file'] = $fileName;
-
                     $topic->resources()->create([
-                        'url' => $resource['file'],
+                        'url' => $fileName,
                         'caption' => $resource['caption'] ?? null
                     ]);
                 }
@@ -111,10 +108,10 @@ class TopicController extends Controller
             'topic_name' => 'required|string|max:50',
             'description' => 'nullable|string|max:100',
             'resources' => 'array|nullable',
-            'resources.*.id' => 'string', // Only required for updating a module (hidden input)
-            'resources.*.is_deleted' => 'boolean',
-            'resources.*.file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
-            'resources.*.caption' => 'string|max:100',
+            'resources.*.id' => 'required|string', // Only required for updating a module (hidden input)
+            'resources.*.is_deleted' => 'required|boolean',
+            'resources.*.file' => 'required|file|mimes:jpg,jpeg,png,pdf,docx|max:2048',
+            'resources.*.caption' => 'required|string|max:100',
         ]);
 
         $topic = Topic::where('module_id', $moduleId)
@@ -138,8 +135,6 @@ class TopicController extends Controller
 
             foreach ($validatedData['resources'] as $resource) {
 
-                // 
-
                 if (isset($resource['id'])) {
 
                     // Resource update
@@ -149,35 +144,54 @@ class TopicController extends Controller
                     if (!$existingResource) {
                         // Create the new resource
 
+                        if (isset($resource['file'])) {
+                            if (file_exists(public_path('/uploads/resources/' . $resource['file']))) {
+                                unlink(public_path('/uploads/resources/' . $resource['file']));
+                            }
 
-                    }
+                            $fileName = time() . '_' . $resource['file']->getClientOriginalName();
 
-                    if (isset($resource['is_deleted'])) {
-                        if ($resource['is_deleted'] == true) {
-                            $existingResource->is_deleted = true;
+                            // Saving the file
+                            $resource['file']->move(public_path('/uploads/resources'), $fileName);
+
+                            $newResource = Resource::create([
+                                'id' => $resource['id'],
+                                'topic_id' => $topic->id,
+                                'caption' => $resource['caption'],
+                                'url' => $fileName,
+                            ]);
+
+                            $newResource->save();
                         }
-                    }
-
-                    if (isset($resource['caption'])) {
-                        $existingResource->caption = $resource['caption'];
-                    }
-
-                    if (isset($existingResource['file'])) {
-                        // TODO: Please make the existing file deleted after the file update. Current method only update file path on the DB
-                        if (file_exists(public_path('/uploads/resources' . $resource['file']))) {
-                            unlink(public_path('/uploads/resources' . $resource['file']));
+                    } else {
+                        if (isset($resource['is_deleted'])) {
+                            if ($resource['is_deleted'] == true) {
+                                $existingResource->is_deleted = true;
+                            }
                         }
 
-                        $fileName = time() . '_' . $resource['file']->getClientOriginalName();
+                        if (isset($resource['caption'])) {
+                            $existingResource->caption = $resource['caption'];
+                        }
 
-                        // Saving the file
-                        $resource['file']->move(public_path('/uploads/resources'), $fileName);
+                        if (isset($resource['file'])) {
+                            if (isset($existingResource->url)) {
+                                // TODO: Please make the existing file deleted after the file update. Current method only update file path on the DB
+                                if (file_exists(public_path('/uploads/resources/' . $existingResource->url))) {
+                                    unlink(public_path('/uploads/resources/' . $existingResource->url));
+                                }
+                            }
 
-                        $resource['file'] = $fileName;
+                            $fileName = time() . '_' . $resource['file']->getClientOriginalName();
 
+                            // Saving the file
+                            $resource['file']->move(public_path('/uploads/resources'), $fileName);
+
+                            $existingResource->url = $fileName;
+                        }
+                        $existingResource->save();
                     }
 
-                    $existingResource->save();
                 }
             }
         }

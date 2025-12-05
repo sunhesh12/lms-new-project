@@ -17,6 +17,25 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        formProps.transform((data) => {
+            const formData = new FormData();
+
+            formData.append("topic_name", data.topic_name);
+            formData.append("description", data.description);
+
+            data.resources.forEach((res, index) => {
+                formData.append(`resources[${index}][id]`, res.id ?? "");
+                formData.append(`resources[${index}][caption]`, res.caption ?? "");
+                formData.append(`resources[${index}][file]`, res.file ?? "");
+                formData.append(
+                    `resources[${index}][is_deleted]`,
+                    res.is_deleted ?? 0
+                );
+            });
+
+            return formData;
+        });
+
         if (isUpdate) {
             formProps.post(
                 route("topic.update", {
@@ -24,33 +43,26 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     topicId: topicId,
                 }),
                 {
-                    ...formProps.data,
-                    resources: formProps.data.resources.filter(
-                        (resource) => resource.id != "-1"
-                    ),
-                },
-                {
                     preserveScroll: true,
                     forceFormData: true,
                     onSuccess: () => {
                         console.log("Topic updated");
-                        formProps.reset();
                     },
                 }
             );
         } else {
-            formProps.post(route("topic.create", { moduleId }), {
+            console.log("Data: ", formProps.data);
+            formProps.post(route("topic.create", { moduleId }),{
                 preserveScroll: true,
                 forceFormData: true,
                 onSuccess: () => {
                     console.log("Topic created");
-                    formProps.reset();
                 },
             });
         }
     };
 
-    const AddResourceButton = (id) => {
+    const AddResourceButton = () => {
         return (
             <Button
                 icon={faPlus}
@@ -60,9 +72,9 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                         ...formProps.data.resources,
                         {
                             id: crypto.randomUUID(),
-                            caption: "",
                             is_deleted: 0,
                             file: null,
+                            caption: "",
                         },
                     ]);
                 }}
@@ -74,11 +86,12 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     };
 
     const updateFile = (id, file) => {
-        const updated = formProps.data.resources.updated.map((resource) => {
+        const updated = formProps.data.resources.map((resource) => {
             return resource.id === id
                 ? {
                       ...resource,
                       file,
+                      is_deleted: 0,
                   }
                 : resource;
         });
@@ -86,11 +99,12 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     };
 
     const resetFile = (id) => {
-        const updated = formProps.data.resources.updated.map((resource) => {
+        const updated = formProps.data.resources.map((resource) => {
             return resource.id === id
                 ? {
                       ...resource,
                       file: null,
+                      is_deleted: 0,
                   }
                 : resource;
         });
@@ -98,7 +112,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
     };
 
     const updateCaption = (id, caption) => {
-        const updated = formProps.data.resources.updated.map((resource) => {
+        const updated = formProps.data.resources.map((resource) => {
             return resource.id === id
                 ? {
                       ...resource,
@@ -161,22 +175,8 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     </div>
                 )}
                 render={({ id, caption }, index) => {
-                    console.log(
-                        "id: ",
-                        id,
-                        " index: ",
-                        index,
-                        " caption: ",
-                        caption
-                    );
                     return (
                         <div key={index} className={styles.resourceInput}>
-                            <input
-                                type="hidden"
-                                id="resource-id"
-                                name="id"
-                                value={id}
-                            />
                             <TextInput
                                 type="text"
                                 name="caption"
