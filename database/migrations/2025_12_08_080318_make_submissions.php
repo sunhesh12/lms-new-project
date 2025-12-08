@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('assignment_id');
             $table->string("resource_id");
             $table->foreign("student_id")->references("id")->on("users");
-            $table->foreign("resource_id")->references("id")->on("resources");
             $table->foreign("assignment_id")->references("id")->on("assignments");
         });
     }

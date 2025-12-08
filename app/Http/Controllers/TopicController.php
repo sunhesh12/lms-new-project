@@ -39,7 +39,7 @@ class TopicController extends Controller
         $module = Module::find($moduleId);
 
         if (!$module) {
-            return redirect()->back()->with('message', 'Topic doesent belonging to a module successfully');
+            return redirect()->back(404)->with('message', 'Topic doesent belonging to a module successfully');
         }
 
         $topic = $module->topics()->create([
@@ -57,7 +57,7 @@ class TopicController extends Controller
 
                     $topic->resources()->create([
                         'url' => $fileName,
-                        'caption' => $resource['caption'] ?? null
+                        'caption' => $resource['caption']
                     ]);
                 }
             }

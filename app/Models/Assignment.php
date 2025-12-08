@@ -53,9 +53,9 @@ class Assignment extends Model
     /**
      * Get the resource associated with the assignment.
      */
-    public function resource(): BelongsTo
+    public function resource()
     {
-        return $this->belongsTo(Resource::class);
+        return $this->hasMany(Resource::class);
     }
 
     /**

@@ -36,4 +36,14 @@ class Resource extends Model
     {
         return $this->belongsTo(Topic::class);
     }
+
+    public function submission()
+    {
+        return $this->belongsTo(Submission::class);
+    }
+
+    public function assignment()
+    {
+        return $this->belongsTo(Assignment::class);
+    }
 }

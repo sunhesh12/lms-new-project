@@ -19,10 +19,8 @@ return new class extends Migration
             $table->boolean("is_deleted")->default(false);
             $table->timestamp("started")->nullable();
             $table->timestamp("deadline")->nullable();
-            $table->string("resource_id")->nullable();
             $table->string("module_id");
             $table->foreign("module_id")->references("id")->on("modules")->onDelete("cascade");
-            $table->foreign("resource_id")->references("id")->on("resources")->onDelete("cascade");
         });
     }
 
