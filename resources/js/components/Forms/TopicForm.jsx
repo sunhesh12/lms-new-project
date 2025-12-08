@@ -172,7 +172,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                 fallback={() => (
                     <div className={styles.emptyResources}>
                         <InputLabel label="No resources have added. Include any resource to be available in the topic" />
-                    </div>
+                    </div>  
                 )}
                 render={({ id, caption }, index) => {
                     return (

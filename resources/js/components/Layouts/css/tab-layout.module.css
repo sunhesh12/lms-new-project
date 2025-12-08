@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap:10px;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.tabButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    height: 40px;
+    background-color: transparent;
+    border:none;
+    font-family: "Work Sans";
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding-bottom: 20px;
+}
