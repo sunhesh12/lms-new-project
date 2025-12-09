@@ -24,19 +24,24 @@ Route::prefix('modules')->group(function () {
         Route::post('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
         Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete"); //->middleware('auth
         Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset"); //->middleware('auth
-        
+
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
             return Inertia::render('Modules/Assignment', [
                 'moduleId' => $moduleId,
                 'assignmentId' => $assignmentId
             ]);
         }); //->middleware('auth');
-        
+
         // For creating new assignments for a module
         Route::post("/assignments/create", [AssignmentController::class, 'create'])->name("assignment.create");
-    
+
     });
 });//->middleware('auth');
+
+Route::post("/assignments/{assignmentId}/update", [AssignmentController::class, 'update'])->name("assignment.update");
+Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 'delete'])->name("assignment.delete");
+Route::post("/assignments/{assignmentId}/submit", [AssignmentController::class, 'submit'])->name("assignment.submit");
+Route::post("/assignments/{assignmentId}/reset", [AssignmentController::class, 'reset'])->name("assignment.reset");
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
