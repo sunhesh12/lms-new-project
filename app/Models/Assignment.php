@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class Assignment extends Model
 {
@@ -34,11 +35,14 @@ class Assignment extends Model
     /**
      * Boot the model.
      */
-    protected static function booted(): void
+   protected static function boot()
     {
-        // Global scope to exclude soft deleted records
-        static::addGlobalScope('notDeleted', function (Builder $builder) {
-            $builder->where('is_deleted', false);
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (! $model->id) {
+                $model->id = (string) Str::uuid();
+            }
         });
     }
 
@@ -53,9 +57,9 @@ class Assignment extends Model
     /**
      * Get the resource associated with the assignment.
      */
-    public function resource()
+    public function resources()
     {
-        return $this->hasMany(Resource::class);
+        return $this->hasMany(Resource::class, 'assignment_id', 'id');
     }
 
     /**
@@ -63,7 +67,7 @@ class Assignment extends Model
      */
     public function submissions(): HasMany
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(Submission::class, 'assignment_id', 'id');
     }
 
     /**
