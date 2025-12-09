@@ -154,7 +154,7 @@ export default function ModuleMain({ module }) {
                     <EditModule
                         formProps={moduleEditFormProps}
                         moduleId={module.id}
-                        defaultCoverImage={`/uploads/modules/${module.cover_image_url}`}
+                        defaultCoverImage={`/storage/uploads/modules/${module.cover_image_url}`}
                     />
                 </FloatingWindowContainer>
             )}
@@ -162,7 +162,7 @@ export default function ModuleMain({ module }) {
             <ModuleHeader
                 moduleName={`${module.name}`}
                 subTitle={module.description}
-                coverImage={`/uploads/modules/${module.cover_image_url}`}
+                coverImage={`/storage/uploads/modules/${module.cover_image_url}`}
             />
             <div id="module-content" className={styles.moduleContent}>
                 <ModuleToolbar
