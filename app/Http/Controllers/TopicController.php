@@ -7,6 +7,7 @@ use App\Models\Resource;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class TopicController extends Controller
 {
@@ -50,13 +51,19 @@ class TopicController extends Controller
         if (!empty($validatedData['resources'])) {
             foreach ($validatedData['resources'] as $resource) {
                 if (isset($resource['file'])) {
-                    $fileName = time() . '_' . $resource['file']->getClientOriginalName();
+
+                    $filePath = Storage::disk('public')->path('/uploads/resources/');
+                    $fileName = $resource['file']->getClientOriginalName();
+
+                    if (file_exists($filePath . $fileName)) {
+                        unlink($filePath . $fileName);
+                    }
 
                     // Saving the file
-                    $resource['file']->move(public_path('/uploads/resources'), $fileName);
+                    $resource['file']->move($filePath, $fileName);
 
                     $topic->resources()->create([
-                        'url' => $fileName,
+                        'url' => $resource['file'],
                         'caption' => $resource['caption']
                     ]);
                 }
@@ -145,20 +152,21 @@ class TopicController extends Controller
                         // Create the new resource
 
                         if (isset($resource['file'])) {
-                            if (file_exists(public_path('/uploads/resources/' . $resource['file']))) {
-                                unlink(public_path('/uploads/resources/' . $resource['file']));
+                            $filePath = Storage::disk('public')->path('/uploads/resources/');
+                            $fileName = $validatedData['resource_file']->getClientOriginalName();   
+
+                            if (file_exists($filePath . $fileName)) {
+                                unlink($filePath . $fileName);
                             }
 
-                            $fileName = time() . '_' . $resource['file']->getClientOriginalName();
-
                             // Saving the file
-                            $resource['file']->move(public_path('/uploads/resources'), $fileName);
+                            $resource['file']->move($filePath, $fileName);
 
                             $newResource = Resource::create([
                                 'id' => $resource['id'],
                                 'topic_id' => $topic->id,
                                 'caption' => $resource['caption'],
-                                'url' => $fileName,
+                                'url' => $resource['file'],
                             ]);
 
                             $newResource->save();
@@ -175,17 +183,19 @@ class TopicController extends Controller
                         }
 
                         if (isset($resource['file'])) {
+
+                            $filePath = Storage::disk('public')->path('/uploads/resources/');
+                            $fileName = $validatedData['resource_file']->getClientOriginalName();
+                            
                             if (isset($existingResource->url)) {
                                 // TODO: Please make the existing file deleted after the file update. Current method only update file path on the DB
-                                if (file_exists(public_path('/uploads/resources/' . $existingResource->url))) {
-                                    unlink(public_path('/uploads/resources/' . $existingResource->url));
+                                if (file_exists($filePath . $fileName)) {
+                                    unlink($filePath . $fileName);
                                 }
                             }
 
-                            $fileName = time() . '_' . $resource['file']->getClientOriginalName();
-
                             // Saving the file
-                            $resource['file']->move(public_path('/uploads/resources'), $fileName);
+                            $resource['file']->move($filePath . $fileName);
 
                             $existingResource->url = $fileName;
                         }
