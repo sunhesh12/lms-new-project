@@ -1,0 +1,134 @@
+/* Layout */
+.wrapper {
+    width: 66%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.empty {
+    width: 66%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Header */
+.header {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+}
+
+.headerSelect {
+    background: #eef2ff;
+}
+
+.header h3 {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Selection */
+.selectionBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc2626;
+}
+
+/* Messages */
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Message Row */
+.messageRow {
+    display: flex;
+}
+
+.me {
+    justify-content: flex-end;
+}
+
+.other {
+    justify-content: flex-start;
+}
+
+/* Message Bubble */
+.bubble {
+    max-width: 70%;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.me .bubble {
+    background: #4f46e5;
+    color: white;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.other .bubble {
+    border-bottom-left-radius: 0.25rem;
+}
+
+/* Time */
+.time {
+    display: block;
+    text-align: right;
+    font-size: 0.65rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+/* Input Area */
+.inputArea {
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+}
+
+.form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.form input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+}
+
+.form button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.form button:disabled {
+    opacity: 0.5;
+}

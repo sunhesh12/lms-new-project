@@ -12,7 +12,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $conversations = $user->conversations()
+        $conversations = $user ->conversations()
             ->with(['messages' => function($query) use ($user) {
                 // Latest message must not be deleted by me
                 $query->where(function ($q) use ($user) {

@@ -1,8 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import ChatSidebar from './Partials/ChatSidebar';
 import ChatWindow from './Partials/ChatWindow';
+
+import styles from '@/css/chat.module.css';
 
 export default function Index({ auth, conversations, activeConversation }) {
     const [selectedConversation, setSelectedConversation] = useState(activeConversation || null);
@@ -12,15 +14,12 @@ export default function Index({ auth, conversations, activeConversation }) {
     }, [activeConversation]);
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-        // header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Chat</h2>}
-        >
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Chat" />
 
-            <div className="h-[calc(100vh-4rem)] bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto h-full">
-                    <div className="bg-white/90 backdrop-blur-sm shadow-xl sm:rounded-2xl h-full flex overflow-hidden border border-white/20">
+            <div className={styles.chatPage}>
+                <div className={styles.chatContainer}>
+                    <div className={styles.chatCard}>
                         <ChatSidebar
                             conversations={conversations}
                             selectedConversation={selectedConversation}
