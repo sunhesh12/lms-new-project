@@ -79,4 +79,18 @@ Route::get('/register', function () {
 });
 
 
+
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
+    Route::get('/api/users/search', [App\Http\Controllers\ChatController::class, 'search'])->name('users.search');
+    Route::post('/api/conversations/check', [App\Http\Controllers\ChatController::class, 'checkConversation'])->name('conversations.check');
+    Route::post('/api/groups/store', [App\Http\Controllers\ChatController::class, 'storeGroup'])->name('groups.store');
+    Route::post('/messages/{message}/delete-everyone', [App\Http\Controllers\ChatController::class, 'deleteForEveryone'])->name('messages.delete.everyone');
+    Route::post('/messages/{message}/delete-me', [App\Http\Controllers\ChatController::class, 'deleteForMe'])->name('messages.delete.me');
+    Route::post('/messages/delete-multiple', [App\Http\Controllers\ChatController::class, 'deleteMultiple'])->name('messages.delete.multiple');
+    Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
+    Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+
+
+
 require __DIR__ . '/auth.php';
