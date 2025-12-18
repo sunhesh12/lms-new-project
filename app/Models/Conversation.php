@@ -18,8 +18,8 @@ class Conversation extends Model
         return $this->hasMany(Participant::class);
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'participants');
     }
 }

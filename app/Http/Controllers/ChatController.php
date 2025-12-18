@@ -12,36 +12,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $conversations = $user ->conversations()
-            ->with(['messages' => function($query) use ($user) {
-                // Latest message must not be deleted by me
-                $query->where(function ($q) use ($user) {
-                        $q->whereNull('deleted_by')
-                          ->orWhereJsonDoesntContain('deleted_by', $user->id);
-                    })
-                    ->latest()
-                    ->limit(1);
-            }])
-            ->with(['users', 'participants' => function($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
-            ->get()
-            ->map(function ($conversation) use ($user) {
-                $lastReadAt = $conversation->participants->first()->last_read_at;
-                
-                // Count unread, excluding hidden messages
-                $conversation->unread_count = $conversation->messages()
-                    ->where('created_at', '>', $lastReadAt ?? '1970-01-01')
-                    ->where(function ($query) use ($user) {
-                        $query->whereNull('deleted_by')
-                              ->orWhereJsonDoesntContain('deleted_by', $user->id);
-                    })
-                    ->count();
-                    
-                return $conversation;
-            })
-            ->sortByDesc(fn($c) => $c->messages->first()?->created_at ?? $c->created_at)
-            ->values();
+        $conversations = $this->getConversations($user);
 
         return Inertia::render('Chat/Index', [
             'conversations' => $conversations
@@ -63,7 +34,21 @@ class ChatController extends Controller
         $this->markAsReadInternal($conversation);
 
         $user = Auth::user();
-        $conversations = $user->conversations()
+        $conversations = $this->getConversations($user);
+
+        return Inertia::render('Chat/Index', [
+            'conversations' => $conversations,
+            'activeConversation' => $conversation
+        ]);
+    }
+
+    private function getConversations($user)
+    {
+        if (!$user) {
+            return collect();
+        }
+
+        return $user->conversations()
             ->with(['messages' => function($query) use ($user) {
                 $query->where(function ($q) use ($user) {
                         $q->whereNull('deleted_by')
@@ -77,23 +62,22 @@ class ChatController extends Controller
             }])
             ->get()
             ->map(function ($conversation) use ($user) {
-                $lastReadAt = $conversation->participants->first()->last_read_at;
+                $participant = $conversation->participants->first();
+                $lastReadAt = $participant ? $participant->last_read_at : '1970-01-01';
+                
                 $conversation->unread_count = $conversation->messages()
                     ->where('created_at', '>', $lastReadAt ?? '1970-01-01')
+                    ->where('user_id', '!=', $user->id)
                     ->where(function ($query) use ($user) {
                         $query->whereNull('deleted_by')
                               ->orWhereJsonDoesntContain('deleted_by', $user->id);
                     })
                     ->count();
+                    
                 return $conversation;
             })
             ->sortByDesc(fn($c) => $c->messages->first()?->created_at ?? $c->created_at)
             ->values();
-
-        return Inertia::render('Chat/Index', [
-            'conversations' => $conversations,
-            'activeConversation' => $conversation
-        ]);
     }
 
     public function markAsRead(Conversation $conversation)
@@ -154,14 +138,15 @@ class ChatController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        if (empty($query)) {
-            return response()->json([]);
+        
+        $usersQuery = \App\Models\User::where('id', '!=', Auth::id());
+
+        if (!empty($query)) {
+            $usersQuery->where('name', 'like', "%{$query}%");
         }
 
-        $users = \App\Models\User::where('id', '!=', Auth::id())
-            ->where('name', 'like', "%{$query}%")
-            ->limit(10)
-            ->get(['id', 'name', 'email']);
+        $users = $usersQuery->limit(20)
+            ->get(['id', 'name', 'email', 'profile_pic']);
 
         return response()->json($users);
     }

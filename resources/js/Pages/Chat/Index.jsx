@@ -1,10 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import ChatSidebar from './Partials/ChatSidebar';
-import ChatWindow from './Partials/ChatWindow';
-
-import styles from '@/css/chat.module.css';
+import ChatSidebar from '@/Pages/Chat/Partials/ChatSidebar';
+import ChatWindow from '@/Pages/Chat/Partials/ChatWindow';
+import style from '@/css/chat.module.css';
 
 export default function Index({ auth, conversations, activeConversation }) {
     const [selectedConversation, setSelectedConversation] = useState(activeConversation || null);
@@ -14,13 +13,16 @@ export default function Index({ auth, conversations, activeConversation }) {
     }, [activeConversation]);
 
     return (
-        <AuthenticatedLayout user={auth.user}>
+        <AuthenticatedLayout
+            user={auth.user}
+        >
             <Head title="Chat" />
 
-            <div className={styles.chatPage}>
-                <div className={styles.chatContainer}>
-                    <div className={styles.chatCard}>
+            <div className={style.page_wrapper}>
+                <div className={style.container}>
+                    <div className={`${style.card} ${selectedConversation ? style.showWindow : style.showSidebar}`}>
                         <ChatSidebar
+                            auth={auth}
                             conversations={conversations}
                             selectedConversation={selectedConversation}
                             setSelectedConversation={setSelectedConversation}
@@ -28,6 +30,7 @@ export default function Index({ auth, conversations, activeConversation }) {
                         <ChatWindow
                             user={auth.user}
                             conversation={selectedConversation}
+                            onBack={() => setSelectedConversation(null)}
                         />
                     </div>
                 </div>

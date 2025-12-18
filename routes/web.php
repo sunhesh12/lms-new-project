@@ -80,6 +80,7 @@ Route::get('/register', function () {
 
 
 
+Route::middleware('auth')->group(function () {
     Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
     Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
     Route::get('/api/users/search', [App\Http\Controllers\ChatController::class, 'search'])->name('users.search');
@@ -90,6 +91,8 @@ Route::get('/register', function () {
     Route::post('/messages/delete-multiple', [App\Http\Controllers\ChatController::class, 'deleteMultiple'])->name('messages.delete.multiple');
     Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
+});
 
 
 

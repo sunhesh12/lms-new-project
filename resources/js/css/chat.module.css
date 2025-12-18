@@ -1,23 +1,92 @@
-.chatPage {
+/* Main gradient container */
+.page_wrapper {
+  height: calc(100vh - 4rem);
+  padding: 1rem;
+  background: linear-gradient(135deg,
+      #f5f7ff 0%,
+      #eef2ff 25%,
+      #e0e7ff 50%,
+      #f3e8ff 75%,
+      #fce7f3 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .page_wrapper {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page_wrapper {
+    padding: 2.5rem;
+  }
+}
+
+/* Centered container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card / panel */
+.card {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.07),
+    0 1px 1px 0 rgba(255, 255, 255, 0.3) inset;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .card {
+    border-radius: 1.5rem;
+  }
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .page_wrapper {
+    padding: 0;
     height: calc(100vh - 4rem);
-    padding: 16px;
-    background: linear-gradient(135deg, #e0e7ff, #ede9fe, #fce7f3);
-}
+  }
 
-.chatContainer {
-    max-width: 1280px;
-    margin: 0 auto;
-    height: 100%;
-}
+  .container {
+    max-width: 100%;
+  }
 
-.chatCard {
-    height: 100%;
+  .card {
+    border-radius: 0;
+    border: none;
+  }
+
+  /* Logic to show only one side at a time on mobile */
+  .showSidebar :global(.chat-sidebar) {
     display: flex;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 16px;
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1),
-                0 10px 10px -5px rgba(0,0,0,0.04);
+    width: 100%;
+  }
+
+  .showSidebar :global(.chat-window) {
+    display: none;
+  }
+
+  .showWindow :global(.chat-sidebar) {
+    display: none;
+  }
+
+  .showWindow :global(.chat-window) {
+    display: flex;
+    width: 100%;
+  }
 }

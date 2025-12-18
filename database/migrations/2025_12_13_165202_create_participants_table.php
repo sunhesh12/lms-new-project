@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid()->primary()->default(DB::raw('(UUID())'));
-            $table->foreignId('conversation_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
             $table->foreignUuId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('role', ['admin', 'member'])->default('member');
             $table->timestamp('last_read_at')->nullable();

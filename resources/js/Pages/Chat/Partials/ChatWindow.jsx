@@ -1,104 +1,467 @@
+import { Link, useForm } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
-import { useForm } from '@inertiajs/react';
+import {
+    Send,
+    Smile,
+    Paperclip,
+    Mic,
+    X,
+    Reply,
+    Copy,
+    Trash2,
+    Trash,
+    Check,
+    Image as ImageIcon,
+    FileText,
+    Music,
+    ChevronLeft,
+    MoreVertical
+} from 'lucide-react';
 import axios from 'axios';
-import styles from '@/css/chatWindow.module.css';
+import EmojiPicker from 'emoji-picker-react';
+import style from '@/css/chatwindow.module.css';
 
-export default function ChatWindow({ user, conversation }) {
-    const [messages, setMessages] = useState(conversation?.messages || []);
-    const messagesEndRef = useRef(null);
-
-    const { data, setData, post, processing, reset } = useForm({
-        body: '',
-        conversation_id: conversation?.id || '',
-        reply_to_id: null,
-        attachment: null,
-        attachment_type: null
-    });
-
-    const [contextModal, setContextModal] = useState({ visible: false, message: null });
-    const [replyingTo, setReplyingTo] = useState(null);
+export default function ChatWindow({ user, conversation, onBack }) {
+    const [messages, setMessages] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
+    const messagesEndRef = useRef(null);
+    const chatWindowRef = useRef(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
 
+    // Context Menu States
+    const [messageContext, setMessageContext] = useState(null);
+    const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+    const [replyTo, setReplyTo] = useState(null);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        body: '',
+        attachment: null,
+        reply_to_id: null
+    });
+
+    const inputRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    // Media Recording
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
     useEffect(() => {
         setMessages(conversation?.messages || []);
-        setReplyingTo(null);
+        setReplyTo(null);
         setSelectionMode(false);
         setSelectedMessages([]);
         reset();
+        scrollToBottom();
     }, [conversation]);
 
-    useEffect(scrollToBottom, [messages]);
+    useEffect(() => {
+        setData(prev => ({ ...prev, reply_to_id: replyTo?.id || null }));
+    }, [replyTo]);
+
+    useEffect(() => {
+        if (conversation && window.Echo) {
+            window.Echo.private(`chat.${conversation.id}`)
+                .listen('.message.sent', (e) => {
+                    setMessages(prev => [...prev, e.message]);
+                    scrollToBottom();
+                });
+
+            return () => {
+                window.Echo.leave(`chat.${conversation.id}`);
+            };
+        }
+    }, [conversation?.id]);
+
+    const scrollToBottom = () => {
+        setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    };
+
+    const handleSend = (e) => {
+        e.preventDefault();
+        if (processing || (!data.body && !data.attachment)) return;
+
+        post(route('chat.store'), {
+            onSuccess: () => {
+                reset();
+                setReplyTo(null);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                scrollToBottom();
+            },
+            preserveScroll: true
+        });
+    };
+
+    const handleEmojiClick = (emojiData) => {
+        setData('body', data.body + emojiData.emoji);
+        setShowEmojiPicker(false);
+        inputRef.current?.focus();
+    };
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('attachment', file);
+            setShowAttachmentMenu(false);
+        }
+    };
+
+    const toogleRecording = async () => {
+        if (isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        } else {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mediaRecorder = new MediaRecorder(stream);
+                mediaRecorderRef.current = mediaRecorder;
+                audioChunksRef.current = [];
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) audioChunksRef.current.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                    const file = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+                    setData('attachment', file);
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                setIsRecording(true);
+            } catch (err) {
+                console.error("Microphone access denied:", err);
+            }
+        }
+    };
+
+    const handleContextMenu = (e, message) => {
+        e.preventDefault();
+        if (selectionMode) return;
+
+        const rect = chatWindowRef.current.getBoundingClientRect();
+        setMenuPosition({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+        setMessageContext(message);
+    };
+
+    const toggleSelection = (msgId) => {
+        if (selectedMessages.includes(msgId)) {
+            setSelectedMessages(prev => prev.filter(id => id !== msgId));
+        } else {
+            setSelectedMessages(prev => [...prev, msgId]);
+        }
+    };
+
+    const closeContextModal = () => setMessageContext(null);
+
+    const startReply = () => {
+        setReplyTo(messageContext);
+        closeContextModal();
+        inputRef.current?.focus();
+    };
+
+    const startSelection = () => {
+        setSelectionMode(true);
+        setSelectedMessages([messageContext.id]);
+        closeContextModal();
+    };
+
+    const handleCopy = (text) => {
+        navigator.clipboard.writeText(text);
+        closeContextModal();
+    };
+
+    const deleteForMe = () => {
+        if (!messageContext) return;
+        const msgId = messageContext.id;
+        axios.post(route('messages.delete.me', msgId))
+            .then(() => {
+                setMessages(prev => prev.filter(m => m.id !== msgId));
+                closeContextModal();
+            });
+    };
+
+    const deleteForEveryone = () => {
+        if (!messageContext) return;
+        const msgId = messageContext.id;
+        axios.post(route('messages.delete.everyone', msgId))
+            .then(() => {
+                setMessages(prev => prev.filter(m => m.id !== msgId));
+                closeContextModal();
+            });
+    };
+
+    const renderMessage = (msg) => {
+        const isMe = msg.user_id === user.id;
+        const isSelected = selectedMessages.includes(msg.id);
+
+        return (
+            <div
+                key={msg.id}
+                className={`${style.messageRow} ${isMe ? style.me : style.other}`}
+                onContextMenu={(e) => handleContextMenu(e, msg)}
+                onClick={() => selectionMode && toggleSelection(msg.id)}
+            >
+                {selectionMode && (
+                    <div className="flex items-center px-2">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 bg-white'}`}>
+                            {isSelected && <Check size={12} color="white" />}
+                        </div>
+                    </div>
+                )}
+                <div className={`${style.bubble} ${isMe ? style.bubbleSender : style.bubbleReceiver} ${isSelected ? style.selectionRing : ''}`}>
+                    {msg.reply_to && (
+                        <div className={`${style.replyQuote} ${isMe ? style.replySender : style.replyReceiver}`}>
+                            <p className="font-bold opacity-80">{msg.reply_to.user?.name}</p>
+                            <p className="truncate">{msg.reply_to.body}</p>
+                        </div>
+                    )}
+
+                    {msg.attachment_path && (
+                        <div className={style.attachmentContainer}>
+                            {msg.attachment_type?.startsWith('image/') ? (
+                                <img src={`/storage/${msg.attachment_path}`} alt="Attachment" className={style.attachmentImage} />
+                            ) : msg.attachment_type?.startsWith('video/') ? (
+                                <video src={`/storage/${msg.attachment_path}`} controls className={style.attachmentVideo} />
+                            ) : msg.attachment_type?.startsWith('audio/') ? (
+                                <audio src={`/storage/${msg.attachment_path}`} controls className={style.attachmentAudio} />
+                            ) : (
+                                <a href={`/storage/${msg.attachment_path}`} target="_blank" className={`${style.attachmentPdf} ${isMe ? style.pdfSender : style.pdfReceiver}`}>
+                                    <FileText size={18} className="mr-2" />
+                                    <span>Download File</span>
+                                </a>
+                            )}
+                        </div>
+                    )}
+
+                    <p>{msg.body}</p>
+                    <span className={style.time}>
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </div>
+            </div>
+        );
+    };
 
     if (!conversation) {
         return (
-            <div className={styles.empty}>
-                Select a conversation to start chatting
+            <div className={style.empty}>
+                <div className="text-center p-8 bg-white rounded-3xl shadow-sm border border-slate-100 max-w-sm mx-auto">
+                    <div className="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Send size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Your Conversations</h3>
+                    <p className="text-slate-500 text-sm">Select a contact or group to start messaging.</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className={styles.wrapper}>
-            {/* Header */}
-            <div className={`${styles.header} ${selectionMode ? styles.headerSelect : ''}`}>
-                {selectionMode ? (
-                    <div className={styles.selectionBar}>
-                        <span>{selectedMessages.length} Selected</span>
-                        <button className={styles.deleteBtn}>🗑</button>
+        <div ref={chatWindowRef} className={style.wrapper}>
+            <div className={`${style.header} ${selectionMode ? style.headerSelect : ''}`}>
+                <div className={style.headerLeft}>
+                    <button onClick={onBack} className={style.backButton}>
+                        <ChevronLeft size={24} />
+                    </button>
+
+                    {/* Header Avatar */}
+                    {(() => {
+                        const otherUser = conversation.users?.find(u => u.id !== user.id);
+                        if (!otherUser) return null;
+
+                        return (
+                            <div className={style.headerAvatar}>
+                                {otherUser.avatar_url ? (
+                                    <img src={otherUser.avatar_url} alt={otherUser.name} className="w-full h-full rounded-[12px] object-cover" />
+                                ) : (
+                                    <span>{otherUser.name.charAt(0).toUpperCase()}</span>
+                                )}
+                            </div>
+                        );
+                    })()}
+
+                    <div className={style.headerInfoContainer}>
+                        <h3>
+                            {selectionMode ? `${selectedMessages.length} selected` : (conversation.name || conversation.users?.find(u => u.id !== user.id)?.name)}
+                        </h3>
+                        {!selectionMode && (() => {
+                            const otherUser = conversation.users?.find(u => u.id !== user.id);
+                            if (!otherUser) return null;
+
+                            return (
+                                <div className={`${style.headerStatus} ${otherUser.online ? style.onlineStatus : ''}`}>
+                                    <span className={`${style.statusDot} ${otherUser.online ? style.onlineDot : ''}`} />
+                                    {otherUser.online ? 'Online' : (otherUser.last_seen ? `Last seen ${new Date(otherUser.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Offline')}
+                                </div>
+                            );
+                        })()}
                     </div>
-                ) : (
-                    <h3>{conversation.name || conversation.users[0].name}</h3>
-                )}
+                </div>
+
+                <div className="flex items-center gap-1">
+                    {selectionMode ? (
+                        <>
+                            <button className={style.iconBtn} onClick={() => setSelectionMode(false)} title="Cancel">
+                                <X size={20} />
+                            </button>
+                            <button className={`${style.iconBtn} ${style.deleteBtn}`} title="Delete Selected">
+                                <Trash2 size={20} />
+                            </button>
+                        </>
+                    ) : (
+                        <button className={style.iconBtn}>
+                            <MoreVertical size={20} />
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {/* Messages */}
-            <div className={styles.messages}>
-                {messages.map(message => (
-                    <div
-                        key={message.id}
-                        className={`${styles.messageRow} ${
-                            message.user_id === user.id ? styles.me : styles.other
-                        }`}
-                    >
-                        <div className={styles.bubble}>
-                            {message.body && <p>{message.body}</p>}
-                            <span className={styles.time}>
-                                {new Date(message.created_at).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </span>
-                        </div>
-                    </div>
-                ))}
+            <div className={style.messagesArea}>
+                {messages.map(renderMessage)}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className={styles.inputArea}>
-                <form className={styles.form}>
-                    <input
-                        type="text"
-                        value={data.body}
-                        onChange={e => setData('body', e.target.value)}
-                        placeholder="Type a message..."
-                        disabled={processing}
-                    />
-                    <button type="submit" disabled={processing}>
-                        Send
+            <div className={style.inputArea}>
+                {data.attachment && (
+                    <div className={`${style.inputPreview} ${style.previewFile}`}>
+                        <div className="flex items-center gap-2">
+                            <FileText size={16} className="text-green-600" />
+                            <span className="text-sm font-medium text-green-700">{data.attachment.name}</span>
+                        </div>
+                        <button onClick={() => setData('attachment', null)} className={style.iconBtn}>
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
+
+                <div className={style.inputWrapper}>
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className={style.utilBtn}
+                    >
+                        <Paperclip size={22} />
                     </button>
-                </form>
+
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                        className={style.hidden}
+                    />
+
+                    <form onSubmit={handleSend} className={style.form}>
+                        <button
+                            type="button"
+                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                            className={style.utilBtn}
+                        >
+                            <Smile size={22} />
+                        </button>
+
+                        {showEmojiPicker && (
+                            <div className={style.emojiPickerContainer}>
+                                <EmojiPicker onEmojiClick={handleEmojiClick} />
+                            </div>
+                        )}
+
+                        <div className="flex-1 flex flex-col">
+                            {replyTo && (
+                                <div className={`${style.inputPreview} ${style.previewReply}`}>
+                                    <div className="flex-1 border-l-4 border-indigo-500 pl-2">
+                                        <p className="text-[10px] text-indigo-600 font-extrabold uppercase tracking-tight">Replying to {replyTo.user?.name}</p>
+                                        <p className="text-xs text-slate-600 truncate">{replyTo.body}</p>
+                                    </div>
+                                    <button onClick={() => setReplyTo(null)} className={style.utilBtn}>
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            )}
+
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={data.body}
+                                onChange={e => setData('body', e.target.value)}
+                                placeholder={replyTo ? "Type your reply..." : (isRecording ? "Recording..." : "Type a message...")}
+                                disabled={processing || selectionMode || isRecording}
+                                onFocus={() => {
+                                    setShowEmojiPicker(false);
+                                    setShowAttachmentMenu(false);
+                                }}
+                            />
+                        </div>
+                    </form>
+
+                    <button
+                        type="button"
+                        onClick={toogleRecording}
+                        className={`${style.utilBtn} ${isRecording ? 'bg-red-500 text-white animate-pulse' : ''}`}
+                    >
+                        <Mic size={24} />
+                    </button>
+
+                    <button
+                        type="submit"
+                        onClick={handleSend}
+                        className={style.sendBtn}
+                        disabled={processing || selectionMode || (!data.body && !data.attachment)}
+                    >
+                        <Send size={20} />
+                    </button>
+                </div>
             </div>
+
+            {messageContext && (
+                <div className={style.modalBackdrop} onClick={() => setMessageContext(null)}>
+                    <div
+                        className={style.modalContent}
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                            position: 'absolute',
+                            left: `${Math.min(menuPosition.x, chatWindowRef.current.clientWidth - 230)}px`,
+                            top: `${Math.min(menuPosition.y, chatWindowRef.current.clientHeight - 250)}px`,
+                            zIndex: 1000
+                        }}
+                    >
+                        <button onClick={startReply} className={style.modalAction}>
+                            <Reply size={14} className={style.modalIcon} />
+                            Reply
+                        </button>
+                        <button onClick={() => handleCopy(messageContext.body)} className={style.modalAction}>
+                            <Copy size={14} className={style.modalIcon} />
+                            Copy Text
+                        </button>
+                        <button onClick={startSelection} className={style.modalAction}>
+                            <Check size={14} className={style.modalIcon} />
+                            Select Messages
+                        </button>
+
+                        <div className={style.modalSeparator} />
+
+                        {messageContext.user_id === user.id && (
+                            <button onClick={deleteForEveryone} className={`${style.modalAction} ${style.modalDelete}`}>
+                                <Trash2 size={14} className={style.modalIcon} />
+                                Delete for Everyone
+                            </button>
+                        )}
+                        <button onClick={deleteForMe} className={`${style.modalAction} ${style.modalDelete}`}>
+                            <Trash size={14} className={style.modalIcon} />
+                            Delete for Me
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

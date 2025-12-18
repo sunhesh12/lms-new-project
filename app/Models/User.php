@@ -10,6 +10,8 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $table = 'users'; // or your custom table
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'name',
@@ -27,6 +29,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->profile_pic || $this->profile_pic === 'profile/default.png') {
+            return null;
+        }
+        return asset('storage/' . $this->profile_pic);
+    }
 
     public function student()
     {

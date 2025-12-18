@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Participant extends Model
 {
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = ['conversation_id', 'user_id', 'role', 'last_read_at'];
 
     public function conversation()

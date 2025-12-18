@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from '@inertiajs/react';
-import styles from '@/css/createGroupModal.module.css';
+import style from '@/css/createGroupModal.module.css';
 
 export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -9,6 +9,7 @@ export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
 
+    // Form for group creation
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
         participants: []
@@ -23,63 +24,70 @@ export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
         }
     }, [isOpen]);
 
+    // Handle user search
     useEffect(() => {
-        const delay = setTimeout(() => {
+        const delayDebounceFn = setTimeout(() => {
             if (searchQuery.trim()) {
                 setIsSearching(true);
                 axios.get(route('users.search'), { params: { query: searchQuery } })
-                    .then(res => {
-                        const filtered = res.data.filter(
-                            user => !selectedUsers.find(u => u.id === user.id)
+                    .then(response => {
+                        // Filter out already selected users
+                        const filtered = response.data.filter(user =>
+                            !selectedUsers.find(u => u.id === user.id)
                         );
                         setSearchResults(filtered);
                         setIsSearching(false);
                     })
-                    .catch(() => setIsSearching(false));
+                    .catch(error => {
+                        console.error('Error searching:', error);
+                        setIsSearching(false);
+                    });
             } else {
                 setSearchResults([]);
             }
         }, 300);
 
-        return () => clearTimeout(delay);
+        return () => clearTimeout(delayDebounceFn);
     }, [searchQuery, selectedUsers]);
 
     const addUser = (user) => {
-        const updated = [...selectedUsers, user];
-        setSelectedUsers(updated);
-        setData('participants', updated.map(u => u.id));
+        const newSelected = [...selectedUsers, user];
+        setSelectedUsers(newSelected);
+        setData('participants', newSelected.map(u => u.id));
         setSearchQuery('');
         setSearchResults([]);
     };
 
-    const removeUser = (id) => {
-        const updated = selectedUsers.filter(u => u.id !== id);
-        setSelectedUsers(updated);
-        setData('participants', updated.map(u => u.id));
+    const removeUser = (userId) => {
+        const newSelected = selectedUsers.filter(u => u.id !== userId);
+        setSelectedUsers(newSelected);
+        setData('participants', newSelected.map(u => u.id));
     };
 
     const submit = (e) => {
         e.preventDefault();
         axios.post(route('groups.store'), data)
-            .then(res => {
+            .then(response => {
                 onClose();
-                onSuccess(res.data.conversation_id);
+                onSuccess(response.data.conversation_id);
+            })
+            .catch(error => {
+                console.error('Error creating group:', error);
             });
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className={styles.overlay}>
-            <div className={styles.modal}>
-                <div className={styles.header}>
+        <div className={style.overlay}>
+            <div className={style.modal}>
+                <div className={style.header}>
                     <h3>Create New Group</h3>
-                    <button onClick={onClose} className={styles.closeBtn}>×</button>
+                    <button onClick={onClose} className={style.closeBtn}>&times;</button>
                 </div>
 
-                <form onSubmit={submit} className={styles.form}>
-                    {/* Group Name */}
-                    <div className={styles.field}>
+                <form onSubmit={submit} className={style.form}>
+                    <div className={style.field}>
                         <label>Group Name</label>
                         <input
                             type="text"
@@ -87,18 +95,23 @@ export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
                             onChange={e => setData('name', e.target.value)}
                             placeholder="My Awesome Group"
                         />
-                        {errors.name && <p className={styles.error}>{errors.name}</p>}
+                        {errors.name && <p className={style.error}>{errors.name}</p>}
                     </div>
 
-                    {/* Participants */}
-                    <div className={styles.fieldGrow}>
+                    <div className={style.fieldGrow}>
                         <label>Add Participants</label>
 
-                        <div className={styles.chips}>
+                        {/* Selected Users Chips */}
+                        <div className={style.chips}>
                             {selectedUsers.map(user => (
-                                <span key={user.id} className={styles.chip}>
+                                <span key={user.id} className={style.chip}>
                                     {user.name}
-                                    <button type="button" onClick={() => removeUser(user.id)}>×</button>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeUser(user.id)}
+                                    >
+                                        &times;
+                                    </button>
                                 </span>
                             ))}
                         </div>
@@ -107,44 +120,46 @@ export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
                             type="text"
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
+                            className="mb-2" /* Keep small margin for spacing if needed, or update CSS */
                             placeholder="Search users..."
                         />
 
-                        <div className={styles.results}>
+                        {/* Search Results */}
+                        <div className={style.results}>
                             {isSearching ? (
-                                <div className={styles.info}>Searching...</div>
-                            ) : searchResults.length ? (
+                                <div className={style.info}>Searching...</div>
+                            ) : searchResults.length > 0 ? (
                                 searchResults.map(user => (
                                     <div
                                         key={user.id}
                                         onClick={() => addUser(user)}
-                                        className={styles.resultItem}
+                                        className={style.resultItem}
                                     >
-                                        <div className={styles.avatar}>
+                                        <div className={style.avatar}>
                                             {user.name.charAt(0)}
                                         </div>
-                                        {user.name}
+                                        <div>{user.name}</div>
                                     </div>
                                 ))
                             ) : searchQuery ? (
-                                <div className={styles.info}>No users found</div>
+                                <div className={style.info}>No users found</div>
                             ) : null}
                         </div>
-
-                        {errors.participants && (
-                            <p className={styles.error}>{errors.participants}</p>
-                        )}
+                        {errors.participants && <p className={style.error}>{errors.participants}</p>}
                     </div>
 
-                    {/* Actions */}
-                    <div className={styles.actions}>
-                        <button type="button" onClick={onClose} className={styles.cancel}>
+                    <div className={style.actions}>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className={style.cancel}
+                        >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            disabled={processing || !data.name || !selectedUsers.length}
-                            className={styles.submit}
+                            disabled={processing || selectedUsers.length === 0 || !data.name}
+                            className={style.submit}
                         >
                             Create Group
                         </button>

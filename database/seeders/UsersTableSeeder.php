@@ -58,5 +58,6 @@ class UsersTableSeeder extends Seeder
             'updated_at' => now(),
             'course_id' => $faker->randomElement($courseIds),
         ]);
+
     }
 }

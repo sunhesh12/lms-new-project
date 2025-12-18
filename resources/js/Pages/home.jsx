@@ -12,7 +12,7 @@ export default function Welcome() {
                 <div className={styles["landing-NavBar-first-Container"]}>
                     <div className={styles["landing-NavBar-Elements"]}>
                         <img
-                            src="@/../icons/home.ico"
+                            src="/icons/home.ico"
                             alt="LMS Logo"
                             height="50px"
                         />
@@ -20,7 +20,7 @@ export default function Welcome() {
                     </div>
                     <div className={styles["landing-NavBar-Elements"]}>
                         <img
-                            src="@/../icons/contact.ico"
+                            src="/icons/contact.ico"
                             alt="LMS Logo"
                             height="50px"
                         />
@@ -29,7 +29,7 @@ export default function Welcome() {
 
                     <div className={styles["landing-NavBar-Elements"]}>
                         <img
-                            src="@/../icons/help.ico"
+                            src="/icons/help.ico"
                             alt="LMS Logo"
                             height="50px"
                         />
@@ -40,7 +40,7 @@ export default function Welcome() {
                     <div className={styles["Landing-NavBar-logo"]}>
                         <div>
                             <img
-                                src="@/../images/usjp-logo.png"
+                                src="/images/usjp-logo.png"
                                 alt="LMS Logo"
                                 height="70px"
                             />
@@ -56,7 +56,7 @@ export default function Welcome() {
                 <article className={styles.hero}>
                     <div>
                         <img
-                            src="./images/welcome-image.png"
+                            src="/images/welcome-image.png"
                             className={styles.heroArt}
                             alt="Welcome Image"
                         />

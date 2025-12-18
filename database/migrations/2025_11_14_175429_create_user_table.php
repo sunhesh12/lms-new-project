@@ -16,13 +16,17 @@ return new class extends Migration
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('user_phone_no');
             $table->string('profile_pic');
             $table->string('user_dob');
             $table->string('address');
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
+
+        
     }
 
     /**
