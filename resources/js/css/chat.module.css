@@ -1,6 +1,7 @@
 /* Main gradient container */
 .page_wrapper {
   height: calc(100vh - 4rem);
+  width: 100%;
   padding: 1rem;
   background: linear-gradient(135deg,
       #f5f7ff 0%,

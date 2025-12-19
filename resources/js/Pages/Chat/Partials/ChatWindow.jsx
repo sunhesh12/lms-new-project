@@ -38,7 +38,8 @@ export default function ChatWindow({ user, conversation, onBack }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         body: '',
         attachment: null,
-        reply_to_id: null
+        reply_to_id: null,
+        conversation_id: conversation?.id
     });
 
     const inputRef = useRef(null);
@@ -54,6 +55,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
         setReplyTo(null);
         setSelectionMode(false);
         setSelectedMessages([]);
+        setData('conversation_id', conversation?.id);
         reset();
         scrollToBottom();
     }, [conversation]);
@@ -88,7 +90,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
 
         post(route('chat.store'), {
             onSuccess: () => {
-                reset();
+                reset('body', 'attachment', 'reply_to_id');
                 setReplyTo(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 scrollToBottom();
@@ -106,7 +108,16 @@ export default function ChatWindow({ user, conversation, onBack }) {
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setData('attachment', file);
+            let type = 'pdf';
+            if (file.type.startsWith('image/')) type = 'image';
+            else if (file.type.startsWith('video/')) type = 'video';
+            else if (file.type.startsWith('audio/')) type = 'audio';
+
+            setData(prev => ({
+                ...prev,
+                attachment: file,
+                attachment_type: type
+            }));
             setShowAttachmentMenu(false);
         }
     };
