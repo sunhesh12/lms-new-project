@@ -9,10 +9,11 @@ import {
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import 'temporal-polyfill/global'
 import '@schedule-x/theme-default/dist/index.css'
- 
-function CalendarApp() {
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+
+function CalendarApp({ auth }) {
   const eventsService = useState(() => createEventsServicePlugin())[0]
- 
+
   const calendar = useCalendarApp({
     views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
     events: [
@@ -25,17 +26,19 @@ function CalendarApp() {
     ],
     plugins: [eventsService]
   })
- 
+
   useEffect(() => {
     // get all events
     eventsService.getAll()
   }, [])
- 
+
   return (
-    <div>
+    <AuthenticatedLayout
+      user={auth.user}
+    >
       <ScheduleXCalendar calendarApp={calendar} />
-    </div>
-  )
+    </AuthenticatedLayout>
+  );
 }
- 
+
 export default CalendarApp
