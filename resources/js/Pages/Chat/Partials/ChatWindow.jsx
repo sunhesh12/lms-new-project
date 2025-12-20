@@ -3,18 +3,17 @@ import AudioPlayer from './AudioPlayer';
 import { useState, useEffect, useRef } from 'react';
 import {
     Send,
+    Heart,
     Smile,
-    Paperclip,
     Mic,
-    X,
+    Pin,
+    FileText,
+    Trash,
+    Trash2,
     Reply,
     Copy,
-    Trash2,
-    Trash,
     Check,
-    Image as ImageIcon,
-    FileText,
-    Music,
+    X,
     ChevronLeft,
     MoreVertical
 } from 'lucide-react';
@@ -109,13 +108,19 @@ export default function ChatWindow({ user, conversation, onBack }) {
         inputRef.current?.focus();
     };
 
-    const handleFileSelect = (e) => {
+    const handleFileSelection = (e) => {
         const file = e.target.files[0];
         if (file) {
-            let type = 'pdf';
-            if (file.type.startsWith('image/')) type = 'image';
-            else if (file.type.startsWith('video/')) type = 'video';
-            else if (file.type.startsWith('audio/')) type = 'audio';
+            let type = file.type;
+            if (file.type.startsWith('image/')) {
+                type = file.type;
+            } else if (file.type.startsWith('video/')) {
+                type = file.type;
+            } else if (file.type.startsWith('audio/')) {
+                type = file.type;
+            } else if (file.type === 'application/pdf') {
+                type = 'pdf';
+            }
 
             setData(prev => ({
                 ...prev,
@@ -372,20 +377,23 @@ export default function ChatWindow({ user, conversation, onBack }) {
                     </div>
                 )}
 
+
                 <div className={style.inputWrapper}>
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className={style.utilBtn}
+                        title="Attach file"
                     >
-                        <Paperclip size={22} />
+                        <Pin size={22} />
                     </button>
 
                     <input
                         type="file"
                         ref={fileInputRef}
-                        onChange={handleFileSelect}
-                        className={style.hidden}
+                        style={{ display: 'none' }}
+                        onChange={handleFileSelection}
+                        accept="image/*,video/*,audio/*,.pdf,application/*"
                     />
 
                     <form onSubmit={handleSend} className={style.form}>
