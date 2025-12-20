@@ -1,0 +1,537 @@
+.sidebar {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(226, 232, 240, 0.8);
+    height: 100%;
+    background: #ffffff;
+    position: relative;
+    z-index: 30;
+}
+
+/* Sidebar Header - Workspace Style */
+.sidebarHeader {
+    padding: 1.5rem 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headerTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+}
+
+.headerTitleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.headerAvatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 0.875rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+    border: 1px solid #ffffff;
+}
+
+
+.headerActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.headerActionBtn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.headerActionBtn:hover {
+    background: #4338ca;
+    transform: scale(1.05);
+}
+
+.headerActionBtn:active {
+    transform: scale(0.95);
+}
+
+.settingsBtn {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.settingsBtn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Modern Pill Search */
+.searchBar {
+    position: relative;
+    width: 100%;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    background: #f1f5f9;
+    border: 1.5px solid transparent;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #0f172a;
+}
+
+.searchInput::placeholder {
+    color: #94a3b8;
+}
+
+.searchInput:focus {
+    background: #ffffff;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    width: 18px;
+    height: 18px;
+    transition: color 0.2s;
+}
+
+.searchInput:focus+.searchIcon {
+    color: #4f46e5;
+}
+
+/* Filter Tabs */
+.filterTabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: #f1f5f9;
+    border-radius: 12px;
+}
+
+.filterTab {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filterTab:hover {
+    color: #4f46e5;
+}
+
+.filterTabActive {
+    background: #ffffff;
+    color: #4f46e5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* List */
+.list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 0.5rem 1rem;
+}
+
+/* Sections */
+.section {
+    padding: 1.5rem 0.75rem 0.625rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+}
+
+/* SaaS Style Conversation Item */
+.convItem {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: all 0.1s ease;
+    gap: 0.875rem;
+    border-left: 3px solid transparent;
+}
+
+.convItem:hover {
+    background-color: #f1f5f9;
+}
+
+.convSelected {
+    background-color: #eff6ff !important;
+    border-left-color: #3b82f6;
+}
+
+.convSelected .convName {
+    color: #0f172a;
+    /* Back to original dark text on light blue */
+}
+
+.convSelected .convPreview {
+    color: #64748b;
+}
+
+.convSelected .convTime {
+    color: #64748b;
+}
+
+.convHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    width: 100%;
+}
+
+.convAvatar {
+    flex-shrink: 0;
+    height: 3.25rem;
+    width: 3.25rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    font-weight: 700;
+    font-size: 1.125rem;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    position: relative;
+    text-transform: uppercase;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.convItem:hover .convAvatar {
+    transform: scale(1.05);
+}
+
+/* Visual Placeholder for Status */
+.statusDot {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background-color: #10b981;
+    /* Green for online */
+    border: 2px solid #ffffff;
+}
+
+.convContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.convTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.convName {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.125rem;
+}
+
+.convTime {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.convPreview {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Unread Badge - Sharp & Pill Style */
+.unreadBadge {
+    background-color: #4f46e5;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    min-width: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+}
+
+/* Scrollbar Customization */
+.list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+.list:hover::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+/* Floating Action Button */
+.floatingBtn {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    background: #4f46e5;
+    color: white;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 40;
+}
+
+.floatingBtn:hover {
+    transform: translateY(-4px) scale(1.05);
+    background: #4338ca;
+    box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+.floatingBtn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.contactPopupOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: rgba(15, 23, 42, 0.2);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.contactPopupCard {
+    background: #ffffff;
+    border-radius: 2rem;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.popupAvatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.75rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+}
+
+.popupName {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.375rem;
+    letter-spacing: -0.025em;
+}
+
+.popupEmail {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.popupActionBtn {
+    width: 100%;
+    padding: 1rem;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 1.125rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+}
+
+.popupActionBtn:hover {
+    background: #4338ca;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px -5px rgba(79, 70, 229, 0.4);
+}
+
+.popupActionBtn:active {
+    transform: translateY(0);
+}
+
+.popupCloseBtn {
+    margin-top: 1rem;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.popupCloseBtn:hover {
+    color: #475569;
+}
+
+/* Contacts View */
+.contactsHeader {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.backBtn {
+    color: #64748b;
+    padding: 0.5rem;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: #f1f5f9;
+}
+
+.contactsTitle {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Empty State / Footer Text */
+.emptyText {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+.img_Cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img_full_rounded {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.flex_between_center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

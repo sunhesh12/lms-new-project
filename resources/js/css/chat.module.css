@@ -1,0 +1,93 @@
+/* Main gradient container */
+.page_wrapper {
+  height: calc(100vh - 4rem);
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg,
+      #f5f7ff 0%,
+      #eef2ff 25%,
+      #e0e7ff 50%,
+      #f3e8ff 75%,
+      #fce7f3 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .page_wrapper {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page_wrapper {
+    padding: 2.5rem;
+  }
+}
+
+/* Centered container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card / panel */
+.card {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.07),
+    0 1px 1px 0 rgba(255, 255, 255, 0.3) inset;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .card {
+    border-radius: 1.5rem;
+  }
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .page_wrapper {
+    padding: 0;
+    height: calc(100vh - 4rem);
+  }
+
+  .container {
+    max-width: 100%;
+  }
+
+  .card {
+    border-radius: 0;
+    border: none;
+  }
+
+  /* Logic to show only one side at a time on mobile */
+  .showSidebar :global(.chat-sidebar) {
+    display: flex;
+    width: 100%;
+  }
+
+  .showSidebar :global(.chat-window) {
+    display: none;
+  }
+
+  .showWindow :global(.chat-sidebar) {
+    display: none;
+  }
+
+  .showWindow :global(.chat-window) {
+    display: flex;
+    width: 100%;
+  }
+}

@@ -15,7 +15,7 @@ export default function SideNavBarContent({ isOpen }) {
           </Link>
         </li>
         <li>
-          <Link href="/courses">
+          <Link href="/module">
             <BookOpen size={20} />
             {!isOpen && <span>Courses</span>}
           </Link>
@@ -30,6 +30,18 @@ export default function SideNavBarContent({ isOpen }) {
           <Link href="/students">
             <Users size={20} />
             {!isOpen && <span>Students</span>}
+          </Link>
+        </li>
+        <li>
+          <Link href="/chat">
+            <Users size={20} />
+            {!isOpen && <span>Message</span>}
+          </Link>
+        </li>
+        <li>
+          <Link href="/calendar">
+            <Users size={20} />
+            {!isOpen && <span>Calendar</span>}
           </Link>
         </li>
       </ul>
