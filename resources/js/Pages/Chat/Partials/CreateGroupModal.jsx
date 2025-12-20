@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import style from '@/css/createGroupModal.module.css';
 
-export default function CreateGroupModal({ isOpen, onClose, onSuccess }) {
+export default function CreateGroupModal({ isOpen, onClose, onSuccess, auth }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);

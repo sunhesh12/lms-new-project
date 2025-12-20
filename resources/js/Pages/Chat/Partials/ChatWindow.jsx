@@ -55,8 +55,8 @@ export default function ChatWindow({ user, conversation, onBack }) {
         setReplyTo(null);
         setSelectionMode(false);
         setSelectedMessages([]);
-        setData('conversation_id', conversation?.id);
         reset();
+        setData('conversation_id', conversation?.id);
         scrollToBottom();
     }, [conversation]);
 

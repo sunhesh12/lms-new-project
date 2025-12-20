@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+
 class Participant extends Model
 {
+    use HasUuids;
+
     protected $primaryKey = 'uuid';
-    public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = ['conversation_id', 'user_id', 'role', 'last_read_at'];

@@ -17,6 +17,8 @@ export default function ProfileSettingsModal({ isOpen, onClose, user }) {
 
     const [error, setError] = useState(null);
 
+    console.log('ProfileSettingsModal render, isOpen:', isOpen);
+
     if (!isOpen) return null;
 
     const handleFileChange = (e) => {
@@ -138,6 +140,26 @@ export default function ProfileSettingsModal({ isOpen, onClose, user }) {
                                 <p className={style.footerNote}>
                                     Only JPG, PNG or GIF. Max 2MB.
                                 </p>
+
+                                {imagePreview && selectedFile && (
+                                    <button
+                                        onClick={handleUpload}
+                                        disabled={isUploading}
+                                        className={style.saveBtn}
+                                    >
+                                        {isUploading ? (
+                                            <>
+                                                <Loader2 size={18} className="animate-spin mr-2" />
+                                                Uploading...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Check size={18} className="mr-2" />
+                                                Save Picture
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </>
                         ) : (
                             <div className="w-full">

@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { Search, Plus, Users, ArrowLeft, MessageCircle, Settings } from 'lucide-react';
+import { Search, Plus, Users, ArrowLeft, MessageCircle, Camera } from 'lucide-react';
 import axios from 'axios';
 import CreateGroupModal from './CreateGroupModal';
 import ProfileSettingsModal from './ProfileSettingsModal';
@@ -188,7 +188,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                         <div className={style.headerTop}>
                             <div className={style.headerTitleWrapper}>
                                 <h2 className={style.headerTitle}>Chats</h2>
-                                <div className={style.headerAvatar}>
+                                <div className={style.headerAvatar} title="Profile">
                                     {auth.user.avatar_url ? (
                                         <img src={auth.user.avatar_url} alt={auth.user.name} className="w-full h-full object-cover" />
                                     ) : (
@@ -198,18 +198,18 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                             </div>
                             <div className={style.headerActions}>
                                 <button
-                                    onClick={() => setView('contacts')}
+                                    onClick={() => setShowGroupModal(true)}
                                     className={style.headerActionBtn}
-                                    title="New Chat"
+                                    title="Create Group"
                                 >
                                     <Plus size={20} />
                                 </button>
                                 <button
                                     onClick={() => setShowProfileModal(true)}
-                                    className={`${style.headerActionBtn} ${style.settingsBtn}`}
-                                    title="Settings"
+                                    className={style.headerActionBtn}
+                                    title="Change Profile Picture"
                                 >
-                                    <Settings size={20} />
+                                    <Camera size={20} />
                                 </button>
                             </div>
                         </div>
