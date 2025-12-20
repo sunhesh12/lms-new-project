@@ -1,7 +1,7 @@
 // src/components/sideNavBar/SideNavBarContent.jsx
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { Home, BookOpen, FileText, Users } from "lucide-react";
+import { Home, BookOpen, FileText, Users, MessageSquare, Calendar } from "lucide-react";
 import style from "@/css/dashboard.module.css";
 
 export default function SideNavBarContent({ isOpen }) {
@@ -34,13 +34,13 @@ export default function SideNavBarContent({ isOpen }) {
         </li>
         <li>
           <Link href="/chat">
-            <Users size={20} />
+            <MessageSquare size={20} />
             {!isOpen && <span>Message</span>}
           </Link>
         </li>
         <li>
           <Link href="/calendar">
-            <Users size={20} />
+            <Calendar size={20} />
             {!isOpen && <span>Calendar</span>}
           </Link>
         </li>

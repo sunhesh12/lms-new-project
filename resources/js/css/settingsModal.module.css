@@ -1,0 +1,137 @@
+.settingsModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.settingsModal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settingsModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settingsModalHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.closeBtn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.settingsModalBody {
+  padding: 10px;
+}
+
+.settingsItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  color: #374151;
+  font-size: 15px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: inherit;
+}
+
+.settingsItem:hover {
+  background: #f3f4f6;
+  transform: translateX(2px);
+}
+
+.settingsItem svg {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.settingsDivider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 10px 0;
+}
+
+.logoutItem {
+  color: #ef4444;
+}
+
+.logoutItem:hover {
+  background: #fee2e2;
+}
+
+.logoutItem svg {
+  color: #ef4444;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .settingsModal {
+    width: 95%;
+    max-width: none;
+  }
+
+  .settingsModalHeader {
+    padding: 16px;
+  }
+
+  .settingsModalHeader h2 {
+    font-size: 18px;
+  }
+
+  .settingsItem {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
