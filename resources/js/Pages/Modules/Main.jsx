@@ -1,4 +1,5 @@
 import GuestLayout from "@/Layouts/GuestLayout";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import styles from "@/css/module.module.css";
 import Topic from "@/components/Accordion/Topic";
 import ModuleHeader from "@/components/Module/ModuleHeader";
@@ -100,7 +101,8 @@ export default function ModuleMain({ module }) {
     )
 
     return (
-        <GuestLayout>
+        <AuthenticatedLayout>
+            {/* <GuestLayout> */}
             {topicFormVisible && (
                 <FloatingWindowContainer
                     closeAction={() => {
@@ -196,6 +198,7 @@ export default function ModuleMain({ module }) {
                     },
                 ]}
             />
-        </GuestLayout>
+            {/* </GuestLayout> */}
+        </AuthenticatedLayout>
     );
 }
