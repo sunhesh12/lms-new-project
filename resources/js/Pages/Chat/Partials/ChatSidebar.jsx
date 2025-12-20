@@ -205,7 +205,10 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                                     <Plus size={20} />
                                 </button>
                                 <button
-                                    onClick={() => setShowProfileModal(true)}
+                                    onClick={() => {
+                                        alert('Camera button clicked! Opening modal...');
+                                        setShowProfileModal(true);
+                                    }}
                                     className={style.headerActionBtn}
                                     title="Change Profile Picture"
                                 >

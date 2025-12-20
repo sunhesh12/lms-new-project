@@ -1,4 +1,5 @@
 import { Link, useForm } from '@inertiajs/react';
+import AudioPlayer from './AudioPlayer';
 import { useState, useEffect, useRef } from 'react';
 import {
     Send,
@@ -34,6 +35,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
     const [messageContext, setMessageContext] = useState(null);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const [replyTo, setReplyTo] = useState(null);
+    const [pdfPreview, setPdfPreview] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         body: '',
@@ -49,6 +51,8 @@ export default function ChatWindow({ user, conversation, onBack }) {
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
+    const [recordingDuration, setRecordingDuration] = useState(0);
+    const recordingIntervalRef = useRef(null);
 
     useEffect(() => {
         setMessages(conversation?.messages || []);
@@ -124,8 +128,11 @@ export default function ChatWindow({ user, conversation, onBack }) {
 
     const toogleRecording = async () => {
         if (isRecording) {
+            // Stop recording
             mediaRecorderRef.current.stop();
             setIsRecording(false);
+            clearInterval(recordingIntervalRef.current);
+            setRecordingDuration(0);
         } else {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -140,12 +147,22 @@ export default function ChatWindow({ user, conversation, onBack }) {
                 mediaRecorder.onstop = () => {
                     const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
                     const file = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
-                    setData('attachment', file);
+                    setData(prev => ({
+                        ...prev,
+                        attachment: file,
+                        attachment_type: 'audio'
+                    }));
                     stream.getTracks().forEach(track => track.stop());
                 };
 
                 mediaRecorder.start();
                 setIsRecording(true);
+                setRecordingDuration(0);
+
+                // Start timer
+                recordingIntervalRef.current = setInterval(() => {
+                    setRecordingDuration(prev => prev + 1);
+                }, 1000);
             } catch (err) {
                 console.error("Microphone access denied:", err);
             }
@@ -243,13 +260,13 @@ export default function ChatWindow({ user, conversation, onBack }) {
                                 <img src={`/storage/${msg.attachment_path}`} alt="Attachment" className={style.attachmentImage} />
                             ) : msg.attachment_type?.startsWith('video/') ? (
                                 <video src={`/storage/${msg.attachment_path}`} controls className={style.attachmentVideo} />
-                            ) : msg.attachment_type?.startsWith('audio/') ? (
-                                <audio src={`/storage/${msg.attachment_path}`} controls className={style.attachmentAudio} />
+                            ) : (msg.attachment_type?.startsWith('audio/') || msg.attachment_type === 'audio') ? (
+                                <AudioPlayer audioUrl={`/storage/${msg.attachment_path}`} isMe={isMe} />
                             ) : (
-                                <a href={`/storage/${msg.attachment_path}`} target="_blank" className={`${style.attachmentPdf} ${isMe ? style.pdfSender : style.pdfReceiver}`}>
+                                <button onClick={() => setPdfPreview(`/storage/${msg.attachment_path}`)} className={`${style.attachmentPdf} ${isMe ? style.pdfSender : style.pdfReceiver}`}>
                                     <FileText size={18} className="mr-2" />
-                                    <span>Download File</span>
-                                </a>
+                                    <span>View File</span>
+                                </button>
                             )}
                         </div>
                     )}
@@ -414,6 +431,29 @@ export default function ChatWindow({ user, conversation, onBack }) {
                         </div>
                     </form>
 
+                    {isRecording && (
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 1rem',
+                            background: '#fee2e2',
+                            borderRadius: '1rem',
+                            color: '#dc2626',
+                            fontWeight: '600',
+                            fontSize: '0.875rem'
+                        }}>
+                            <div style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background: '#dc2626',
+                                animation: 'pulse 1.5s infinite'
+                            }} />
+                            Recording {Math.floor(recordingDuration / 60)}:{(recordingDuration % 60).toString().padStart(2, '0')}
+                        </div>
+                    )}
+
                     <button
                         type="button"
                         onClick={toogleRecording}
@@ -471,6 +511,75 @@ export default function ChatWindow({ user, conversation, onBack }) {
                             Delete for Me
                         </button>
                     </div>
+                </div>
+            )}
+
+            {/* PDF Preview Modal */}
+            {pdfPreview && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0, 0, 0, 0.9)',
+                        zIndex: 10000,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: '1rem'
+                    }}
+                    onClick={() => setPdfPreview(null)}
+                >
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '1rem',
+                        color: 'white'
+                    }}>
+                        <h3 style={{ fontSize: '1.125rem', fontWeight: '600' }}>Document Preview</h3>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <a
+                                href={pdfPreview}
+                                download
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    background: '#4f46e5',
+                                    color: 'white',
+                                    borderRadius: '0.5rem',
+                                    textDecoration: 'none',
+                                    fontSize: '0.875rem',
+                                    fontWeight: '500'
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Download
+                            </a>
+                            <button
+                                onClick={() => setPdfPreview(null)}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    background: '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '0.5rem',
+                                    cursor: 'pointer',
+                                    fontSize: '0.875rem',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                    <iframe
+                        src={pdfPreview}
+                        style={{
+                            flex: 1,
+                            border: 'none',
+                            borderRadius: '0.5rem',
+                            background: 'white'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    />
                 </div>
             )}
         </div>
