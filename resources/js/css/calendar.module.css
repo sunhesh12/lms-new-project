@@ -1328,3 +1328,533 @@
     min-height: 80px;
   }
 }
+
+/* Calendar.module.css - Add these new styles to your existing CSS */
+
+/* Notifications Panel */
+.notificationsPanel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.notificationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.notificationTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notificationFilterButtons {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.notifFilterBtn {
+  padding: 6px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.notifFilterBtn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notifFilterBtnActive {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notificationList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Custom Scrollbar for Notifications */
+.notificationList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notificationList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.notificationList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.notificationList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.notificationItem {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.notificationItem:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(4px);
+}
+
+.notifTime {
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.notifContent {
+  flex: 1;
+}
+
+.notifEventTitle {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.notifEventDate {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.noNotifications {
+  text-align: center;
+  padding: 32px 20px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.noNotifIcon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.noNotifications p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Calendar Header with Search */
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.calendarTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  min-width: 200px;
+}
+
+/* Quick Navigation Dropdowns */
+.quickNavigation {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.quickNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quickNavLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.quickNavSelect {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background: white;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.quickNavSelect:hover {
+  border-color: #4F46E5;
+  background: #fefefe;
+}
+
+.quickNavSelect:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Search Date Container */
+.searchDateContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.searchDateInput {
+  padding: 10px 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 180px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.searchDateInput:hover {
+  border-color: #4F46E5;
+}
+
+.searchDateInput:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.clearSearchBtn {
+  padding: 8px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearSearchBtn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.calendarNav {
+  display: flex;
+  gap: 10px;
+}
+
+.navBtn {
+  padding: 10px 20px;
+  background: #4F46E5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.navBtn:hover {
+  background: #4338CA;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Event Badge (shows inside calendar day) */
+.eventBadge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.eventTime {
+  font-weight: 700;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.eventTitle {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.eventIndicators {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eventMore {
+  font-size: 10px;
+  color: #64748b;
+  text-align: center;
+  padding: 2px;
+  font-weight: 600;
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+/* Sidebar Header with Filter Buttons */
+.sidebarHeader {
+  margin-bottom: 20px;
+}
+
+.sidebarTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.eventFilterButtons {
+  display: flex;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.filterBtn {
+  flex: 1;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterBtn:hover {
+  color: #475569;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.filterBtnActive {
+  background: white;
+  color: #4F46E5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Searched Date Highlight */
+.searchedDate {
+  background: #fef3c7 !important;
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Update existing styles */
+.calendarDay {
+  min-height: 100px;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendarDay:hover {
+  background: #f8fafc;
+  border-color: #4F46E5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dayNumber {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.today {
+  background: #EEF2FF;
+  border: 2px solid #4F46E5;
+}
+
+.today .dayNumber {
+  color: #4F46E5;
+  font-weight: 700;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .calendarHeader {
+    gap: 12px;
+  }
+
+  .calendarTitle {
+    width: 100%;
+    text-align: center;
+  }
+
+  .quickNavigation {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .searchDateContainer {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .calendarNav {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .notificationsPanel {
+    padding: 16px;
+  }
+
+  .notificationHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .notificationFilterButtons {
+    width: 100%;
+  }
+
+  .notifFilterBtn {
+    flex: 1;
+  }
+
+  .notificationList {
+    max-height: 150px;
+  }
+
+  .calendarHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .calendarTitle {
+    text-align: center;
+    font-size: 20px;
+    min-width: auto;
+  }
+
+  .quickNavigation {
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px;
+  }
+
+  .quickNavSelect {
+    min-width: 80px;
+    font-size: 13px;
+  }
+
+  .searchDateContainer {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .searchDateInput {
+    flex: 1;
+    min-width: auto;
+  }
+
+  .calendarNav {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .navBtn {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .eventBadge {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .calendarDay {
+    min-height: 80px;
+  }
+}

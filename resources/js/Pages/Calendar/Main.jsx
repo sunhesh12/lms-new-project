@@ -35,6 +35,7 @@ function CalendarApp({ auth }) {
   // Apply filters whenever events or filter values change
   useEffect(() => {
     applyFilters();
+    updateTodayEvents();
   }, [events, filterYear, filterMonth, searchDate, eventFilter])
 
   // Update filters when currentDate changes
@@ -42,6 +43,12 @@ function CalendarApp({ auth }) {
     setFilterYear(currentDate.getFullYear());
     setFilterMonth(currentDate.getMonth() + 1);
   }, [currentDate])
+
+  const updateTodayEvents = () => {
+    const today = formatDate(new Date());
+    const eventsToday = events.filter(event => event.date === today);
+    setTodayEvents(eventsToday);
+  }
 
   const fetchEvents = async () => {
     try {
@@ -197,6 +204,19 @@ function CalendarApp({ auth }) {
     setSearchDate('');
   }
 
+  const handleDateSearch = (e) => {
+    const selectedDate = e.target.value;
+    setSearchDate(selectedDate);
+    
+    // Move calendar to the selected date's month and year
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
+      setFilterYear(date.getFullYear());
+      setFilterMonth(date.getMonth() + 1);
+    }
+  }
+
   const getSidebarTitle = () => {
     if (searchDate) {
       return `Events on ${searchDate}`;
@@ -204,6 +224,16 @@ function CalendarApp({ auth }) {
       return 'All Events';
     } else {
       return `Events in ${monthNames[filterMonth - 1]} ${filterYear}`;
+    }
+  }
+
+  const getNotificationsToDisplay = () => {
+    if (notificationFilter === 'today') {
+      return todayEvents;
+    } else {
+      // Show all upcoming events (today and future)
+      const today = formatDate(new Date());
+      return events.filter(event => event.date >= today).sort((a, b) => new Date(a.date) - new Date(b.date));
     }
   }
 
@@ -255,6 +285,48 @@ function CalendarApp({ auth }) {
   return (
     <AuthenticatedLayout user={auth.user}>
       <div className={styles.calendarApp}>
+        {/* Notifications Panel */}
+        <div className={styles.notificationsPanel}>
+          <div className={styles.notificationHeader}>
+            <h3 className={styles.notificationTitle}>
+              📢 {notificationFilter === 'today' ? "Today's Events" : 'Upcoming Events'}
+            </h3>
+            <div className={styles.notificationFilterButtons}>
+              <button 
+                className={`${styles.notifFilterBtn} ${notificationFilter === 'today' ? styles.notifFilterBtnActive : ''}`}
+                onClick={() => setNotificationFilter('today')}
+              >
+                Today
+              </button>
+              <button 
+                className={`${styles.notifFilterBtn} ${notificationFilter === 'all' ? styles.notifFilterBtnActive : ''}`}
+                onClick={() => setNotificationFilter('all')}
+              >
+                All Upcoming
+              </button>
+            </div>
+          </div>
+          
+          <div className={styles.notificationList}>
+            {getNotificationsToDisplay().length === 0 ? (
+              <div className={styles.noNotifications}>
+                <span className={styles.noNotifIcon}>🎉</span>
+                <p>{notificationFilter === 'today' ? 'No events today!' : 'No upcoming events!'}</p>
+              </div>
+            ) : (
+              getNotificationsToDisplay().map((event) => (
+                <div key={event.id} className={styles.notificationItem}>
+                  <div className={styles.notifTime}>{event.start_time}</div>
+                  <div className={styles.notifContent}>
+                    <div className={styles.notifEventTitle}>{event.title}</div>
+                    <div className={styles.notifEventDate}>{event.date}</div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
         {loading && (
           <div style={{ 
             position: 'fixed', 
@@ -282,7 +354,7 @@ function CalendarApp({ auth }) {
                 <input 
                   type="date"
                   value={searchDate}
-                  onChange={(e) => setSearchDate(e.target.value)}
+                  onChange={handleDateSearch}
                   className={styles.searchDateInput}
                   placeholder="Search date"
                 />
