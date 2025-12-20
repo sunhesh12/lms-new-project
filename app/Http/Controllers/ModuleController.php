@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
@@ -90,16 +91,17 @@ class ModuleController extends Controller
 
         // If the request contains a file
         if ($request->hasFile('cover_image_url')) {
+
+            $filePath = Storage::disk('public')->path('/uploads/modules/');
+            $fileName = $validatedData['cover_image_url']->getClientOriginalName();
+
             // Delete old image if exists
-            if ($module->cover_image_url && file_exists(public_path('uploads/modules/' . $module->cover_image_url))) {
-                unlink(public_path('uploads/modules/' . $module->cover_image_url));
+            if ($module->cover_image_url && file_exists($filePath . $fileName)) {
+                unlink($filePath . $fileName);
             }
 
-            // Generate unique name
-            $fileName = time() . '_' . $request->cover_image_url->getClientOriginalName();
-
             // Save file to /public/uploads/modules
-            $request->cover_image_url->move(public_path('uploads/modules'), $fileName);
+            $request->cover_image_url->move($filePath, $fileName);
 
             $validatedData['cover_image_url'] = $fileName;
 

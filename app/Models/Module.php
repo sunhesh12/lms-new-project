@@ -41,4 +41,9 @@ class Module extends Model
     {
         return $this->hasMany(Topic::class, 'module_id', 'id');
     }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'module_id', 'id');
+    }
 }

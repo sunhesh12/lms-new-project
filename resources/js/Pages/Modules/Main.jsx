@@ -10,6 +10,12 @@ import AssignmentForm from "@/components/Forms/AssignmentForm";
 import Enrollments from "@/components/Enrollments";
 import { useForm } from "@inertiajs/react";
 import EditModule from "@/components/Forms/EditModule";
+import TabLayout from "@/components/Layouts/TabLayout";
+import {
+    faBook,
+    faClock,
+    faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function ModuleMain({ module }) {
     // Saving the visibility of each floating window
@@ -21,8 +27,6 @@ export default function ModuleMain({ module }) {
     // Setting whether a topic update is performed
     const topicId = useRef(null);
     const isTopicUpdate = useRef(false);
-
-    console.log(module);
 
     // Form states
 
@@ -41,6 +45,59 @@ export default function ModuleMain({ module }) {
         credit_value: module.credit_value,
         cover_image_url: null,
     });
+
+    const TopicsView = () => (
+        <article id="topics-container" className={styles.topicsContainer}>
+            <p>Pinned</p>
+            <section id="pinned"></section>
+            {module.topics.length > 0 ? (
+                module.topics.map((topic, index) => (
+                    <Topic
+                        key={topic.id}
+                        resources={topic.resources}
+                        topicName={topic.topic_name}
+                        description={topic.description}
+                        /* Toggling topic form with some initial values */
+                        formToggle={() => {
+                            setTopicFormVisible(true);
+
+                            // Setting the initial values for the form
+                            topicFormProps.setData(
+                                "topic_name",
+                                topic.topic_name
+                            );
+                            topicFormProps.setData(
+                                "description",
+                                topic.description
+                            );
+
+                            topicFormProps.setData(
+                                "resources",
+                                topic.resources.map((resource) => {
+                                    return {
+                                        id: resource.id,
+                                        caption: resource.caption,
+                                        is_deleted: resource.is_deleted,
+                                        file: null,
+                                    };
+                                })
+                            );
+
+                            // Since the topic form is an update
+                            isTopicUpdate.current = true;
+                            topicId.current = topic.id;
+                        }}
+                    />
+                ))
+            ) : (
+                <p>No topics available.</p>
+            )}
+        </article>
+    );
+
+    const AssignmentsView = () => (
+        <div></div>
+    )
 
     return (
         <GuestLayout>
@@ -97,7 +154,7 @@ export default function ModuleMain({ module }) {
                     <EditModule
                         formProps={moduleEditFormProps}
                         moduleId={module.id}
-                        defaultCoverImage={`/uploads/modules/${module.cover_image_url}`}
+                        defaultCoverImage={`/storage/uploads/modules/${module.cover_image_url}`}
                     />
                 </FloatingWindowContainer>
             )}
@@ -105,7 +162,7 @@ export default function ModuleMain({ module }) {
             <ModuleHeader
                 moduleName={`${module.name}`}
                 subTitle={module.description}
-                coverImage={`/uploads/modules/${module.cover_image_url}`}
+                coverImage={`/storage/uploads/modules/${module.cover_image_url}`}
             />
             <div id="module-content" className={styles.moduleContent}>
                 <ModuleToolbar
@@ -123,56 +180,22 @@ export default function ModuleMain({ module }) {
                     }}
                 />
                 <h2>Module Content</h2>
-                <article
-                    id="topics-container"
-                    className={styles.topicsContainer}
-                >
-                    <p>Pinned</p>
-                    <section id="pinned"></section>
-                    {module.topics.length > 0 ? (
-                        module.topics.map((topic, index) => (
-                            <Topic
-                                key={topic.id}
-                                resources={topic.resources}
-                                topicName={topic.topic_name}
-                                description={topic.description}
-                                /* Toggling topic form with some initial values */
-                                formToggle={() => {
-                                    setTopicFormVisible(true);
-
-                                    // Setting the initial values for the form
-                                    topicFormProps.setData(
-                                        "topic_name",
-                                        topic.topic_name
-                                    );
-                                    topicFormProps.setData(
-                                        "description",
-                                        topic.description
-                                    );
-
-                                    topicFormProps.setData(
-                                        "resources",
-                                        topic.resources.map(resource => {
-                                            return {
-                                                id: resource.id,
-                                                caption: resource.caption,
-                                                is_deleted: resource.is_deleted,
-                                                file: null,
-                                            }
-                                        })
-                                    );
-
-                                    // Since the topic form is an update
-                                    isTopicUpdate.current = true;
-                                    topicId.current = topic.id;
-                                }}
-                            />
-                        ))
-                    ) : (
-                        <p>No topics available.</p>
-                    )}
-                </article>
             </div>
+            <TabLayout
+                tabs={[
+                    { name: "Topics", icon: faBook, view: <TopicsView /> },
+                    {
+                        name: "Assignments",
+                        icon: faClock,
+                        view: <TopicsView />,
+                    },
+                    {
+                        name: "Quizes",
+                        icon: faQuestionCircle,
+                        view: <TopicsView />,
+                    },
+                ]}
+            />
         </GuestLayout>
     );
 }
