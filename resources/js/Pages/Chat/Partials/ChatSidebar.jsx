@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { Search, Plus, Users, ArrowLeft, MessageCircle, Camera } from 'lucide-react';
+import { Search, Plus, Users, ArrowLeft, MessageCircle, Camera, Settings } from 'lucide-react';
 import axios from 'axios';
 import CreateGroupModal from './CreateGroupModal';
 import ProfileSettingsModal from './ProfileSettingsModal';
@@ -148,7 +148,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                         }
                         const otherUser = conversation.users?.find(u => u.id !== auth.user.id);
                         if (otherUser?.avatar_url) {
-                            return <img src={otherUser.avatar_url} alt={otherUser.name} className="w-full h-full rounded-[14px] object-cover" />;
+                            return <img src={otherUser.avatar_url} alt={otherUser.name} className={style.img_full_rounded} />;
                         }
                         return getConversationName(conversation).charAt(0).toUpperCase();
                     })()}
@@ -165,7 +165,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                             }
                         </p>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className={style.flex_between_center}>
                         <p className={style.convPreview}>
                             {conversation.messages.length > 0 ? conversation.messages[0].body : 'No messages yet'}
                         </p>
@@ -190,7 +190,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                                 <h2 className={style.headerTitle}>Chats</h2>
                                 <div className={style.headerAvatar} title="Profile">
                                     {auth.user.avatar_url ? (
-                                        <img src={auth.user.avatar_url} alt={auth.user.name} className="w-full h-full object-cover" />
+                                        <img src={auth.user.avatar_url} alt={auth.user.name} className={style.img_Cover} />
                                     ) : (
                                         auth.user.name.charAt(0).toUpperCase()
                                     )}
@@ -206,13 +206,13 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                                 </button>
                                 <button
                                     onClick={() => {
-                                        alert('Camera button clicked! Opening modal...');
+                                        // alert('Camera button clicked! Opening modal...');
                                         setShowProfileModal(true);
                                     }}
                                     className={style.headerActionBtn}
                                     title="Change Profile Picture"
                                 >
-                                    <Camera size={20} />
+                                    <Settings size={20} />
                                 </button>
                             </div>
                         </div>
