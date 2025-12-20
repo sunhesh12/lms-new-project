@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\EventController;
+// use Illuminate\Support\Facades\Route;
 
 
 
@@ -86,6 +88,31 @@ Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard
 
 Route::get('/register', function () {
     return Inertia::render('Auth/Register')->name('register');
+});
+
+
+
+
+// // Protected routes (requires authentication)
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::apiResource('events', EventController::class);
+    
+//     // Or if you prefer explicit routes:
+//     Route::get('/events', [EventController::class, 'index']);
+//     Route::post('/events', [EventController::class, 'store']);
+//     Route::get('/events/{event}', [EventController::class, 'show']);
+//     Route::put('/events/{event}', [EventController::class, 'update']);
+//     Route::patch('/events/{event}', [EventController::class, 'update']);
+//     Route::delete('/events/{event}', [EventController::class, 'destroy']);
+// });
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Events API Resource routes
+    Route::get('/events', [EventController::class, 'index'])->name('api.events.index');
+    Route::post('/events', [EventController::class, 'store'])->name('api.events.store');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('api.events.show');
+    Route::put('/events/{event}', [EventController::class, 'update'])->name('api.events.update');
+    Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('api.events.destroy');
 });
 
 
