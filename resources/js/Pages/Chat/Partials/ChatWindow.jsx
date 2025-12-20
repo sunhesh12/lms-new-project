@@ -245,8 +245,8 @@ export default function ChatWindow({ user, conversation, onBack }) {
                 onClick={() => selectionMode && toggleSelection(msg.id)}
             >
                 {selectionMode && (
-                    <div className="flex items-center px-2">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 bg-white'}`}>
+                    <div className={style.flex_center_px_2}>
+                        <div className={`${style.not_selected_text} ${isSelected ? style.selected : ''}`}>
                             {isSelected && <Check size={12} color="white" />}
                         </div>
                     </div>
@@ -315,7 +315,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
                         return (
                             <div className={style.headerAvatar}>
                                 {otherUser.avatar_url ? (
-                                    <img src={otherUser.avatar_url} alt={otherUser.name} className="w-full h-full rounded-[12px] object-cover" />
+                                    <img src={otherUser.avatar_url} alt={otherUser.name} className={style.header_avatar_image} />
                                 ) : (
                                     <span>{otherUser.name.charAt(0).toUpperCase()}</span>
                                 )}
