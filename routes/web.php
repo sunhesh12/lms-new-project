@@ -133,4 +133,37 @@ Route::middleware('auth')->group(function () {
 
 
 
+
+use App\Http\Controllers\QuizController;
+
+
+
+
+Route::middleware(['auth'])->group(function () {
+    // Main quiz page route
+    Route::get('/modules/quiz', [QuizController::class, 'page'])->name('modules.quiz');
+});
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Get all quizzes
+    Route::get('/quizzes', [QuizController::class, 'index']);
+    
+    // Get specific quiz with questions
+    Route::get('/quizzes/{id}', [QuizController::class, 'show']);
+    
+    // Submit quiz attempt
+    Route::post('/quizzes/{id}/submit', [QuizController::class, 'submit']);
+    
+    // Get quiz results
+    Route::get('/quiz-attempts/{attemptId}/results', [QuizController::class, 'results']);
+    
+    // Get user's quiz history
+    Route::get('/quiz-history', [QuizController::class, 'history']);
+});
+
+
+
 require __DIR__ . '/auth.php';

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ResourceSeeder::class,
             ChatSeeder::class,
             EventSeeder::class,
+            QuizSeeder::class,
             // CourseSeeder::class,
             // PortalUserSeeder::class,
             // ModuleSeeder::class,

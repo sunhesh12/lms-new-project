@@ -1,33 +1,43 @@
 <?php
 
+// app/Models/Quiz.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
     use HasFactory;
 
-    protected $table = 'quizzes';
-
-    // UUID primary key
-    protected $keyType = 'string';
-    public $incrementing = false;
-
     protected $fillable = [
-        'topic_id',
-        'heading',
+        'title',
         'description',
-        'start_time',
-        'end_time',
-        'duration_minutes',
-        'is_deleted',
+        'duration',
+        'passing_score',
+        'is_active',
     ];
 
-    // Relationship
-    public function topic()
+    protected $casts = [
+        'is_active' => 'boolean',
+        'duration' => 'integer',
+        'passing_score' => 'integer',
+    ];
+
+    public function questions(): HasMany
     {
-        return $this->belongsTo(Topic::class);
+        return $this->hasMany(Question::class)->orderBy('order');
+    }
+
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(quiz_attempt::class);
+    }
+
+    public function getQuestionsCountAttribute(): int
+    {
+        return $this->questions()->count();
     }
 }
