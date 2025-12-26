@@ -1,6 +1,4 @@
-@import url("@/css/root.module.css");
-
-.dashboard-notification{
+.dashboard-notification {
     top: 20px;
     right: 20px;
     background-color: var(--whiteop);
@@ -24,12 +22,18 @@
 }
 
 .dashboard-notification-success {
-    background-color: var(--successNotify); /* green */
+    background-color: var(--successNotify);
+    /* green */
 }
 
 .dashboard-notification-fail {
-    background-color: var(--errorNotify); /* red */
+    background-color: var(--errorNotify);
+    /* red */
     color: var(--white);
+}
+
+.dashboard-notification-noting {
+    background-color: var(--notingNotify);
 }
 
 .notification-link {
@@ -39,24 +43,24 @@
 }
 
 
-.notificationIconContent{
+.notificationIconContent {
     display: flex;
     justify-content: flex-start;
     gap: 20px;
 }
 
-.notification-icon-container{
+.notification-icon-container {
     width: max-content;
     height: 100%;
     display: flex;
-    align-items: center;    
+    align-items: center;
     justify-content: center;
 }
 
-.notificationIconContent h1{
+.notificationIconContent h1 {
     font-size: large;
 }
 
-.notificationIconContent p{
+.notificationIconContent p {
     font-size: small;
 }

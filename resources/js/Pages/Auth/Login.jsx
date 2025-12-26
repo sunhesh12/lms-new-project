@@ -1,12 +1,11 @@
-import Checkbox from "@/components/Checkbox";
-import InputError from "@/components/InputError";
-import InputLabel from "@/components/InputLabel";
-import PrimaryButton from "@/components/PrimaryButton";
-import TextInput from "@/components/TextInput";
+import Checkbox from "@/components/Input/Checkbox";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import style from "@/css/login.module.css";
-import { Input } from "@/components/ui/input";
+import { Head, useForm } from "@inertiajs/react";
+import CustomLink from "@/components/Links/Link";
+import styles from "@/css/login.module.css";
+import TextInput from "@/components/Input/TextInput";
+import Button from "@/components/Input/Button";
+import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -18,95 +17,82 @@ export default function Login({ status, canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("login"), {
+        post(route("login.submit"), {
             onFinish: () => reset("password"),
         });
     };
 
     return (
         <GuestLayout>
-            <div className={style["Login-Container-wrapper"]}>
-            <div className={style["Login-Container"]}>
-                <Head title="Log in" />
+            <Head title="Login" />
 
-                {status && (
-                    <div className="mb-4 text-sm font-medium text-green-600">
-                        {status}
-                    </div>
-                )}
+            <div className={styles.loginPage}>
+                <div className={styles.loginFormContainer}>
+                    <h1>Sign in</h1>
 
-                <form onSubmit={submit}>
-                    <div>
-                        <InputLabel htmlFor="email" value="Email" />
-
-                        <Input
+                    <form onSubmit={submit} className={styles.loginForm}>
+                        <TextInput
                             id="email"
                             type="email"
                             name="email"
+                            label="Email"
+                            icon={faEnvelope}
+                            error={errors.email}
                             value={data.email}
-                            placeholder = "Enter your Email"
-                            className="mt-1 block w-full"
-                            autocomplete="new-password"
-                            isFocused={true}
+                            placeholder="Enter your Email"
                             onChange={(e) => setData("email", e.target.value)}
                         />
 
-                        <InputError message={errors.email} className="mt-2" />
-                    </div>
-
-                    <div className="mt-4">
-                        <InputLabel htmlFor="password" value="Password" />
-
-                        <Input
+                        <TextInput
                             id="password"
                             type="password"
                             name="password"
+                            label="Password"
+                            icon={faKey}
+                            error={errors.password}
                             value={data.password}
-                            placeholder = "Enter your password"
-                            className="mt-1 block w-full"
-                            autoComplete="new-password"
+                            placeholder="Enter your Password"
                             onChange={(e) =>
                                 setData("password", e.target.value)
                             }
                         />
 
-                        <InputError
-                            message={errors.password}
-                            className="mt-2"
-                        />
-                    </div>
+                        <div className={styles.rememberMe}>
+                            <label className={styles.rememberMeLabel}>
+                                <Checkbox
+                                    name="remember"
+                                    checked={data.remember}
+                                    onChange={(e) =>
+                                        setData("remember", e.target.checked)
+                                    }
+                                />
+                                <span className={styles.rememberMeText}>
+                                    Remember me
+                                </span>
+                            </label>
+                        </div>
 
-                    <div className="mt-4 block">
-                        <label className="flex items-center">
-                            <Checkbox
-                                name="remember"
-                                checked={data.remember}
-                                onChange={(e) =>
-                                    setData("remember", e.target.checked)
-                                }
-                            />
-                            <span className="ms-2 text-sm text-gray-600">
-                                Remember me
-                            </span>
-                        </label>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-end">
                         {canResetPassword && (
-                            <Link
-                                href={route("password.request")}
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
+                            <CustomLink href={route("password.request")}>
                                 Forgot your password?
-                            </Link>
+                            </CustomLink>
                         )}
 
-                        <PrimaryButton className="ms-4" disabled={processing}>
-                            Log in
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </div>
+                        <div>
+                            <Button disabled={processing}>Login</Button>
+                        </div>
+
+                        <span>
+                            New to the LMS?{" "}
+                            <CustomLink
+                                href={route("register")}
+                                className={styles.registerLink}
+                            >
+                                Register
+                            </CustomLink>
+                        </span>
+                    </form>
+                </div>
             </div>
         </GuestLayout>
     );

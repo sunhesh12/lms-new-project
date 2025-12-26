@@ -1,4 +1,69 @@
-@import url('root.module.css');
+/* @import url('root.module.css'); */
+
+.landing-NavBar{
+    width: 100%;
+    height: 100px;
+    /* background-color: var(--white); */
+    display: flex;
+    /* justify-content: space-around; */
+    align-items: flex-start;
+}
+
+.landing-NavBar-first-Container{
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+.landing-NavBar-Second-Container{
+    width: 40%;
+    height: 100px;
+    display: flex;
+    /* background-color: red; */
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.Landing-NavBar-logo{
+    width: 100%;
+    height: 80px;
+    background-size: contain;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    /* background-position: center; */
+}
+
+.Landing-NavBar-logo-Text{
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding-right: 50px;
+}
+
+.Landing-NavBar-logo-Text h1{
+    font-size: 1.2em;
+    margin: 0;
+    padding: 0;
+}
+
+.Landing-NavBar-logo-Text p{
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+.landing-NavBar-Elements{
+    display: flex;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    gap:20px;
+    font-size: 1em;
+}
 
 .hero {
     display: grid;
@@ -28,6 +93,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: -100px;
 }
 
 .blackText {

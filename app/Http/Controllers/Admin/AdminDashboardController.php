@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Module;
+use App\Models\Course;
+use App\Models\student;
+use App\Models\lecture;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class AdminDashboardController extends Controller
+{
+    public function index()
+    {
+        $user = auth()->user();
+        $notifications = [];
+
+        $stats = [
+            'total_users' => User::count(),
+            'total_students' => student::count(),
+            'total_lecturers' => lecture::count(),
+            'total_courses' => Course::count(),
+            'total_modules' => Module::count(),
+        ];
+
+        $recent_users = User::with(['student', 'lecture', 'system_admin'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        if ($user->isLecturer()) {
+            $lecture = $user->lecture;
+            $moduleIds = $lecture->modules()->pluck('module_id');
+
+            // 1. Fetch modules taught
+            $taughtModules = Module::whereIn('id', $moduleIds)->get();
+
+            // 2. Fetch ungraded assignments (next 7 days or past)
+            $ungradedAssignments = \App\Models\Assignment::whereIn('module_id', $moduleIds)
+                ->withCount('submissions')
+                ->get()
+                ->filter(function($a) { return $a->submissions_count > 0; });
+
+            foreach ($ungradedAssignments as $assignment) {
+                $notifications[] = [
+                    'id' => 'grading_' . $assignment->id,
+                    'topic' => 'Grading Required',
+                    'message' => "{$assignment->submissions_count} submissions ready for {$assignment->title}",
+                    'type' => 'error',
+                    'link' => route('module.show', $assignment->module_id),
+                    'date' => $assignment->deadline,
+                ];
+            }
+
+            // 3. Upcoming events for lecturer
+            $upcomingEvents = $user->events()
+                ->where('date', '>=', now()->toDateString())
+                ->orderBy('date')
+                ->limit(5)
+                ->get();
+
+            foreach ($upcomingEvents as $event) {
+                $notifications[] = [
+                    'id' => 'event_' . $event->id,
+                    'topic' => 'Event',
+                    'message' => "{$event->title} on {$event->date->format('M d')}",
+                    'type' => 'noting',
+                    'link' => '/calendar',
+                    'date' => $event->date,
+                ];
+            }
+        }
+
+        // --- Chart Data Aggregation ---
+        
+        // 1. User Registration Trend (Last 30 days)
+        $registrations = User::selectRaw('DATE(created_at) as date, count(*) as count')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+        
+        $registrationTrends = $registrations->map(function($reg) {
+            return ['date' => $reg->date, 'count' => (int)$reg->count];
+        });
+
+        // 2. Role Distribution
+        $roleDistribution = [
+            ['role' => 'Students', 'count' => $stats['total_students']],
+            ['role' => 'Lecturers', 'count' => $stats['total_lecturers']],
+            ['role' => 'Admins', 'count' => User::has('system_admin')->count()],
+        ];
+
+        // 3. Modules per Course
+        $modulesPerCourse = Course::withCount('modules')
+            ->limit(10)
+            ->get()
+            ->map(function($course) {
+                return ['course' => $course->title, 'count' => $course->modules_count];
+            });
+
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => $stats,
+            'recent_users' => $recent_users,
+            'notifications' => $notifications,
+            'charts' => [
+                'registrationTrends' => $registrationTrends,
+                'roleDistribution' => $roleDistribution,
+                'modulesPerCourse' => $modulesPerCourse,
+            ]
+        ]);
+    }
+
+    public function users()
+    {
+        return Inertia::render('Admin/Users', [
+            'users' => User::with(['student', 'lecture', 'system_admin'])->get()
+        ]);
+    }
+
+    public function updateUserRole(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required|in:admin,lecturer,student'
+        ]);
+
+        // Remove existing roles
+        $user->student()->delete();
+        $user->lecture()->delete();
+        $user->system_admin()->delete();
+
+        // Add new role
+        switch ($request->role) {
+            case 'admin':
+                $user->system_admin()->create(['type' => 'super_admin']);
+                break;
+            case 'lecturer':
+                $user->lecture()->create(['faculty_id' => null]); // Default null or handle faculty assignment
+                break;
+            case 'student':
+                $user->student()->create(['academic_year' => date('Y')]);
+                break;
+        }
+
+        return redirect()->back()->with('message', "User role updated to {$request->role}");
+    }
+
+    public function toggleStatus(User $user)
+    {
+        $newStatus = $user->status === 'active' ? 'blocked' : 'active';
+        $user->update(['status' => $newStatus]);
+
+        return redirect()->back()->with('message', "User status updated to {$newStatus}");
+    }
+
+    public function systemHealth()
+    {
+        $health = [
+            'status' => 'OK',
+            'server_time' => now()->toDateTimeString(),
+            'php_version' => PHP_VERSION,
+            'database' => \DB::connection()->getPdo() ? 'Connected' : 'Error',
+            'storage_status' => is_writable(storage_path()) ? 'Writable' : 'Read-Only',
+        ];
+
+        return Inertia::render('Admin/SystemHealth', [
+            'health' => $health
+        ]);
+    }
+}

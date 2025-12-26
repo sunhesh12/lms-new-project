@@ -1,0 +1,54 @@
+:root {
+    --red: red;
+    --green: green;
+    --white: rgb(230, 230, 230);
+    --whiteop: rgb(255, 255, 255);
+    --black: black;
+    --poppinsFont: 'poppins';
+    --successNotify: #c0eab4;
+    --errorNotify: #ff4242;
+    --notingNotify: #e0e0e0;
+
+
+    /* side nav bar from Authenticate Layoute */
+    --sideNavBarWidth: 20%;
+
+    /* Official color scheme */
+    --black: #001219;
+    --blue: #005063;
+    --orange: #F7931E;
+    --red: #880808;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 15px;
+}
+
+body {
+    margin: 0;
+    font-family: "Work Sans";
+    accent-color: var(--black);
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+p {
+    font-size: 1.1rem;
+}
+
+@font-face {
+    font-family: 'Pangolin';
+    src: url('/fonts/Pangolin-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Work Sans';
+    src: url('/fonts/WorkSans-VariableFont_wght.ttf');
+}

@@ -1,0 +1,30 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap:10px;   
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.submitButtonContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.emptyResources {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 10px;
+}
+
+.resourceInput {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 200px 100px;
+    align-items: center;
+    row-gap: 10px;
+    min-width: 80%;
+}
+

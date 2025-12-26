@@ -1,0 +1,37 @@
+.topicItemContainer {
+    display: flex;
+}
+
+.verticalLine {
+    position: relative;
+    left:10px;
+    width: 1px;
+    opacity: 0.2;
+    background-color: #000000;
+}
+
+.itemList {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    width: 100%;
+    grid-template-columns: 20px 1fr; /* bullet | text */
+    row-gap: 40px;
+}
+
+.itemList li {
+    display: contents;
+}
+
+.itemList li::before {
+    position: relative;
+    left:1px;
+    content: '•'; /* bullet point */
+    color: #919191;
+    font-size: 40px;
+    line-height: 1;
+    grid-column: 1;
+    grid-row: auto;
+    align-self:start;
+    top: -9px;
+}

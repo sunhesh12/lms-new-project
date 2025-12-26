@@ -1,0 +1,572 @@
+.container {
+    padding: 30px;
+    font-family: var(--poppinsFont), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1f2937;
+}
+
+.loading {
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sidebar & Navigator */
+.sidebarCard {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    position: sticky;
+    top: 2rem;
+}
+
+.sidebarHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: #111827;
+}
+
+.sidebarHeader h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.navigatorGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.navButton {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 2px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.navButton:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.navActive {
+    border-color: #667eea;
+    background: #f0f4ff;
+    color: #667eea;
+}
+
+.navAnswered {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.navigatorLegend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.legendDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1px solid #e5e7eb;
+}
+
+.errorCard {
+    max-width: 500px;
+    margin: 100px auto;
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.errorTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 16px 0;
+}
+
+.errorMessage {
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+.quizListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.homeLink {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #f3f4f6;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.homeLink:hover {
+    background: #e5e7eb;
+    transform: translateX(-5px);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.mainTitle {
+    color: #111827;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 16px;
+    margin: 0;
+}
+
+.emptyState {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    margin-top: 60px;
+}
+
+.quizGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.quizListCard {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.quizListCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.cardTitle {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+}
+
+.cardDescription {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+}
+
+.cardMeta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.startButton {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.startButton:hover {
+    transform: scale(1.02);
+}
+
+.quizCard {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.quizHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.quizTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #fef3c7;
+    border-radius: 8px;
+    color: #92400e;
+    font-size: 18px;
+}
+
+.progressBar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+}
+
+.questionInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.questionCounter {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.answeredCount {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.questionText {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+.imageContainer {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+    background: #f9fafb;
+}
+
+.questionImage {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    color: #374151;
+}
+
+.option:hover {
+    border-color: #667eea;
+    background: #f8faff;
+}
+
+.optionSelected {
+    border: 2px solid #667eea;
+    background: #f0f4ff;
+}
+
+.optionRadio {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.optionRadioSelected {
+    border: 2px solid #667eea;
+}
+
+.optionRadioInner {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #667eea;
+}
+
+.navigationButtons {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.primaryButton {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.secondaryButton {
+    padding: 12px 32px;
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secondaryButton:hover:not(:disabled) {
+    background: #f0f4ff;
+}
+
+.buttonDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.warningText {
+    text-align: center;
+    color: #f59e0b;
+    font-size: 14px;
+    margin-top: 16px;
+    font-weight: 500;
+}
+
+.quizLayout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .quizLayout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.resultCard {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.resultHeader {
+    margin-bottom: 32px;
+}
+
+.resultTitle {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 16px 0 0 0;
+}
+
+.scoreDisplay {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.scoreCircle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.passedScore {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.failedScore {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+.scorePercentage {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.scoreLabel {
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.scoreDetails {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.scoreItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.passStatus {
+    margin-bottom: 24px;
+}
+
+.passedBadge {
+    display: inline-block;
+    padding: 8px 24px;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.failedBadge {
+    display: inline-block;
+    padding: 8px 24px;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+}

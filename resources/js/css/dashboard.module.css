@@ -1,30 +1,31 @@
-
-@import url('@/css/root.module.css');
 /* @import url('@/css/welcome.module.css'); */
-
-
-.Project-main-container{
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--white);  
-    display: flex;
+.dashboard-container1 {
+  display: flex;
+  height: 100vh;
 }
 
-.sideNavBar{
-    width: var(--sideNavBarWidth);
-    height: 100%;
-    background-color: var(--black);
+.Project-main-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--white);
+  display: flex;
 }
 
-.page-main-container{
-    width: calc(100% - var(--sideNavBarWidth));
-    height: 100%;
+.sideNavBar {
+  width: var(--sideNavBarWidth);
+  height: 100%;
+  background-color: var(--black);
+}
+
+.page-main-container {
+  width: calc(100% - var(--sideNavBarWidth));
+  height: 100%;
 
 }
 
-.sideNavBar-Button{
-    width: 40px;
-    height: 40px;
+.sideNavBar-Button {
+  width: 40px;
+  height: 40px;
 }
 
 .Project-main-container {
@@ -63,6 +64,30 @@
   text-decoration: none;
 }
 
+.sideNavBar-body ul li a.active {
+  background-color: #f3f4f6;
+  color: var(--primary);
+  border-right: 3px solid var(--primary);
+}
+
+.adminLink {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+  font-weight: 700 !important;
+}
+
+.adminLink:hover {
+  background-color: #dbeafe !important;
+}
+
+.subLink {
+  opacity: 0.8;
+}
+
+.subLink:hover {
+  opacity: 1;
+}
+
 .sideNavBar-body li:hover {
   background-color: var(--white);
 }
@@ -79,22 +104,32 @@
   overflow-y: auto;
 }
 
-.dashboard-notifications-container{
-    /* position: fixed; */
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
+.dashboard-notifications-container {
+  height: 100%;
+  /* position: fixed; */
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
-.dashboard-continue-journey-container{
+.noNotifications {
+  color: #6b7280;
+  font-style: italic;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.dashboard-continue-journey-container {
   padding-top: 20px;
-    width: 100%;
-    height: auto;
-    display: flex;
-    align-items: stretch;
-    justify-content: space-around;
-    gap: 50px;
-    /* background-color: red; */
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 50px;
+  /* background-color: red; */
 }
 
 /* .dashboard-continue-journey-card{
@@ -131,8 +166,9 @@
 /* 2 cards per row */
 .dashboard-grid-two-column {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* ✅ two columns */
-  gap: 25px; 
+  grid-template-columns: repeat(2, 1fr);
+  /* ✅ two columns */
+  gap: 25px;
 }
 
 .dashboard-card {
@@ -171,10 +207,33 @@
   margin-top: 5px;
 }
 
+.dashboard-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1f2937;
+}
+
+.dashboard-main {
+  padding: 2rem;
+  color: #1f2937;
+}
+
+.dashboard-greeting {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
 /* 📱 Responsive: stack cards vertically on small screens */
 @media (max-width: 768px) {
   .dashboard-grid-two-column {
     grid-template-columns: 1fr;
   }
 }
-

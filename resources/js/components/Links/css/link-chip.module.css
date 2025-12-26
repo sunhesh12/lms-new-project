@@ -1,0 +1,10 @@
+.itemContent {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    gap: 10px;
+}
+
+.itemContent a {
+    text-decoration: none;
+}
