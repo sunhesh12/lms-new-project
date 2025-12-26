@@ -154,6 +154,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/users', [App\Http\Controllers\Admin\AdminDashboardController::class, 'users'])->name('admin.users.index');
         Route::post('/users/{user}/role', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUserRole'])->name('admin.users.role.update');
+        Route::post('/users/{user}/toggle-status', [App\Http\Controllers\Admin\AdminDashboardController::class, 'toggleStatus'])->name('admin.users.status.toggle');
+        Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\AdminDashboardController::class, 'editUser'])->name('admin.users.edit');
+        Route::post('/users/{user}/update', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUser'])->name('admin.users.update');
+        Route::get('/health', [App\Http\Controllers\Admin\AdminDashboardController::class, 'systemHealth'])->name('admin.health');
     });
 
     Route::get('/api/lecturers/search', function (Request $request) {

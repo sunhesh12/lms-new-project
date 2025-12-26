@@ -74,10 +74,43 @@ class AdminDashboardController extends Controller
             }
         }
 
+        // --- Chart Data Aggregation ---
+        
+        // 1. User Registration Trend (Last 30 days)
+        $registrations = User::selectRaw('DATE(created_at) as date, count(*) as count')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+        
+        $registrationTrends = $registrations->map(function($reg) {
+            return ['date' => $reg->date, 'count' => (int)$reg->count];
+        });
+
+        // 2. Role Distribution
+        $roleDistribution = [
+            ['role' => 'Students', 'count' => $stats['total_students']],
+            ['role' => 'Lecturers', 'count' => $stats['total_lecturers']],
+            ['role' => 'Admins', 'count' => User::has('system_admin')->count()],
+        ];
+
+        // 3. Modules per Course
+        $modulesPerCourse = Course::withCount('modules')
+            ->limit(10)
+            ->get()
+            ->map(function($course) {
+                return ['course' => $course->title, 'count' => $course->modules_count];
+            });
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
             'recent_users' => $recent_users,
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'charts' => [
+                'registrationTrends' => $registrationTrends,
+                'roleDistribution' => $roleDistribution,
+                'modulesPerCourse' => $modulesPerCourse,
+            ]
         ]);
     }
 
@@ -113,5 +146,28 @@ class AdminDashboardController extends Controller
         }
 
         return redirect()->back()->with('message', "User role updated to {$request->role}");
+    }
+
+    public function toggleStatus(User $user)
+    {
+        $newStatus = $user->status === 'active' ? 'blocked' : 'active';
+        $user->update(['status' => $newStatus]);
+
+        return redirect()->back()->with('message', "User status updated to {$newStatus}");
+    }
+
+    public function systemHealth()
+    {
+        $health = [
+            'status' => 'OK',
+            'server_time' => now()->toDateTimeString(),
+            'php_version' => PHP_VERSION,
+            'database' => \DB::connection()->getPdo() ? 'Connected' : 'Error',
+            'storage_status' => is_writable(storage_path()) ? 'Writable' : 'Read-Only',
+        ];
+
+        return Inertia::render('Admin/SystemHealth', [
+            'health' => $health
+        ]);
     }
 }

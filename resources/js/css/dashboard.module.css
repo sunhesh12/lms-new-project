@@ -64,6 +64,30 @@
   text-decoration: none;
 }
 
+.sideNavBar-body ul li a.active {
+  background-color: #f3f4f6;
+  color: var(--primary);
+  border-right: 3px solid var(--primary);
+}
+
+.adminLink {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+  font-weight: 700 !important;
+}
+
+.adminLink:hover {
+  background-color: #dbeafe !important;
+}
+
+.subLink {
+  opacity: 0.8;
+}
+
+.subLink:hover {
+  opacity: 1;
+}
+
 .sideNavBar-body li:hover {
   background-color: var(--white);
 }

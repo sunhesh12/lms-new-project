@@ -22,7 +22,6 @@ class User extends Authenticatable
         'user_phone_no',
         'profile_pic',
         'user_dob',
-        'status',
         'faculty_id',
         'course_id',
     ];
@@ -32,7 +31,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_url', 'role'];
 
     public function getAvatarUrlAttribute()
     {
@@ -86,17 +85,23 @@ class User extends Authenticatable
     // Role checks
     public function isAdmin()
     {
-        return $this->system_admin()->exists();
+        return $this->relationLoaded('system_admin') 
+            ? $this->system_admin !== null 
+            : $this->system_admin()->exists();
     }
 
     public function isLecturer()
     {
-        return $this->lecture()->exists();
+        return $this->relationLoaded('lecture') 
+            ? $this->lecture !== null 
+            : $this->lecture()->exists();
     }
 
     public function isStudent()
     {
-        return $this->student()->exists();
+        return $this->relationLoaded('student') 
+            ? $this->student !== null 
+            : $this->student()->exists();
     }
 
     public function getRoleAttribute()

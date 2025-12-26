@@ -175,11 +175,102 @@
     color: #6b7280;
 }
 
-.statValue {
-    font-size: 1.5rem;
-    line-height: 2rem;
+.managementActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.toggleBtn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.blockBtn {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.blockBtn:hover {
+    background-color: #fecaca;
+    color: #7f1d1d;
+}
+
+.unblockBtn {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.unblockBtn:hover {
+    background-color: #bbf7d0;
+    color: #14532d;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-blocked {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Analytics & Charts */
+.analyticsGrid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+@media (min-width: 1024px) {
+    .analyticsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.chartCard {
+    background-color: #ffffff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.chartHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.chartTitle {
+    font-size: 1rem;
     font-weight: 700;
     color: #111827;
+}
+
+.chartIcon {
+    color: var(--primary);
+}
+
+.chartContainer {
+    width: 100%;
+    height: 300px;
 }
 
 /* Content Grid */
@@ -336,12 +427,100 @@
 }
 
 .primaryControlBtn {
-    background-color: #2563eb;
-    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+    background-color: var(--primary);
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .primaryControlBtn:hover {
-    background-color: #3b82f6;
+    background-color: var(--primary-dark);
+}
+
+/* Health Page Styles */
+.headerWithBack {
+    margin-bottom: 1rem;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: var(--primary);
+}
+
+.healthGrid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .healthGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.healthCard {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.healthIcon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.healthIcon.success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.healthIcon.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.healthInfo {
+    flex: 1;
+}
+
+.healthLabel {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.healthValue {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.statusCheck {
+    color: #166534;
 }
 
 /* Table Card for User Management */

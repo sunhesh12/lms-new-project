@@ -13,6 +13,13 @@ export default function Users({ users }) {
         }
     };
 
+    const handleStatusToggle = (userId, currentStatus) => {
+        const action = currentStatus === 'active' ? 'block' : 'unblock';
+        if (confirm(`Are you sure you want to ${action} this user?`)) {
+            router.post(route('admin.users.status.toggle', userId));
+        }
+    };
+
     const columns = [
         {
             accessor: "name",
@@ -29,7 +36,7 @@ export default function Users({ users }) {
         { accessor: "email", label: "Email" },
         {
             accessor: "role",
-            label: "Current Role",
+            label: "Role",
             render: (row) => (
                 <span className={styles.roleBadge}>
                     {row.role}
@@ -37,10 +44,19 @@ export default function Users({ users }) {
             ),
         },
         {
-            accessor: "actions",
-            label: "Manage Role",
+            accessor: "status",
+            label: "Status",
             render: (row) => (
-                <div className={styles.flexGap2}>
+                <span className={`${styles.statusBadge} ${styles['status-' + row.status]}`}>
+                    {row.status}
+                </span>
+            ),
+        },
+        {
+            accessor: "actions",
+            label: "Management",
+            render: (row) => (
+                <div className={styles.managementActions}>
                     <select
                         className={styles.roleSelect}
                         value={row.role}
@@ -50,6 +66,13 @@ export default function Users({ users }) {
                         <option value="lecturer">Lecturer</option>
                         <option value="admin">Admin</option>
                     </select>
+
+                    <button
+                        onClick={() => handleStatusToggle(row.id, row.status)}
+                        className={`${styles.toggleBtn} ${row.status === 'active' ? styles.blockBtn : styles.unblockBtn}`}
+                    >
+                        {row.status === 'active' ? 'Block' : 'Unblock'}
+                    </button>
                 </div>
             ),
         },
