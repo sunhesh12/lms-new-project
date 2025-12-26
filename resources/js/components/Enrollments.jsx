@@ -88,7 +88,7 @@ export default function Enrollments({ module }) {
                                     <p className={styles.userName}>{student.user.name}</p>
                                     <p className={styles.userEmail}>{student.user.email}</p>
                                 </div>
-                                <button className={styles.actionBtnDelete} style={{ color: 'var(--primary)', border: 'none' }}>
+                                <button className={styles.addBtn}>
                                     <UserPlus size={16} />
                                 </button>
                             </div>

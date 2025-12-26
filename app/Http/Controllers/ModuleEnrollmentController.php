@@ -30,6 +30,13 @@ class ModuleEnrollmentController extends Controller
             return redirect()->back()->with('error', 'Module is full.');
         }
 
+        // Enrollment Key Check
+        if (!empty($module->enrollment_key)) {
+            if ($request->enrollment_key !== $module->enrollment_key) {
+                 return redirect()->back()->withErrors(['enrollment_key' => 'Invalid enrollment key']);
+            }
+        }
+
         ModuleEnrollment::updateOrCreate(
             ['module_id' => $moduleId, 'student_id' => $studentId],
             ['status' => 'active']

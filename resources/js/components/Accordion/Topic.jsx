@@ -9,6 +9,9 @@ import {
     faFile,
     faTrashCan,
     faUpload,
+    faVideo,
+    faImage,
+    faClock,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./css/topic.module.css";
 import Button from "../Input/Button";
@@ -19,6 +22,8 @@ export default function Topic({
     description,
     formToggle,
     resources,
+    assignments = [],
+    onAssignmentCreate,
     buttonText = "Edit Topic",
     isStudent = false,
 }) {
@@ -56,31 +61,74 @@ export default function Topic({
                             {buttonText}
                         </Button>
                         {!isStudent && (
-                            <Button backgroundColor="delete" icon={faTrashCan}>
-                                Delete Topic
-                            </Button>
+                            <>
+                                <Button
+                                    icon={faClock}
+                                    onClick={() => onAssignmentCreate(null)} // null passed as topicId is handled by parent context usually, but here we want to modify Main to pass a handler that knows the topic ID. Actually, simpler: pass onAssignmentCreate which takes topicId.
+                                >
+                                    Add Assignment
+                                </Button>
+                                <Button backgroundColor="delete" icon={faTrashCan}>
+                                    Delete Topic
+                                </Button>
+                            </>
                         )}
                     </div>
                     <p>{description}</p>
-                    <ItemList
-                        items={resources}
-                        render={({ id, url, caption }) => (
-                            <div
-                                className={styles.topicItemContent}
-                                key={id ?? ""}
-                            >
-                                <span>{caption}</span>
-                                <LinkChip
-                                    fileIcon={faFile}
-                                    url={url}
-                                    fileName={url.split("/").at(-1)}
-                                />
+
+                    {/* Assignments Section */}
+                    {assignments && assignments.length > 0 && (
+                        <div className="mb-4">
+                            <h4 className="font-semibold mb-2 text-gray-700">Assignments</h4>
+                            <div className="flex flex-col gap-2">
+                                {assignments.map(assignment => (
+                                    <div key={assignment.id} className="bg-white p-3 rounded border border-gray-200 shadow-sm flex justify-between items-center">
+                                        <div>
+                                            <div className="font-medium text-blue-600">{assignment.title}</div>
+                                            <div className="text-xs text-gray-500">Due: {new Date(assignment.deadline).toLocaleDateString()}</div>
+                                        </div>
+                                        {/* We can add a simple link or status here */}
+                                        <div className="text-xs text-gray-500">
+                                            {new Date() > new Date(assignment.deadline) ? 'Closed' : 'Open'}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
+                        </div>
+                    )}
+
+                    {/* Resources Section with Rich Media */}
+                    <div className={styles.resourcesContainer}>
+                        {resources && resources.length > 0 ? (
+                            resources.map((resource) => {
+                                const ext = resource.url.split('.').pop().toLowerCase();
+                                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+                                const isVideo = ['mp4', 'webm', 'ogg'].includes(ext);
+
+                                return (
+                                    <div key={resource.id} className="mb-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                        <div className="mb-2 font-medium">{resource.caption}</div>
+                                        {isImage ? (
+                                            <img src={`/storage/uploads/resources/${resource.url}`} alt={resource.caption} className="max-w-full h-auto rounded shadow-sm" style={{ maxHeight: '300px' }} />
+                                        ) : isVideo ? (
+                                            <video controls className="max-w-full rounded shadow-sm" style={{ maxHeight: '300px' }}>
+                                                <source src={`/storage/uploads/resources/${resource.url}`} type={`video/${ext}`} />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        ) : (
+                                            <LinkChip
+                                                fileIcon={faFile}
+                                                url={resource.url}
+                                                fileName={resource.url.split("/").at(-1)}
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="text-gray-400 italic">No resources available</div>
                         )}
-                        fallback={() => {
-                            return <div>No resources available</div>;
-                        }}
-                    />
+                    </div>
                 </div>
             )}
         </section>

@@ -75,15 +75,22 @@ class ModuleController extends Controller
         $user = auth()->user();
         
         $module = Module::with([
-            'topics' => function ($query) {
+            'topics' => function ($query) use ($user) {
                 $query->where('is_deleted', false)->with([
                     'resources' => function ($resourcesQuery) {
                         $resourcesQuery->where('is_deleted', false);
+                    },
+                    'assignments' => function ($assignmentsQuery) use ($user) {
+                        $assignmentsQuery->where('is_deleted', false)->with(['submissions' => function($q) use ($user) {
+                             $q->where('student_id', $user->id);
+                        }]);
                     }
                 ]);
             },
-            'assignments' => function ($query) {
-                $query->where('is_deleted', false);
+            'assignments' => function ($query) use ($user) {
+                $query->where('is_deleted', false)->with(['resources', 'submissions' => function ($q) use ($user) {
+                    $q->where('student_id', $user->id);
+                }]);
             },
             'quizzes' => function ($query) {
                 $query->where('is_active', true);
@@ -100,11 +107,15 @@ class ModuleController extends Controller
             return Inertia::render('404');
         }
 
-        // Student access check: must be enrolled
-        if ($user->isStudent()) {
-            $isEnrolled = $module->students()->where('student_id', $user->student->id)->exists();
+        // Access Control
+        $isStaff = $user->isAdmin() || $user->isLecturer();
+
+        if (!$isStaff) {
+            // Check enrollment for non-staff users
+            // We use whereHas or join to check against the user_id on the student record
+            $isEnrolled = $module->students()->where('students.user_id', $user->id)->exists();
             if (!$isEnrolled) {
-                return redirect()->route('modules.index')->with('error', 'You are not enrolled in this module.');
+                return redirect()->route('module.join_page', $id);
             }
         }
 
@@ -156,6 +167,7 @@ class ModuleController extends Controller
             'maximum_students' => 'integer|min:0',
             'description' => 'string|max:500',
             'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'enrollment_key' => 'nullable|string|max:50',
         ]);
 
         $module = Module::findOrFail($moduleId);
@@ -192,5 +204,31 @@ class ModuleController extends Controller
         $module->update(['is_deleted' => true]);
 
         return redirect()->route('modules.index')->with('message', 'Module deleted successfully');
+    }
+
+    public function joinPage($moduleId)
+    {
+        $user = auth()->user();
+        
+        // Only students can join. Staff should see the module. Others are forbidden.
+        if (!$user->isStudent()) {
+            if ($user->isAdmin() || $user->isLecturer()) {
+                return redirect()->route('module.show', $moduleId);
+            }
+            abort(403, 'Only students can join modules.');
+        }
+
+        $module = Module::select('id', 'name', 'credit_value', 'description', 'cover_image_url', 'maximum_students')
+            ->with(['lecturers.user'])
+            ->findOrFail($moduleId);
+
+        // Check if already enrolled
+        if ($module->students()->where('student_id', $user->student->id)->exists()) {
+             return redirect()->route('module.show', $moduleId);
+        }
+
+        return Inertia::render('Modules/Join', [
+            'module' => $module
+        ]);
     }
 }

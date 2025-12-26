@@ -24,6 +24,7 @@ Route::prefix('modules')->group(function () {
 
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
+        Route::get('/join', [ModuleController::class, 'joinPage'])->name('module.join_page');
         Route::post('/', [ModuleController::class, 'update'])->name('module.update');
         Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
@@ -55,6 +56,10 @@ Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 
 Route::post("/assignments/{assignmentId}/submit", [AssignmentController::class, 'submit'])->name("assignment.submit");
 Route::post("/assignments/{assignmentId}/reset", [AssignmentController::class, 'reset'])->name("assignment.reset");
 
+// Grading Routes
+Route::get('/modules/{moduleId}/assignments/{assignmentId}/grading', [AssignmentController::class, 'grading'])->name('assignment.grading');
+Route::post('/assignments/submissions/{submissionId}/grade', [AssignmentController::class, 'storeGrade'])->name('assignment.grade.store');
+
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
 });
@@ -63,11 +68,11 @@ Route::get('/account', function () {
     return Inertia::render('Users/Main');
 });
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 // Route::get('/Courses', function () {
 //     return Inertia::render('Course');

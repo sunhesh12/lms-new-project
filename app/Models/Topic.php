@@ -46,4 +46,9 @@ class Topic extends Model
         return $this->hasMany(Resource::class);
     }
 
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
+
 }
