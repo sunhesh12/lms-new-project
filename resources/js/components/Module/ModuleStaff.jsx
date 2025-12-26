@@ -10,14 +10,15 @@ export default function ModuleStaff({ module }) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (search.length > 2) {
-            const delayDebounceFn = setTimeout(() => {
-                handleSearch();
-            }, 300);
-            return () => clearTimeout(delayDebounceFn);
-        } else {
-            setSearchResults([]);
-        }
+        // Initial load of lecturers
+        handleSearch();
+    }, []);
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            handleSearch();
+        }, 300);
+        return () => clearTimeout(delayDebounceFn);
     }, [search]);
 
     const handleSearch = async () => {

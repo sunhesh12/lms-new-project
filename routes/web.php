@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\EventController;
 // use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 
 
@@ -145,7 +146,7 @@ Route::middleware('auth')->group(function () {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
-            ->limit(10)
+            ->limit(50)
             ->get();
     })->name('students.search');
 
@@ -167,11 +168,15 @@ Route::middleware('auth')->group(function () {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
-            ->limit(10)
+            ->limit(50)
             ->get();
     })->name('lecturers.search');
 
     Route::post('/modules/{module}/staff', [App\Http\Controllers\ModuleController::class, 'manageStaff'])->name('modules.staff.manage');
+    
+    // Enrollment Routes
+    Route::post('/modules/{moduleId}/enroll', [App\Http\Controllers\ModuleEnrollmentController::class, 'store'])->name('module.enroll');
+    Route::delete('/modules/{moduleId}/enrollments/{registrationId}', [App\Http\Controllers\ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
     Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
 
     // Quiz Management
