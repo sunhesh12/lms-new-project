@@ -15,7 +15,12 @@ use App\Http\Controllers\EventController;
 
 // All the routes related modules
 Route::prefix('modules')->group(function () {
+    Route::get('/', [ModuleController::class, 'index'])->name('modules.index');
     Route::post('/', [ModuleController::class, 'create'])->name('module.create'); //->middleware('auth');
+    
+    // Student Quiz Page (specific route must come before parameterizedmoduleId)
+    Route::get('/quiz', [App\Http\Controllers\QuizController::class, 'page'])->name('modules.quiz');
+
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
         Route::post('/', [ModuleController::class, 'update'])->name('module.update');
@@ -37,8 +42,12 @@ Route::prefix('modules')->group(function () {
         // For creating new assignments for a module
         Route::post("/assignments/create", [AssignmentController::class, 'create'])->name("assignment.create");
 
+        // Enrollments
+        Route::post('/enroll', [ModuleEnrollmentController::class, 'store'])->name('module.enroll');
+        Route::delete('/enroll/{registrationId}', [ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
     });
-});//->middleware('auth');
+});
+//->middleware('auth');
 
 Route::post("/assignments/{assignmentId}/update", [AssignmentController::class, 'update'])->name("assignment.update");
 Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 'delete'])->name("assignment.delete");
@@ -129,6 +138,44 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
     Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
+    Route::get('/api/students/search', function (Request $request) {
+        $query = $request->query('query');
+        return \App\Models\student::with('user')
+            ->whereHas('user', function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->limit(10)
+            ->get();
+    })->name('students.search');
+
+    // Admin Routes
+    Route::middleware(['admin'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/users', [App\Http\Controllers\Admin\AdminDashboardController::class, 'users'])->name('admin.users.index');
+        Route::post('/users/{user}/role', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUserRole'])->name('admin.users.role.update');
+    });
+
+    Route::get('/api/lecturers/search', function (Request $request) {
+        $query = $request->query('query');
+        return \App\Models\lecture::with('user')
+            ->whereHas('user', function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->limit(10)
+            ->get();
+    })->name('lecturers.search');
+
+    Route::post('/modules/{module}/staff', [App\Http\Controllers\ModuleController::class, 'manageStaff'])->name('modules.staff.manage');
+    Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
+
+    // Quiz Management
+    Route::post('/quizzes', [App\Http\Controllers\QuizController::class, 'store'])->name('quizzes.store');
+    Route::post('/quizzes/{id}', [App\Http\Controllers\QuizController::class, 'update'])->name('quizzes.update');
+    Route::delete('/quizzes/{id}', [App\Http\Controllers\QuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::post('/quizzes/{id}/questions', [App\Http\Controllers\QuizController::class, 'syncQuestions'])->name('quizzes.questions.sync');
+    Route::delete('/quizzes/{quizId}/questions/{questionId}', [App\Http\Controllers\QuizController::class, 'deleteQuestion'])->name('quizzes.questions.delete');
 });
 
 
@@ -139,14 +186,11 @@ use App\Http\Controllers\QuizController;
 
 
 
+// Redundant quiz route removed (moved above)
+
+
+
 Route::middleware(['auth'])->group(function () {
-    // Main quiz page route
-    Route::get('/modules/quiz', [QuizController::class, 'page'])->name('modules.quiz');
-});
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
     
     // Get all quizzes
     Route::get('/quizzes', [QuizController::class, 'index']);

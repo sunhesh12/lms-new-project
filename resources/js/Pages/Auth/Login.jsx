@@ -57,8 +57,8 @@ export default function Login({ status, canResetPassword }) {
                             }
                         />
 
-                        <div className="mt-4 block">
-                            <label className="flex items-center">
+                        <div className={styles.rememberMe}>
+                            <label className={styles.rememberMeLabel}>
                                 <Checkbox
                                     name="remember"
                                     checked={data.remember}
@@ -66,7 +66,7 @@ export default function Login({ status, canResetPassword }) {
                                         setData("remember", e.target.checked)
                                     }
                                 />
-                                <span className="ms-2 text-sm text-gray-600">
+                                <span className={styles.rememberMeText}>
                                     Remember me
                                 </span>
                             </label>

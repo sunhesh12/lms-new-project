@@ -9,6 +9,9 @@ class Faculty extends Model
 {
     use HasFactory;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'fac_name',
         'theme',

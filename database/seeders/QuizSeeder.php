@@ -12,6 +12,8 @@ class QuizSeeder extends Seeder
 {
     public function run(): void
     {
+        $moduleId = \App\Models\Module::first()?->id;
+
         // JavaScript Fundamentals Quiz
         $jsQuiz = Quiz::create([
             'title' => 'JavaScript Fundamentals',
@@ -19,6 +21,7 @@ class QuizSeeder extends Seeder
             'duration' => 1800, // 30 minutes
             'passing_score' => 70,
             'is_active' => true,
+            'module_id' => $moduleId,
         ]);
 
         $jsQuestions = [
@@ -91,13 +94,13 @@ class QuizSeeder extends Seeder
             ]);
         }
 
-        // React Basics Quiz
         $reactQuiz = Quiz::create([
             'title' => 'React Basics',
             'description' => 'Evaluate your React knowledge',
             'duration' => 1200, // 20 minutes
             'passing_score' => 70,
             'is_active' => true,
+            'module_id' => \App\Models\Module::skip(1)->first()?->id ?? $moduleId,
         ]);
 
         $reactQuestions = [
@@ -177,6 +180,7 @@ class QuizSeeder extends Seeder
             'duration' => 1500, // 25 minutes
             'passing_score' => 65,
             'is_active' => true,
+            'module_id' => \App\Models\Module::skip(2)->first()?->id ?? $moduleId,
         ]);
 
         $phpQuestions = [

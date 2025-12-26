@@ -117,6 +117,76 @@ public function logout(Request $request)
 
     public function dashboard()
     {
-        return Inertia::render('Dashboard');
+        $user = Auth::user();
+        $notifications = [];
+
+        if ($user->isStudent()) {
+            $student = $user->student;
+            
+            // 1. Fetch upcoming assignments for enrolled modules (next 14 days)
+            $enrolledModuleIds = \App\Models\ModuleEnrollment::where('student_id', $student->id)->pluck('module_id');
+            
+            $upcomingAssignments = \App\Models\Assignment::whereIn('module_id', $enrolledModuleIds)
+                ->where('deadline', '>', now())
+                ->where('deadline', '<', now()->addDays(14))
+                ->with('module')
+                ->get();
+
+            foreach ($upcomingAssignments as $assignment) {
+                $notifications[] = [
+                    'id' => 'assignment_' . $assignment->id,
+                    'topic' => 'Assignment Due',
+                    'message' => "{$assignment->title} is due on {$assignment->deadline->format('M d, H:i')}",
+                    'type' => 'error', // Use error for deadlines
+                    'link' => route('module.show', $assignment->module_id),
+                    'date' => $assignment->deadline,
+                ];
+            }
+
+            // 2. Fetch active quizzes for enrolled modules
+            $upcomingQuizzes = \App\Models\Quiz::whereIn('module_id', $enrolledModuleIds)
+                ->where('is_active', true)
+                ->with('module')
+                ->get();
+
+            foreach ($upcomingQuizzes as $quiz) {
+                $notifications[] = [
+                    'id' => 'quiz_' . $quiz->id,
+                    'topic' => 'Active Quiz',
+                    'message' => "{$quiz->title} is available in {$quiz->module->name}",
+                    'type' => 'success',
+                    'link' => route('modules.quiz', ['initialQuizId' => $quiz->id]),
+                    'date' => $quiz->created_at,
+                ];
+            }
+
+            // 3. Fetch user-specific events
+            $upcomingEvents = $user->events()
+                ->where('date', '>=', now()->toDateString())
+                ->orderBy('date')
+                ->orderBy('start_time')
+                ->limit(5)
+                ->get();
+
+            foreach ($upcomingEvents as $event) {
+                $notifications[] = [
+                    'id' => 'event_' . $event->id,
+                    'topic' => 'Event',
+                    'message' => "{$event->title} on {$event->date->format('M d')} at {$event->start_time->format('H:i')}",
+                    'type' => 'noting',
+                    'link' => '/calendar',
+                    'date' => $event->date,
+                ];
+            }
+        }
+
+        // Sort notifications by date (newest first or closest deadline)
+        usort($notifications, function($a, $b) {
+            return $a['date'] <=> $b['date'];
+        });
+
+        return Inertia::render('Dashboard', [
+            'notifications' => $notifications
+        ]);
     }
 }

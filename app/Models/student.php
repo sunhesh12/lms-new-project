@@ -18,4 +18,11 @@ class student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function enrolledModules()
+    {
+        return $this->belongsToMany(Module::class, 'module_enrollments', 'student_id', 'module_id')
+            ->withPivot('id', 'status')
+            ->withTimestamps();
+    }
 }

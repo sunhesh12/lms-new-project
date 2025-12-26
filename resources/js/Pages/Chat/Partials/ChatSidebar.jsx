@@ -253,7 +253,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
 
                     <div className={style.list}>
                         {searchQuery ? (
-                            <div className="space-y-1">
+                            <div className={style.searchResultsWrapper}>
                                 <div className={style.section}>Search Results</div>
                                 {isSearching ? (
                                     <div className={style.emptyText}>Searching...</div>
@@ -267,7 +267,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                                             >
                                                 <div className={style.convAvatar}>
                                                     {user.avatar_url ? (
-                                                        <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-[14px] object-cover" />
+                                                        <img src={user.avatar_url} alt={user.name} className={style.img_full_rounded} />
                                                     ) : (
                                                         user.name.charAt(0).toUpperCase()
                                                     )}
@@ -328,7 +328,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                                 >
                                     <div className={style.convAvatar}>
                                         {user.avatar_url ? (
-                                            <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-[14px] object-cover" />
+                                            <img src={user.avatar_url} alt={user.name} className={style.img_full_rounded} />
                                         ) : (
                                             user.name.charAt(0).toUpperCase()
                                         )}
@@ -355,7 +355,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                         <div className={style.contactPopupCard} onClick={e => e.stopPropagation()}>
                             <div className={style.popupAvatar}>
                                 {popupContact?.avatar_url ? (
-                                    <img src={popupContact.avatar_url} alt={popupContact.name} className="w-full h-full rounded-[1.75rem] object-cover" />
+                                    <img src={popupContact.avatar_url} alt={popupContact.name} className={style.popupAvatarImg} />
                                 ) : (
                                     popupContact?.name?.charAt(0).toUpperCase()
                                 )}

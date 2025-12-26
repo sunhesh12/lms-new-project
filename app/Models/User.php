@@ -23,6 +23,8 @@ class User extends Authenticatable
         'profile_pic',
         'user_dob',
         'status',
+        'faculty_id',
+        'course_id',
     ];
 
     protected $hidden = [
@@ -81,4 +83,27 @@ class User extends Authenticatable
         return $this->hasMany(quiz_attempt::class);
     }
 
+    // Role checks
+    public function isAdmin()
+    {
+        return $this->system_admin()->exists();
+    }
+
+    public function isLecturer()
+    {
+        return $this->lecture()->exists();
+    }
+
+    public function isStudent()
+    {
+        return $this->student()->exists();
+    }
+
+    public function getRoleAttribute()
+    {
+        if ($this->isAdmin()) return 'admin';
+        if ($this->isLecturer()) return 'lecturer';
+        if ($this->isStudent()) return 'student';
+        return 'user';
+    }
 }

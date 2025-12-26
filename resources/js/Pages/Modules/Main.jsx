@@ -9,9 +9,12 @@ import TopicForm from "@/components/Forms/TopicForm";
 import FloatingWindowContainer from "@/Dialog/FloatingWindowContainer";
 import AssignmentForm from "@/components/Forms/AssignmentForm";
 import Enrollments from "@/components/Enrollments";
-import { useForm } from "@inertiajs/react";
+import ModuleStaff from "@/components/Module/ModuleStaff";
+import { useForm, usePage } from "@inertiajs/react";
 import EditModule from "@/components/Forms/EditModule";
 import TabLayout from "@/components/Layouts/TabLayout";
+import QuizForm from "@/components/Forms/QuizForm";
+import { router } from "@inertiajs/react";
 import {
     faBook,
     faClock,
@@ -19,11 +22,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ModuleMain({ module }) {
+    const { auth } = usePage().props;
+    const userRole = auth.user?.role;
+    const userId = auth.user?.id;
+
+    // Check if user is staff for this module (Admin or assigned Lecturer)
+    const isModuleStaff = userRole === 'admin' || (userRole === 'lecturer' && module.lecturers.some(l => l.user_id === userId));
+
     // Saving the visibility of each floating window
     const [assignmentFormVisible, setAssignmentFormVisible] = useState(false);
     const [topicFormVisible, setTopicFormVisible] = useState(false);
     const [moduleEditFormVisible, setModuleEditFormVisible] = useState(false);
     const [enrollmentFormVisible, setEnrollFormVisible] = useState(false);
+    const [staffFormVisible, setStaffFormVisible] = useState(false);
+    const [quizFormVisible, setQuizFormVisible] = useState(false);
+
+    // Selected items for forms
+    const [selectedAssignment, setSelectedAssignment] = useState(null);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
 
     // Setting whether a topic update is performed
     const topicId = useRef(null);
@@ -97,8 +113,59 @@ export default function ModuleMain({ module }) {
     );
 
     const AssignmentsView = () => (
-        <div></div>
-    )
+        <article className={styles.topicsContainer}>
+            {module.assignments.length > 0 ? (
+                module.assignments.map((assignment) => (
+                    <Topic
+                        key={assignment.id}
+                        topicName={assignment.title}
+                        description={assignment.description}
+                        resources={assignment.resources || []}
+                        formToggle={isModuleStaff ? () => {
+                            // Staff logic for editing assignment
+                            setSelectedAssignment(assignment);
+                            setAssignmentFormVisible(true);
+                        } : () => {
+                            // Student logic for submitting
+                            setSelectedAssignment(assignment);
+                            setAssignmentFormVisible(true);
+                        }}
+                        isStudent={!isModuleStaff}
+                        buttonText={isModuleStaff ? "Edit Assignment" : "Submit Assignment"}
+                    />
+                ))
+            ) : (
+                <p>No assignments available.</p>
+            )}
+        </article>
+    );
+
+    const QuizzesView = () => (
+        <article className={styles.topicsContainer}>
+            {module.quizzes.length > 0 ? (
+                module.quizzes.map((quiz) => (
+                    <Topic
+                        key={quiz.id}
+                        topicName={quiz.title}
+                        description={quiz.description}
+                        resources={[]} // Quizzes might not have direct resources here
+                        formToggle={isModuleStaff ? () => {
+                            // Staff logic for editing quiz
+                            setSelectedQuiz(quiz);
+                            setQuizFormVisible(true);
+                        } : () => {
+                            // Student logic for starting quiz
+                            router.get(route('modules.quiz', { quiz_id: quiz.id }));
+                        }}
+                        isStudent={!isModuleStaff}
+                        buttonText={isModuleStaff ? "Edit Quiz" : "Start Quiz"}
+                    />
+                ))
+            ) : (
+                <p>No quizzes available.</p>
+            )}
+        </article>
+    );
 
     return (
         <AuthenticatedLayout>
@@ -131,9 +198,14 @@ export default function ModuleMain({ module }) {
                 <FloatingWindowContainer
                     closeAction={() => {
                         setAssignmentFormVisible(false);
+                        setSelectedAssignment(null);
                     }}
                 >
-                    <AssignmentForm />
+                    <AssignmentForm
+                        assignment={selectedAssignment}
+                        isModuleStaff={isModuleStaff}
+                        moduleId={module.id}
+                    />
                 </FloatingWindowContainer>
             )}
 
@@ -161,6 +233,30 @@ export default function ModuleMain({ module }) {
                 </FloatingWindowContainer>
             )}
 
+            {staffFormVisible && (
+                <FloatingWindowContainer
+                    closeAction={() => {
+                        setStaffFormVisible(false);
+                    }}
+                >
+                    <ModuleStaff module={module} />
+                </FloatingWindowContainer>
+            )}
+
+            {quizFormVisible && (
+                <FloatingWindowContainer
+                    closeAction={() => {
+                        setQuizFormVisible(false);
+                        setSelectedQuiz(null);
+                    }}
+                >
+                    <QuizForm
+                        quiz={selectedQuiz}
+                        moduleId={module.id}
+                    />
+                </FloatingWindowContainer>
+            )}
+
             <ModuleHeader
                 moduleName={`${module.name}`}
                 subTitle={module.description}
@@ -168,11 +264,18 @@ export default function ModuleMain({ module }) {
             />
             <div id="module-content" className={styles.moduleContent}>
                 <ModuleToolbar
+                    isModuleStaff={isModuleStaff}
                     onTopicCreate={() => {
                         setTopicFormVisible(true);
                     }}
                     onAssignmentCreate={() => {
                         setAssignmentFormVisible(true);
+                    }}
+                    onQuizCreate={() => {
+                        setQuizFormVisible(true);
+                    }}
+                    onManageStaff={() => {
+                        setStaffFormVisible(true);
                     }}
                     onEnrollments={() => {
                         setEnrollFormVisible(true);
@@ -189,12 +292,12 @@ export default function ModuleMain({ module }) {
                     {
                         name: "Assignments",
                         icon: faClock,
-                        view: <TopicsView />,
+                        view: <AssignmentsView />,
                     },
                     {
-                        name: "Quizes",
+                        name: "Quizzes",
                         icon: faQuestionCircle,
-                        view: <TopicsView />,
+                        view: <QuizzesView />,
                     },
                 ]}
             />

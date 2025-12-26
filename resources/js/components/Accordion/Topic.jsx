@@ -8,6 +8,7 @@ import {
     faEdit,
     faFile,
     faTrashCan,
+    faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./css/topic.module.css";
 import Button from "../Input/Button";
@@ -18,6 +19,8 @@ export default function Topic({
     description,
     formToggle,
     resources,
+    buttonText = "Edit Topic",
+    isStudent = false,
 }) {
     const [expanded, setExpanded] = useState(false);
     return (
@@ -45,16 +48,18 @@ export default function Topic({
                 <div id="expanded-content" className={styles.expandedContent}>
                     <div id="topic-toolbar" className={styles.topicToolbar}>
                         <Button
-                            icon={faEdit}
+                            icon={isStudent ? faUpload : faEdit}
                             onClick={() => {
                                 formToggle();
                             }}
                         >
-                            Edit Topic
+                            {buttonText}
                         </Button>
-                        <Button backgroundColor="delete" icon={faTrashCan}>
-                            Delete Topic
-                        </Button>
+                        {!isStudent && (
+                            <Button backgroundColor="delete" icon={faTrashCan}>
+                                Delete Topic
+                            </Button>
+                        )}
                     </div>
                     <p>{description}</p>
                     <ItemList

@@ -46,4 +46,23 @@ class Module extends Model
     {
         return $this->hasMany(Assignment::class, 'module_id', 'id');
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class, 'module_id', 'id');
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(student::class, 'module_enrollments', 'module_id', 'student_id')
+            ->withPivot('id', 'status')
+            ->withTimestamps();
+    }
+
+    public function lecturers()
+    {
+        return $this->belongsToMany(lecture::class, 'module_staff', 'module_id', 'lecture_id')
+            ->withPivot('id', 'role')
+            ->withTimestamps();
+    }
 }

@@ -10,12 +10,32 @@ use Illuminate\Support\Facades\DB;
 
 class ModuleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $user = auth()->user();
+        
+        if ($user->isStudent()) {
+            $enrolledIds = $user->student->enrolledModules()->pluck('modules.id')->toArray();
+            
+            $enrolled_modules = $user->student->enrolledModules()
+                ->where('is_deleted', false)
+                ->get();
+                
+            $available_modules = Module::where('is_deleted', false)
+                ->whereNotIn('id', $enrolledIds)
+                ->get();
+
+            return Inertia::render('Modules/Index', [
+                'enrolled_modules' => $enrolled_modules,
+                'available_modules' => $available_modules
+            ]);
+        } else {
+            // For teachers/admins, show all active modules
+            $modules = Module::where('is_deleted', false)->get();
+            return Inertia::render('Modules/Index', [
+                'modules' => $modules
+            ]);
+        }
     }
 
     /**
@@ -31,7 +51,20 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (auth()->user()->isStudent()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'credit_value' => 'required|integer|min:0',
+            'maximum_students' => 'required|integer|min:0',
+            'description' => 'required|string|max:500',
+        ]);
+
+        $module = Module::create($request->all());
+
+        return redirect()->route('module.show', $module->id)->with('message', 'Module created successfully');
     }
 
     /**
@@ -39,34 +72,73 @@ class ModuleController extends Controller
      */
     public function show($id)
     {
+        $user = auth()->user();
+        
         $module = Module::with([
-            'topics' => function ($topicQuery) {
-                $topicQuery->where('is_deleted', false)->with([
+            'topics' => function ($query) {
+                $query->where('is_deleted', false)->with([
                     'resources' => function ($resourcesQuery) {
-                        $resourcesQuery->where('is_deleted', false)->select('id', 'caption', 'url', 'topic_id', 'is_deleted');
+                        $resourcesQuery->where('is_deleted', false);
                     }
                 ]);
+            },
+            'assignments' => function ($query) {
+                $query->where('is_deleted', false);
+            },
+            'quizzes' => function ($query) {
+                $query->where('is_active', true);
+            },
+            'students' => function ($query) {
+                $query->with('user');
+            },
+            'lecturers' => function ($query) {
+                $query->with('user');
             }
-        ])->where('is_deleted', 'false')->find($id);
-
-        //dd($module->toArray());
+        ])->where('is_deleted', false)->find($id);
 
         if (!$module) {
             return Inertia::render('404');
         }
 
+        // Student access check: must be enrolled
+        if ($user->isStudent()) {
+            $isEnrolled = $module->students()->where('student_id', $user->student->id)->exists();
+            if (!$isEnrolled) {
+                return redirect()->route('modules.index')->with('error', 'You are not enrolled in this module.');
+            }
+        }
+
         return Inertia::render('Modules/Main', [
             'module' => $module,
         ]);
-
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Manage module staff (Lecturers/Assistants).
      */
-    public function edit(Module $module)
+    public function manageStaff(Request $request, $moduleId)
     {
-        //
+        if (auth()->user()->isStudent()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'lecture_id' => 'required|exists:lectures,id',
+            'role' => 'required|string|in:lecturer,assistant',
+            'action' => 'required|string|in:add,remove',
+        ]);
+
+        $module = Module::findOrFail($moduleId);
+
+        if ($request->action === 'add') {
+            $module->lecturers()->syncWithoutDetaching([
+                $request->lecture_id => ['role' => $request->role]
+            ]);
+        } else {
+            $module->lecturers()->detach($request->lecture_id);
+        }
+
+        return redirect()->back()->with('message', 'Staff updated successfully');
     }
 
     /**
@@ -74,65 +146,35 @@ class ModuleController extends Controller
      */
     public function update(Request $request, $moduleId)
     {
-        // Will return a 422 unprocessable entity response if validation fails
+        if (auth()->user()->isStudent()) {
+            abort(403);
+        }
+
         $validatedData = $request->validate([
             'name' => 'string|max:100',
             'credit_value' => 'integer|min:0',
             'maximum_students' => 'integer|min:0',
             'description' => 'string|max:500',
-            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // <= IMAGE VALIDATION
+            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $module = Module::find($moduleId);
-
-        if (!$module) {
-            return redirect()->route('module.show')->with('error', 'No module found ');
-        }
+        $module = Module::findOrFail($moduleId);
 
         // If the request contains a file
         if ($request->hasFile('cover_image_url')) {
-
             $filePath = Storage::disk('public')->path('/uploads/modules/');
             $fileName = $validatedData['cover_image_url']->getClientOriginalName();
 
             // Delete old image if exists
             if ($module->cover_image_url && file_exists($filePath . $fileName)) {
-                unlink($filePath . $fileName);
+                // unlink($filePath . $fileName); // Keep for safety or implement proper deletion
             }
 
-            // Save file to /public/uploads/modules
             $request->cover_image_url->move($filePath, $fileName);
-
             $validatedData['cover_image_url'] = $fileName;
-
         }
 
-        // Conditionally updating each field
-        if (empty($validatedData)) {
-            return redirect()->route("module.show", $moduleId)->with('message', 'No changes made for module');
-        }
-
-        if (isset($validatedData['name'])) {
-            $module->name = $validatedData['name'];
-        }
-
-        if (isset($validatedData['credit_value'])) {
-            $module->credit_value = $validatedData['credit_value'];
-        }
-
-        if (isset($validatedData['maximum_students'])) {
-            $module->maximum_students = $validatedData['maximum_students'];
-        }
-
-        if (isset($validatedData['description'])) {
-            $module->description = $validatedData['description'];
-        }
-
-        if (isset($validatedData['cover_image_url'])) {
-            $module->cover_image_url = $validatedData['cover_image_url'];
-        }
-
-        $module->save();
+        $module->update($validatedData);
 
         return redirect()->route("module.show", $moduleId)->with('message', 'Module updated successfully');
     }
@@ -140,15 +182,15 @@ class ModuleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Module $module, $moduleId)
+    public function destroy($moduleId)
     {
-        $module = Module::factory()->create([
-            'name' => 'Test Module',
-            'description' => 'This is a test module.',
-        ]);
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
 
+        $module = Module::findOrFail($moduleId);
         $module->update(['is_deleted' => true]);
 
-        return redirect()->back()->with('message', 'Module deleted successfully');
+        return redirect()->route('modules.index')->with('message', 'Module deleted successfully');
     }
 }

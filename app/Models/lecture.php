@@ -19,4 +19,11 @@ class lecture extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function modules()
+    {
+        return $this->belongsToMany(Module::class, 'module_staff', 'lecture_id', 'module_id')
+            ->withPivot('id', 'role')
+            ->withTimestamps();
+    }
 }

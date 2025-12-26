@@ -1,4 +1,4 @@
-.loginPage{
+.loginPage {
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -7,23 +7,25 @@
     background-color: var(--white);
 }
 
-.loginFormContainer{
-    height:auto;
+.loginFormContainer {
+    height: auto;
     background-color: var(--whiteop);
     display: flex;
     flex-direction: column;
-    border-radius: 10px;;
+    border-radius: 10px;
+    ;
     align-items: center;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    ;
     padding: 40px 40px;
-    gap:10px;
+    gap: 10px;
     width: 50%;
 }
 
 .loginForm {
     display: flex;
     flex-direction: column;
-    gap:20px;
+    gap: 20px;
     border-radius: 10px;
     width: 60%;
 }
@@ -54,3 +56,27 @@
     border-color: #ff3b3b !important;
 }
 
+.rememberMe {
+    margin-top: 1rem;
+    display: block;
+}
+
+.rememberMeLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.rememberMeText {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.wFull {
+    width: 100%;
+}
+
+.signUpBtnWrapper {
+    margin-top: 1rem;
+}

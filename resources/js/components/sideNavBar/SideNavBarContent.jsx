@@ -1,13 +1,25 @@
 // src/components/sideNavBar/SideNavBarContent.jsx
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { Home, BookOpen, FileText, Users, MessageSquare, Calendar } from "lucide-react";
+import { usePage } from "@inertiajs/react";
+import { Home, BookOpen, FileText, Users, MessageSquare, Calendar, ShieldCheck } from "lucide-react";
 import style from "@/css/dashboard.module.css";
 
 export default function SideNavBarContent({ isOpen }) {
+  const { auth } = usePage().props;
+  const isAdmin = auth.user?.role === 'admin';
+
   return (
     <nav className={style["sideNavBar-body"]}>
       <ul>
+        {isAdmin && (
+          <li>
+            <Link href={route('admin.dashboard')} className="text-blue-600 font-bold bg-blue-50/50">
+              <ShieldCheck size={20} />
+              {!isOpen && <span>Admin Panel</span>}
+            </Link>
+          </li>
+        )}
         <li>
           <Link href="/dashboard">
             <Home size={20} />
@@ -15,7 +27,7 @@ export default function SideNavBarContent({ isOpen }) {
           </Link>
         </li>
         <li>
-          <Link href="/module">
+          <Link href="/modules">
             <BookOpen size={20} />
             {!isOpen && <span>Courses</span>}
           </Link>

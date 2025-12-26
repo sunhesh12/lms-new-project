@@ -13,6 +13,7 @@ class Question extends Model
     protected $fillable = [
         'quiz_id',
         'question',
+        'image_url',
         'options',
         'correct_answer',
         'points',

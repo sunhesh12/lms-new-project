@@ -8,29 +8,19 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-
         $this->call([
             FacultySeeder::class,
             CourseSeeder::class,
             UsersTableSeeder::class,
             StudentsTableSeeder::class,
             LecturersTableSeeder::class,
+            AdminUserSeeder::class,      // Added AdminUserSeeder
             ModuleSeeder::class,
             TopicSeeder::class,
             ResourceSeeder::class,
             ChatSeeder::class,
             EventSeeder::class,
             QuizSeeder::class,
-            // CourseSeeder::class,
-            // PortalUserSeeder::class,
-            // ModuleSeeder::class,
-            // TopicSeeder::class,
-            // LectureMaterialSeeder::class,
         ]);
-
-        // $this->call(QuizSeeder::class);
-        // $this->call(QuestionSeeder::class);
-        // $this->call(AnswerSeeder::class);
-        // $this->call(QuizSubmissionSeeder::class);
     }
 }

@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Optional: Set alias for easier use in routes
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
