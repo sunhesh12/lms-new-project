@@ -4,7 +4,7 @@ import styles from "@/css/dashboard.module.css";
 import Notification from "@/components/notification";
 import DashboardCart from "@/components/DashboardCart";
 
-export default function Dashboard() {
+export default function Dashboard({ notifications = [] }) {
     const User = usePage().props.auth.user;
 
     // Format the user's name nicely (e.g., J. D. SMITH)
@@ -31,36 +31,31 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                <h2 className={styles["dashboard-header"]}>
                     Dashboard
                 </h2>
             }
         >
             <Head title="Dashboard" />
-            <div className="p-8 text-gray-800">
-                <h1 className="text-3xl font-bold">
+            <div className={styles["dashboard-main"]}>
+                <h1 className={styles["dashboard-greeting"]}>
                     {getGreeting()} <span>{formatName(User?.name)}</span>.
                 </h1>
-                {/* <p className="mt-4 text-lg text-gray-600">
-                    Welcome to your dashboard! Here you can manage your account and view your recent activities.
-                </p> */}
-                <div className={styles["dashboard-notifications-container"]}>
-                    <Notification
-                        message={"This is a success notification!"}
-                        Link={"#"}
-                        type={"success"}
-                    ></Notification>
-                    <Notification
-                        message={"This is a error notification!"}
-                        Link={"#"}
-                        type={"error"}
-                    ></Notification>
 
-                    <Notification
-                        message={"This is a error notification!"}
-                        Link={"#"}
-                        type={"noting"}
-                    ></Notification>
+                <div className={styles["dashboard-notifications-container"]}>
+                    {notifications.length > 0 ? (
+                        notifications.map((notif) => (
+                            <Notification
+                                key={notif.id}
+                                topic={notif.topic}
+                                message={notif.message}
+                                type={notif.type}
+                                Link={notif.link}
+                            />
+                        ))
+                    ) : (
+                        <p className={styles.noNotifications}>No new notifications.</p>
+                    )}
                 </div>
                 <div>
                     <br></br>

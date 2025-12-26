@@ -12,15 +12,10 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $courses = Course::with('faculty')->get();
+        return \Inertia\Inertia::render('Course', [
+            'courses' => $courses
+        ]);
     }
 
     /**
@@ -28,38 +23,29 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'faculty_id' => 'required|exists:faculties,id',
+        ]);
+
+        Course::create($validated);
+
+        return redirect()->back()->with('message', 'Course created successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Course $course)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Course $course)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Course $course)
-    {
-        //
+        $course = Course::with(['faculty', 'modules'])->findOrFail($id);
+        return \Inertia\Inertia::render('Course/Show', [
+            'course' => $course
+        ]);
     }
 }

@@ -2,7 +2,6 @@
 .dashboard-container1 {
   display: flex;
   height: 100vh;
-  background-color: red;
 }
 
 .Project-main-container {
@@ -65,6 +64,30 @@
   text-decoration: none;
 }
 
+.sideNavBar-body ul li a.active {
+  background-color: #f3f4f6;
+  color: var(--primary);
+  border-right: 3px solid var(--primary);
+}
+
+.adminLink {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+  font-weight: 700 !important;
+}
+
+.adminLink:hover {
+  background-color: #dbeafe !important;
+}
+
+.subLink {
+  opacity: 0.8;
+}
+
+.subLink:hover {
+  opacity: 1;
+}
+
 .sideNavBar-body li:hover {
   background-color: var(--white);
 }
@@ -82,10 +105,20 @@
 }
 
 .dashboard-notifications-container {
+  height: 100%;
   /* position: fixed; */
   top: 20px;
   right: 20px;
   z-index: 1000;
+}
+
+.noNotifications {
+  color: #6b7280;
+  font-style: italic;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  text-align: center;
 }
 
 .dashboard-continue-journey-container {
@@ -172,6 +205,30 @@
   font-size: 13px;
   color: #666;
   margin-top: 5px;
+}
+
+.dashboard-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1f2937;
+}
+
+.dashboard-main {
+  padding: 2rem;
+  color: #1f2937;
+}
+
+.dashboard-greeting {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
 }
 
 /* 📱 Responsive: stack cards vertically on small screens */

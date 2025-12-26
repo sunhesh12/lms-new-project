@@ -39,7 +39,7 @@ export default function Register() {
                             error={errors.name}
                             value={data.name}
                             placeholder="Enter your Name"
-                            className="mt-1 block w-full"
+                            className={styles.wFull}
                             onChange={(e) => setData("name", e.target.value)}
                         />
 
@@ -51,7 +51,7 @@ export default function Register() {
                             error={errors.email}
                             value={data.email}
                             placeholder="Enter your Email"
-                            className="mt-1 block w-full"
+                            className={styles.wFull}
                             onChange={(e) => setData("email", e.target.value)}
                         />
 
@@ -63,7 +63,7 @@ export default function Register() {
                             error={errors.password}
                             value={data.password}
                             placeholder="Enter your Password"
-                            className="mt-1 block w-full"
+                            className={styles.wFull}
                             onChange={(e) =>
                                 setData("password", e.target.value)
                             }
@@ -77,14 +77,14 @@ export default function Register() {
                             error={errors.password_confirmation}
                             value={data.password_confirmation}
                             placeholder="Confirm your Password"
-                            className="mt-1 block w-full"
+                            className={styles.wFull}
                             onChange={(e) =>
                                 setData("password_confirmation", e.target.value)
                             }
                         />
 
-                        <div className="mt-4 block">
-                            <label className="flex items-center">
+                        <div className={styles.rememberMe}>
+                            <label className={styles.rememberMeLabel}>
                                 <Checkbox
                                     name="remember"
                                     checked={data.remember}
@@ -92,13 +92,13 @@ export default function Register() {
                                         setData("remember", e.target.checked)
                                     }
                                 />
-                                <span className="ms-2 text-sm text-gray-600">
+                                <span className={styles.rememberMeText}>
                                     Remember me
                                 </span>
                             </label>
                         </div>
 
-                        <div className="mt-4">
+                        <div className={styles.signUpBtnWrapper}>
                             <Button disabled={processing}>Sign Up</Button>
                         </div>
 

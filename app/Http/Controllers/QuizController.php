@@ -1,11 +1,8 @@
 <?php
 
-// app/Http/Controllers/QuizController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
-use App\Models\quiz_attempt;
 use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,17 +12,17 @@ use Inertia\Inertia;
 class QuizController extends Controller
 {
     /**
-     * Display the quiz page
-     * Route: GET /modules/quiz
+     * Display the quiz page (Student)
      */
-    public function page()
+    public function page(Request $request)
     {
-        return Inertia::render('Modules/quiz');
+        return Inertia::render('Modules/quiz', [
+            'initialQuizId' => $request->query('quiz_id')
+        ]);
     }
 
     /**
-     * Get all active quizzes (API)
-     * Route: GET /api/quizzes
+     * Get all active quizzes (API - Student)
      */
     public function index()
     {
@@ -47,8 +44,7 @@ class QuizController extends Controller
     }
 
     /**
-     * Get a specific quiz with questions (API)
-     * Route: GET /api/quizzes/{id}
+     * Get a specific quiz with questions (API - Student)
      */
     public function show($id)
     {
@@ -61,23 +57,46 @@ class QuizController extends Controller
                 ], 404);
             }
 
-            // Hide correct answers
+            // Hide correct answers but include images
             $questions = $quiz->questions->map(function ($question) {
                 return [
                     'id' => $question->id,
                     'question' => $question->question,
+                    'image_url' => $question->image_url ? asset($question->image_url) : null,
                     'options' => $question->options,
                     'points' => $question->points,
+                    'order' => $question->order,
                 ];
             });
 
+            // Check attempts for students
+            $userAttempts = 0;
+            $canAttempt = true;
+            if (auth()->user()->isStudent()) {
+                $userAttempts = QuizAttempt::where('quiz_id', $quiz->id)
+                    ->where('user_id', auth()->id())
+                    ->count();
+                
+                if (!$quiz->allow_multiple_attempts && $userAttempts >= 1) {
+                    $canAttempt = false;
+                } elseif ($quiz->allow_multiple_attempts && $quiz->max_attempts > 0 && $userAttempts >= $quiz->max_attempts) {
+                    $canAttempt = false;
+                }
+            }
+
             return response()->json([
-                'id' => $quiz->id,
-                'title' => $quiz->title,
-                'description' => $quiz->description,
-                'duration' => $quiz->duration,
-                'passing_score' => $quiz->passing_score,
-                'questions' => $questions,
+                'quiz' => [
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                    'description' => $quiz->description,
+                    'duration' => $quiz->duration,
+                    'passing_score' => $quiz->passing_score,
+                    'allow_multiple_attempts' => $quiz->allow_multiple_attempts,
+                    'max_attempts' => $quiz->max_attempts,
+                    'user_attempts' => $userAttempts,
+                    'can_attempt' => $canAttempt,
+                ],
+                'questions' => $questions
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -87,8 +106,7 @@ class QuizController extends Controller
     }
 
     /**
-     * Submit quiz attempt (API)
-     * Route: POST /api/quizzes/{id}/submit
+     * Submit quiz attempt (API - Student)
      */
     public function submit(Request $request, $id)
     {
@@ -128,17 +146,17 @@ class QuizController extends Controller
 
             $percentage = ($totalPoints > 0) ? ($earnedPoints / $totalPoints) * 100 : 0;
             $passed = $percentage >= $quiz->passing_score;
-            $timeTaken = \Carbon\Carbon::parse($completedAt)->diffInSeconds($startedAt);
+            $timeTaken = now()->diffInSeconds(\Carbon\Carbon::parse($startedAt));
 
             // Save attempt
-            $attempt = quiz_attempt::create([
+            $attempt = QuizAttempt::create([
                 'quiz_id' => $quiz->id,
                 'user_id' => Auth::id(),
                 'answers' => $answers,
                 'score' => $earnedPoints,
-                'percentage' => $percentage,
+                'percentage' => round($percentage, 2),
                 'passed' => $passed,
-                'started_at' => $startedAt,
+                'started_at' => \Carbon\Carbon::parse($startedAt),
                 'completed_at' => $completedAt,
                 'time_taken' => $timeTaken,
             ]);
@@ -163,19 +181,15 @@ class QuizController extends Controller
     }
 
     /**
-     * Get quiz results with correct answers (API)
-     * Route: GET /api/quiz-attempts/{attemptId}/results
+     * Get quiz results with correct answers (API - Student)
      */
     public function results($attemptId)
     {
         try {
-            $attempt = quiz_attempt::with(['quiz.questions'])->findOrFail($attemptId);
+            $attempt = QuizAttempt::with(['quiz.questions'])->findOrFail($attemptId);
 
-            // Check if user owns this attempt
             if ($attempt->user_id !== Auth::id()) {
-                return response()->json([
-                    'error' => 'Unauthorized access'
-                ], 403);
+                return response()->json(['error' => 'Unauthorized access'], 403);
             }
 
             $results = $attempt->quiz->questions->map(function ($question) use ($attempt) {
@@ -185,6 +199,7 @@ class QuizController extends Controller
                 return [
                     'question_id' => $question->id,
                     'question' => $question->question,
+                    'image_url' => $question->image_url ? asset($question->image_url) : null,
                     'options' => $question->options,
                     'user_answer' => $userAnswer,
                     'correct_answer' => $question->correct_answer,
@@ -206,20 +221,17 @@ class QuizController extends Controller
                 'results' => $results,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Results not found'
-            ], 404);
+            return response()->json(['error' => 'Results not found'], 404);
         }
     }
 
     /**
-     * Get user's quiz history (API)
-     * Route: GET /api/quiz-history
+     * Get user's quiz history (API - Student)
      */
     public function history()
     {
         try {
-            $attempts = quiz_attempt::with('quiz')
+            $attempts = QuizAttempt::with('quiz')
                 ->where('user_id', Auth::id())
                 ->orderBy('completed_at', 'desc')
                 ->get()
@@ -242,10 +254,127 @@ class QuizController extends Controller
                 'total_attempts' => $attempts->count(),
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch quiz history',
-                'message' => $e->getMessage()
-            ], 500);
+            return response()->json(['error' => 'Failed to fetch history'], 500);
         }
+    }
+
+    /**
+     * Store a new quiz (Staff)
+     */
+    public function store(Request $request)
+    {
+        if (auth()->user()->isStudent()) abort(403);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'required|integer|min:0',
+            'passing_score' => 'required|integer|min:0|max:100',
+            'module_id' => 'required|exists:modules,id',
+            'allow_multiple_attempts' => 'boolean',
+            'max_attempts' => 'integer|min:0',
+        ]);
+
+        Quiz::create($request->all());
+        return redirect()->back()->with('message', 'Quiz created successfully');
+    }
+
+    /**
+     * Update a quiz (Staff)
+     */
+    public function update(Request $request, $id)
+    {
+        if (auth()->user()->isStudent()) abort(403);
+
+        $request->validate([
+            'title' => 'string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'integer|min:0',
+            'passing_score' => 'integer|min:0|max:100',
+            'allow_multiple_attempts' => 'boolean',
+            'max_attempts' => 'integer|min:0',
+        ]);
+
+        $quiz = Quiz::findOrFail($id);
+        $quiz->update($request->all());
+        return redirect()->back()->with('message', 'Quiz updated successfully');
+    }
+
+    /**
+     * Delete a quiz (Staff)
+     */
+    public function destroy($id)
+    {
+        if (auth()->user()->isStudent()) abort(403);
+
+        $quiz = Quiz::findOrFail($id);
+        $quiz->delete();
+        return redirect()->back()->with('message', 'Quiz deleted successfully');
+    }
+
+    /**
+     * Add or update questions (Staff)
+     */
+    public function syncQuestions(Request $request, $quizId)
+    {
+        if (auth()->user()->isStudent()) abort(403);
+
+        $quiz = Quiz::findOrFail($quizId);
+
+        $request->validate([
+            'questions' => 'required|array',
+            'questions.*.id' => 'nullable',
+            'questions.*.question' => 'required|string',
+            'questions.*.options' => 'required|array|min:2',
+            'questions.*.correct_answer' => 'required|integer',
+            'questions.*.points' => 'required|integer|min:1',
+            'questions.*.image' => 'nullable|image|max:2048',
+        ]);
+
+        foreach ($request->questions as $index => $qData) {
+            $imagePath = null;
+            if ($request->hasFile("questions.$index.image")) {
+                $file = $request->file("questions.$index.image");
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('storage/uploads/quizzes/'), $fileName);
+                $imagePath = 'storage/uploads/quizzes/' . $fileName;
+            }
+
+            if (!empty($qData['id'])) {
+                $question = $quiz->questions()->find($qData['id']);
+                if ($question) {
+                    $updateData = [
+                        'question' => $qData['question'],
+                        'options' => $qData['options'],
+                        'correct_answer' => $qData['correct_answer'],
+                        'points' => $qData['points'],
+                        'order' => $index,
+                    ];
+                    if ($imagePath) $updateData['image_url'] = $imagePath;
+                    $question->update($updateData);
+                }
+            } else {
+                $quiz->questions()->create([
+                    'question' => $qData['question'],
+                    'options' => $qData['options'],
+                    'correct_answer' => $qData['correct_answer'],
+                    'points' => $qData['points'],
+                    'order' => $index,
+                    'image_url' => $imagePath,
+                ]);
+            }
+        }
+        return redirect()->back()->with('message', 'Questions synced successfully');
+    }
+
+    /**
+     * Delete a question (Staff)
+     */
+    public function deleteQuestion($quizId, $questionId)
+    {
+        if (auth()->user()->isStudent()) abort(403);
+        $question = \App\Models\Question::where('quiz_id', $quizId)->findOrFail($questionId);
+        $question->delete();
+        return redirect()->back()->with('message', 'Question deleted successfully');
     }
 }

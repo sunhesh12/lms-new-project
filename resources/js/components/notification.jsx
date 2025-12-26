@@ -3,13 +3,14 @@ import styles from "@/css/notification.module.css";
 
 export default function Notification({ topic, message, type, Link }) {
     // Determine extra class based on the type
-    const notificationClass = `${styles["dashboard-notification"]} ${
-        type === "success"
+    const notificationClass = `${styles["dashboard-notification"]} ${type === "success"
             ? styles["dashboard-notification-success"]
             : type === "error"
-            ? styles["dashboard-notification-fail"]
-            : ""
-    }`;
+                ? styles["dashboard-notification-fail"]
+                : type === "noting"
+                    ? styles["dashboard-notification-noting"]
+                    : ""
+        }`;
 
     return (
         <div className={notificationClass}>
@@ -24,14 +25,14 @@ export default function Notification({ topic, message, type, Link }) {
                     />
                 </div>
                 <div>
-                    <h1>{topic} hello</h1>
+                    <h1>{topic}</h1>
                     <p>{message}</p>
                 </div>
             </div>
             <div>
                 {Link && (
                     <a href={Link} className={styles["notification-link"]}>
-                        Click here
+                        View Details
                     </a>
                 )}
             </div>

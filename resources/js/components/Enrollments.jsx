@@ -1,203 +1,93 @@
+import { useState } from "react";
 import styles from "@/css/components/enrollments.module.css";
 import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Table from "@/components/Tables/Table";
 import Button from "@/components/Input/Button";
 
-export default function Enrollments() {
-    const handleEdit = (topic) => {
-        // Edit logic
+import { router } from "@inertiajs/react";
+import axios from "axios";
+
+export default function Enrollments({ module }) {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+
+    const handleSearch = async (query) => {
+        setSearchQuery(query);
+        if (query.length < 2) {
+            setSearchResults([]);
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            const response = await axios.get(route('students.search', { query }));
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error("Search failed", error);
+        } finally {
+            setIsSearching(false);
+        }
     };
 
-    const handleDelete = (topic) => {
-        // Delete logic
+    const handleEnroll = (studentId) => {
+        router.post(route('module.enroll', { moduleId: module.id }), {
+            student_id: studentId
+        }, {
+            onSuccess: () => {
+                setSearchQuery("");
+                setSearchResults([]);
+            }
+        });
+    };
+
+    const handleDelete = (registrationId) => {
+        if (confirm("Are you sure you want to remove this student?")) {
+            router.delete(route('module.unenroll', {
+                moduleId: module.id,
+                registrationId: registrationId
+            }));
+        }
     };
 
     const columns = [
         {
-            accessor: "checkbox",
-            label: "",
-            cellType: "checkbox",
-            width: "48px",
-            render: (row) => (
-                <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    onClick={(e) => e.stopPropagation()}
-                />
-            ),
+            accessor: "name",
+            label: "Student Name",
+            render: (row) => row.user.name,
         },
         {
-            accessor: "topic_name",
-            label: "Name",
-            cellType: "name",
-            sortable: true,
-            width: "30%",
+            accessor: "email",
+            label: "Email",
+            render: (row) => row.user.email,
         },
         {
-            accessor: "created_at",
-            label: "Date",
-            cellType: "date",
-            render: (row) => new Date(row.created_at).toLocaleDateString(),
-        },
-        {
-            accessor: "members_count",
-            label: "Number of Members",
-            cellType: "number",
-            align: "right",
-        },
-        {
-            accessor: "impressions",
-            label: "Impressions",
-            cellType: "number",
-            align: "right",
-        },
-        {
-            accessor: "ctr",
-            label: "CTR",
-            cellType: "ctr",
+            accessor: "registration_date",
+            label: "Enrolled At",
+            render: (row) => new Date(row.pivot.created_at).toLocaleDateString(),
         },
         {
             accessor: "status",
             label: "Status",
-            cellType: "status",
-            render: (row) => {
-                const statusClass =
-                    {
-                        pending: styles.statusPending,
-                        active: styles.statusActive,
-                        cancelled: styles.statusCancelled,
-                        delay: styles.statusDelay,
-                    }[row.status.toLowerCase()] || styles.statusActive;
-
-                return (
-                    <span className={`${styles.statusBadge} ${statusClass}`}>
-                        {row.status}
-                    </span>
-                );
-            },
+            render: (row) => (
+                <span className={`${styles.statusBadge} ${styles.statusActive}`}>
+                    {row.pivot.status}
+                </span>
+            ),
         },
         {
             accessor: "actions",
             label: "Actions",
-            cellType: "actions",
             render: (row) => (
-                <>
-                    <button
-                        className={`${styles.actionButton} ${styles.downloadButton}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(row);
-                        }}
-                        title="Download"
-                    >
-                        ↓
-                    </button>
-                    <button
-                        className={`${styles.actionButton} ${styles.deleteButton}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(row);
-                        }}
-                        title="Delete"
-                    >
-                        🗑
-                    </button>
-                </>
+                <button
+                    className={`${styles.actionButton} ${styles.deleteButton}`}
+                    onClick={() => handleDelete(row.pivot.id)}
+                    title="Remove Student"
+                >
+                    🗑
+                </button>
             ),
-        },
-    ];
-
-    const topics = [
-        {
-            id: "1a2b3c4d",
-            topic_name: "SOP",
-            created_at: "2024-03-25T18:45:00",
-            members_count: 345,
-            impressions: 23678,
-            ctr: "40.5%",
-            status: "Pending",
-        },
-        {
-            id: "2b3c4d5e",
-            topic_name: "Submissions Process_Module",
-            created_at: "2024-03-25T12:30:00",
-            members_count: 4464,
-            impressions: 14236,
-            ctr: "45.6%",
-            status: "Active",
-        },
-        {
-            id: "3c4d5e6f",
-            topic_name: "Academic Documents",
-            created_at: "2024-03-24T15:20:00",
-            members_count: 1746,
-            impressions: 8543,
-            ctr: "33.7%",
-            status: "Active",
-        },
-        {
-            id: "4d5e6f7g",
-            topic_name: "Compliance Audit Regs",
-            created_at: "2024-03-23T10:55:00",
-            members_count: 463,
-            impressions: 53626,
-            ctr: "34.1%",
-            status: "Cancelled",
-        },
-        {
-            id: "5e6f7g8h",
-            topic_name: "Customer Support Tickets",
-            created_at: "2024-03-23T04:30:00",
-            members_count: 7346,
-            impressions: 9768,
-            ctr: "23.7%",
-            status: "Cancelled",
-        },
-        {
-            id: "6f7g8h9i",
-            topic_name: "Inventory Supply Logistics",
-            created_at: "2024-03-22T17:15:00",
-            members_count: 3635,
-            impressions: 16464,
-            ctr: "37.2%",
-            status: "Active",
-        },
-        {
-            id: "7g8h9i0j",
-            topic_name: "Project Team Tracking",
-            created_at: "2024-03-22T11:40:00",
-            members_count: 2745,
-            impressions: 67457,
-            ctr: "53.8%",
-            status: "Active",
-        },
-        {
-            id: "8h9i0j1k",
-            topic_name: "Training Management Learning",
-            created_at: "2024-03-21T14:05:00",
-            members_count: 5532,
-            impressions: 100345,
-            ctr: "21.5%",
-            status: "Active",
-        },
-        {
-            id: "9i0j1k2l",
-            topic_name: "Resource Task Allocation",
-            created_at: "2024-03-21T09:20:00",
-            members_count: 2643,
-            impressions: 126986,
-            ctr: "11.3%",
-            status: "Delay",
-        },
-        {
-            id: "0j1k2l3m",
-            topic_name: "Data Analysis Reporting",
-            created_at: "2024-03-21T09:15:00",
-            members_count: 11024,
-            impressions: 87093,
-            ctr: "34.6%",
-            status: "Delay",
         },
     ];
 
@@ -208,17 +98,46 @@ export default function Enrollments() {
                     <span>
                         <FontAwesomeIcon icon={faUser} />
                     </span>{" "}
-                    <span>Enrollments for the module</span>
+                    <span>Enrollments for {module.name}</span>
                 </h2>
             </header>
-            <p>View, create or manually enroll students for the course.</p>
-            <div id="table-toolbar" className={styles.tableToolbar}>
-                <Button icon={faPlus} size="small">Add student</Button>
+            <p>Search and enroll students for this module.</p>
+
+            <div className={styles.searchWrapper}>
+                <input
+                    type="text"
+                    placeholder="Search students by name or email..."
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className={styles.searchInput}
+                />
+
+                {searchResults.length > 0 && (
+                    <div className={styles.resultsPopup}>
+                        {searchResults.map((student) => (
+                            <div
+                                key={student.id}
+                                className={styles.resultItem}
+                                onClick={() => handleEnroll(student.id)}
+                            >
+                                <div className={styles.resultInfo}>
+                                    <div className={styles.name}>{student.user.name}</div>
+                                    <div className={styles.email}>{student.user.email}</div>
+                                </div>
+                                <Button size="small" icon={faPlus}>Enroll</Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {isSearching && (
+                    <div className={styles.searchingIndicator}>Searching...</div>
+                )}
             </div>
+
             <Table
                 columns={columns}
-                data={topics}
-                onRowClick={(topic) => console.log("Clicked:", topic)}
+                data={module.students || []}
             />
         </div>
     );
