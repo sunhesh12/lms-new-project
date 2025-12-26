@@ -51,29 +51,37 @@
 
 .sideNavBar-body li {
   width: 100%;
-  padding: 12px;
+  height: 50px;
   display: flex;
   align-items: center;
 }
 
 .sideNavBar-body li a {
   color: var(--white);
+  padding-left: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
 }
 
-.sideNavBar-body ul li a.active {
+/* .sideNavBar-body ul li a.active {
   background-color: #f3f4f6;
   color: var(--primary);
   border-right: 3px solid var(--primary);
-}
+} */
 
 .adminLink {
   color: #2563eb !important;
-  background-color: #eff6ff !important;
+  /* background-color: #eff6ff !important; */
   font-weight: 700 !important;
+}
+
+.active {
+  width: 100%;
+  height: 100%;
+  background-color: #eff6ff !important;
+  color: var(--black) !important;
 }
 
 .adminLink:hover {
