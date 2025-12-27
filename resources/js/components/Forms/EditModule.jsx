@@ -12,7 +12,7 @@ export default function EditModule({
 }) {
     const handleSubmit = (e) => {
         e.preventDefault();
-        formProps.post(route("module.update", {moduleId}), {
+        formProps.post(route("module.update", { moduleId }), {
             preserveScroll: true,
             forceFormData: true,
             method: "__PATCH",
@@ -74,6 +74,15 @@ export default function EditModule({
                     formProps.setData("maximum_students", parseInt(e.target.value));
                 }}
                 value={formProps.data.maximum_students}
+            />
+            <TextInput
+                label="Enrollment Key (Password)"
+                name="enrollment_key"
+                onChange={(e) => {
+                    formProps.setData("enrollment_key", e.target.value);
+                }}
+                value={formProps.data.enrollment_key}
+                placeholder="Leave empty for public access"
             />
             <Button type="submit">Save</Button>
         </form>

@@ -13,6 +13,9 @@ class Assignment extends Model
 {
     use HasUuids;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'title',
         'description',
@@ -20,6 +23,7 @@ class Assignment extends Model
         'deadline',
         'resource_id',
         'module_id',
+        'topic_id',
     ];
 
     protected $casts = [
@@ -52,6 +56,14 @@ class Assignment extends Model
     public function module(): BelongsTo
     {
         return $this->belongsTo(Module::class);
+    }
+
+    /**
+     * Get the topic that owns the assignment.
+     */
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 
     /**

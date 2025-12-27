@@ -7,7 +7,7 @@ import Button from "../Input/Button";
 import { useForm } from "@inertiajs/react";
 
 export default function AssignmentForm({ assignment, isModuleStaff, moduleId }) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         // Fields for creation (Staff)
         title: assignment?.title || "",
         description: assignment?.description || "",
@@ -20,6 +20,14 @@ export default function AssignmentForm({ assignment, isModuleStaff, moduleId }) 
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Ensure date format matches Backend (Y-m-d H:i:s)
+        transform((data) => ({
+            ...data,
+            started: data.started ? data.started.replace("T", " ") + ":00" : "",
+            deadline: data.deadline ? data.deadline.replace("T", " ") + ":00" : "",
+        }));
+
         if (isModuleStaff) {
             if (assignment) {
                 post(route('assignment.update', assignment.id));

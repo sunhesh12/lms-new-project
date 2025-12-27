@@ -1,7 +1,9 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import styles from "@/css/module.module.css";
+import assignmentStyles from "@/css/components/assignments.module.css";
 import Topic from "@/components/Accordion/Topic";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModuleHeader from "@/components/Module/ModuleHeader";
 import ModuleToolbar from "@/components/Module/ModuleToolbar";
 import { useRef, useState } from "react";
@@ -10,7 +12,7 @@ import FloatingWindowContainer from "@/Dialog/FloatingWindowContainer";
 import AssignmentForm from "@/components/Forms/AssignmentForm";
 import Enrollments from "@/components/Enrollments";
 import ModuleStaff from "@/components/Module/ModuleStaff";
-import { useForm, usePage } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import EditModule from "@/components/Forms/EditModule";
 import TabLayout from "@/components/Layouts/TabLayout";
 import QuizForm from "@/components/Forms/QuizForm";
@@ -19,6 +21,9 @@ import {
     faBook,
     faClock,
     faQuestionCircle,
+    faEdit,
+    faUpload,
+    faClipboardList,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ModuleMain({ module }) {
@@ -43,6 +48,7 @@ export default function ModuleMain({ module }) {
 
     // Setting whether a topic update is performed
     const topicId = useRef(null);
+    const assignmentParentTopicId = useRef(null);
     const isTopicUpdate = useRef(false);
 
     // Form states
@@ -60,7 +66,10 @@ export default function ModuleMain({ module }) {
         description: module.description,
         maximum_students: module.maximum_students,
         credit_value: module.credit_value,
+        maximum_students: module.maximum_students,
+        credit_value: module.credit_value,
         cover_image_url: null,
+        enrollment_key: module.enrollment_key || "",
     });
 
     const TopicsView = () => (
@@ -72,9 +81,14 @@ export default function ModuleMain({ module }) {
                     <Topic
                         key={topic.id}
                         resources={topic.resources}
+                        assignments={topic.assignments}
                         topicName={topic.topic_name}
                         description={topic.description}
                         /* Toggling topic form with some initial values */
+                        onAssignmentCreate={(tId) => {
+                            assignmentParentTopicId.current = topic.id;
+                            setAssignmentFormVisible(true);
+                        }}
                         formToggle={() => {
                             setTopicFormVisible(true);
 
@@ -113,31 +127,109 @@ export default function ModuleMain({ module }) {
     );
 
     const AssignmentsView = () => (
-        <article className={styles.topicsContainer}>
+        <div className={assignmentStyles.container}>
             {module.assignments.length > 0 ? (
-                module.assignments.map((assignment) => (
-                    <Topic
-                        key={assignment.id}
-                        topicName={assignment.title}
-                        description={assignment.description}
-                        resources={assignment.resources || []}
-                        formToggle={isModuleStaff ? () => {
-                            // Staff logic for editing assignment
-                            setSelectedAssignment(assignment);
-                            setAssignmentFormVisible(true);
-                        } : () => {
-                            // Student logic for submitting
-                            setSelectedAssignment(assignment);
-                            setAssignmentFormVisible(true);
-                        }}
-                        isStudent={!isModuleStaff}
-                        buttonText={isModuleStaff ? "Edit Assignment" : "Submit Assignment"}
-                    />
-                ))
+                module.assignments.map((assignment) => {
+                    const now = new Date();
+                    const startDate = new Date(assignment.started);
+                    const deadline = new Date(assignment.deadline);
+                    const isActive = now >= startDate && now <= deadline;
+
+                    // Determine if student has a grade
+                    // We need to pass submission info to student view. 
+                    // The current module.assignments probably doesn't have student submission info deep nested unless I eager loaded it?
+                    // I eager loaded 'resources' but not 'submissions'.
+                    // For now, I will assume I might need to update the ModuleController to eager load submissions for the current student.
+                    // But for the grading button, it's fine.
+
+                    return (
+                        <div key={assignment.id} className={assignmentStyles.card}>
+                            <div className={assignmentStyles.content}>
+                                <div className={assignmentStyles.iconWrapper}>
+                                    <FontAwesomeIcon icon={faClock} size="lg" />
+                                </div>
+                                <div className={assignmentStyles.info}>
+                                    <h3 className={assignmentStyles.title}>{assignment.title}</h3>
+                                    <p className={assignmentStyles.description}>{assignment.description}</p>
+
+                                    <div className={assignmentStyles.meta}>
+                                        <div className={assignmentStyles.metaItem}>
+                                            <span>Start: {startDate.toLocaleDateString()} {startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                        <div className={assignmentStyles.metaItem}>
+                                            <span>Due: {deadline.toLocaleDateString()} {deadline.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                        <div className={assignmentStyles.metaItem}>
+                                            {isActive ? (
+                                                <span className={assignmentStyles.statusActive}>● Open</span>
+                                            ) : (
+                                                <span className={assignmentStyles.statusClosed}>● Closed</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Student Grade Display */}
+                                    {assignment.submissions && assignment.submissions.length > 0 && (
+                                        <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: assignment.submissions[0].feedback ? '0.5rem' : '0' }}>
+                                                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Grade:</span>
+                                                <span style={{
+                                                    fontWeight: '700',
+                                                    color: assignment.submissions[0].grade >= 50 ? '#16a34a' : '#dc2626',
+                                                    fontSize: '1.1rem'
+                                                }}>
+                                                    {assignment.submissions[0].grade !== null ? `${assignment.submissions[0].grade}/100` : 'Pending'}
+                                                </span>
+                                            </div>
+                                            {assignment.submissions[0].feedback && (
+                                                <div style={{ fontSize: '0.9rem', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '0.5rem' }}>
+                                                    <strong>Feedback:</strong> {assignment.submissions[0].feedback}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Student Grade Display would go here if data was available */}
+                                    {/* We will fix the data fetching in ModuleController in the next step to ensure students see their grades */}
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                {isModuleStaff && (
+                                    <Link
+                                        href={route('assignment.grading', [module.id, assignment.id])}
+                                        className={`${assignmentStyles.actionBtn} ${assignmentStyles.btnSecondary}`}
+                                    >
+                                        <FontAwesomeIcon icon={faClipboardList} /> Grade
+                                    </Link>
+                                )}
+
+                                <button
+                                    className={`${assignmentStyles.actionBtn} ${assignmentStyles.btnSecondary}`}
+                                    onClick={isModuleStaff ? () => {
+                                        setSelectedAssignment(assignment);
+                                        setAssignmentFormVisible(true);
+                                    } : () => {
+                                        setSelectedAssignment(assignment);
+                                        setAssignmentFormVisible(true);
+                                    }}
+                                >
+                                    {isModuleStaff ? (
+                                        <><FontAwesomeIcon icon={faEdit} /> Edit</>
+                                    ) : (
+                                        <><FontAwesomeIcon icon={faUpload} /> Submit</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })
             ) : (
-                <p>No assignments available.</p>
+                <div className={assignmentStyles.emptyState}>
+                    <p>No assignments available for this module yet.</p>
+                </div>
             )}
-        </article>
+        </div>
     );
 
     const QuizzesView = () => (
@@ -199,12 +291,14 @@ export default function ModuleMain({ module }) {
                     closeAction={() => {
                         setAssignmentFormVisible(false);
                         setSelectedAssignment(null);
+                        assignmentParentTopicId.current = null;
                     }}
                 >
                     <AssignmentForm
                         assignment={selectedAssignment}
                         isModuleStaff={isModuleStaff}
                         moduleId={module.id}
+                        topicId={assignmentParentTopicId.current}
                     />
                 </FloatingWindowContainer>
             )}
@@ -215,7 +309,7 @@ export default function ModuleMain({ module }) {
                         setEnrollFormVisible(false);
                     }}
                 >
-                    <Enrollments />
+                    <Enrollments module={module} />
                 </FloatingWindowContainer>
             )}
 
@@ -269,6 +363,7 @@ export default function ModuleMain({ module }) {
                         setTopicFormVisible(true);
                     }}
                     onAssignmentCreate={() => {
+                        assignmentParentTopicId.current = null;
                         setAssignmentFormVisible(true);
                     }}
                     onQuizCreate={() => {

@@ -22,19 +22,26 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
-try {
-    console.log('bootstrap.js: Initializing Echo');
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: import.meta.env.VITE_PUSHER_APP_KEY,
-        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-        wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-        wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-        wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-        forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-        enabledTransports: ['ws', 'wss'],
-    });
-    console.log('bootstrap.js: Echo initialized successfully');
-} catch (e) {
-    console.warn('bootstrap.js: Failed to initialize Echo (Broadcasting disabled)', e);
+// Only initialize Echo if Pusher credentials are configured
+const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
+
+if (pusherKey) {
+    try {
+        console.log('bootstrap.js: Initializing Echo');
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: pusherKey,
+            cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
+            wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
+            wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
+            wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
+            forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
+            enabledTransports: ['ws', 'wss'],
+        });
+        console.log('bootstrap.js: Echo initialized successfully');
+    } catch (e) {
+        console.warn('bootstrap.js: Failed to initialize Echo', e);
+    }
+} else {
+    console.log('bootstrap.js: Broadcasting disabled (Pusher not configured)');
 }

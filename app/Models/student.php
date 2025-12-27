@@ -9,10 +9,25 @@ class student extends Model
 {
     use HasFactory;
 
+    // UUID Support
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
+        'id',
         'academic_year',
         'user_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function user()
     {
