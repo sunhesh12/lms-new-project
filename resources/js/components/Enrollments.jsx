@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "@/css/components/enrollments.module.css";
-import { Search, UserPlus, Trash2 } from "lucide-react";
+import { Search, UserPlus, Trash2, AlertTriangle } from "lucide-react";
 import { router } from "@inertiajs/react";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ export default function Enrollments({ module }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showRemoveAllDialog, setShowRemoveAllDialog] = useState(false);
 
     useEffect(() => {
         // Initial load of students (if API supports empty query)
@@ -24,8 +25,8 @@ export default function Enrollments({ module }) {
     const handleSearch = async (query) => {
         setLoading(true);
         try {
-            // Ensure endpoint handles empty query gracefully or returns top results
-            const response = await axios.get(route('students.search', { query: query }));
+            // Use module-specific endpoint to get only available (non-enrolled) students
+            const response = await axios.get(route('module.available-students', { moduleId: module.id, query: query }));
             setSearchResults(response.data);
         } catch (error) {
             console.error("Search failed", error);
@@ -54,29 +55,91 @@ export default function Enrollments({ module }) {
         }
     };
 
+    const handleRemoveAll = () => {
+        router.delete(route('module.unenroll-all', { moduleId: module.id }), {
+            onSuccess: () => {
+                setShowRemoveAllDialog(false);
+            }
+        });
+    };
+
+    const enrolledCount = module.students?.length || 0;
+    const capacity = module.maximum_students;
+    const isFull = capacity > 0 && enrolledCount >= capacity;
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h2 className={styles.title}>
-                    Module Enrollments
-                </h2>
-                <p className={styles.subtitle}>Enroll students in {module.name}.</p>
+                <div>
+                    <h2 className={styles.title}>
+                        Module Enrollments
+                    </h2>
+                    <p className={styles.subtitle}>
+                        Enroll students in {module.name}.
+                        {capacity > 0 && (
+                            <span style={{ marginLeft: '10px', fontWeight: 'bold', color: isFull ? 'var(--danger)' : 'var(--success)' }}>
+                                ({enrolledCount}/{capacity} enrolled)
+                            </span>
+                        )}
+                    </p>
+                </div>
+                {enrolledCount > 0 && (
+                    <button
+                        className={styles.removeAllBtn}
+                        onClick={() => setShowRemoveAllDialog(true)}
+                        title="Remove All Students"
+                    >
+                        <Trash2 size={18} />
+                        Remove All ({enrolledCount})
+                    </button>
+                )}
             </header>
+
+            {/* Remove All Confirmation Dialog */}
+            {showRemoveAllDialog && (
+                <div className={styles.dialogOverlay} onClick={() => setShowRemoveAllDialog(false)}>
+                    <div className={styles.dialogBox} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.dialogIcon}>
+                            <AlertTriangle size={48} />
+                        </div>
+                        <h3 className={styles.dialogTitle}>Remove All Students?</h3>
+                        <p className={styles.dialogMessage}>
+                            This will remove all <strong>{enrolledCount} student(s)</strong> from this module.
+                            This action cannot be undone.
+                        </p>
+                        <div className={styles.dialogActions}>
+                            <button
+                                className={styles.dialogCancel}
+                                onClick={() => setShowRemoveAllDialog(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className={styles.dialogConfirm}
+                                onClick={handleRemoveAll}
+                            >
+                                Yes, Remove All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className={styles.searchSection}>
                 <div className={styles.searchBox}>
                     <Search className={styles.searchIcon} size={18} />
                     <input
                         type="text"
-                        placeholder="Search students by name or email..."
+                        placeholder={isFull ? "Module is full" : "Search students by name or email..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className={styles.searchInput}
+                        disabled={isFull}
                     />
                     {loading && <div className={styles.loader}></div>}
                 </div>
 
-                {searchResults.length > 0 && searchQuery.length > 0 && (
+                {searchResults.length > 0 && searchQuery.length > 0 && !isFull && (
                     <div className={styles.resultsPopup}>
                         {searchResults.map((student) => (
                             <div

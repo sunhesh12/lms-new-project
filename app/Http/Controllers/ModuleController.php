@@ -210,20 +210,18 @@ class ModuleController extends Controller
     {
         $user = auth()->user();
         
-        // Only students can join. Staff should see the module. Others are forbidden.
-        if (!$user->isStudent()) {
-            if ($user->isAdmin() || $user->isLecturer()) {
-                return redirect()->route('module.show', $moduleId);
-            }
-            abort(403, 'Only students can join modules.');
+        // Admin and lecturers should see the module directly, not the join page
+        if ($user->isAdmin() || $user->isLecturer()) {
+            return redirect()->route('module.show', $moduleId);
         }
 
-        $module = Module::select('id', 'name', 'credit_value', 'description', 'cover_image_url', 'maximum_students')
+        // All other users (students and regular users) can access the join page
+        $module = Module::select('id', 'name', 'credit_value', 'description', 'cover_image_url', 'maximum_students', 'enrollment_key')
             ->with(['lecturers.user'])
             ->findOrFail($moduleId);
 
-        // Check if already enrolled
-        if ($module->students()->where('student_id', $user->student->id)->exists()) {
+        // Check if already enrolled (for users with student records)
+        if ($user->student && $module->students()->where('student_id', $user->student->id)->exists()) {
              return redirect()->route('module.show', $moduleId);
         }
 
