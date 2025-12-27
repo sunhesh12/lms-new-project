@@ -24,6 +24,7 @@ class AssignmentController extends Controller
             'deadline' => 'required|date_format:Y-m-d H:i:s|after_or_equal:now|after:started',
             'resource_file' => 'required|file',
             'resource_caption' => 'required|string|max:50',
+            'topic_id' => 'nullable|exists:topics,id',
         ]);
 
         try {
@@ -47,6 +48,7 @@ class AssignmentController extends Controller
                 'started' => $validatedData['started'],
                 'description' => $validatedData['description'],
                 'deadline' => $validatedData['deadline'],
+                'topic_id' => $validatedData['topic_id'] ?? null,
             ]);
 
             $resource = $assignment->resources()->create([
@@ -117,6 +119,7 @@ class AssignmentController extends Controller
             'resource_id' => 'required|string', // For future support for multiple resources
             'resource_file' => 'file',
             'resource_caption' => 'string|max:50',
+            'topic_id' => 'nullable|exists:topics,id',
         ]);
 
         try {
@@ -140,6 +143,10 @@ class AssignmentController extends Controller
 
             if (isset($validatedData['deadline'])) {
                 $currentAssignment->deadline = $validatedData['deadline'];
+            }
+
+            if (array_key_exists('topic_id', $validatedData)) {
+                $currentAssignment->topic_id = $validatedData['topic_id'];
             }
 
             if (isset($validatedData['resource_file']) || isset($validatedData['resource_caption']) || isset($validatedData['resource_id'])) {
@@ -237,6 +244,64 @@ class AssignmentController extends Controller
         } catch (Exception $exception) {
             return redirect()->back()->with('success', false)->with('message', 'Internal server error occured')->with('server-error', true)->with('error', $exception->getMessage());
         }
+    }
+
+    public function grading($moduleId, $assignmentId)
+    {
+        if (!auth()->user()->isLecturer() && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $module = Module::with(['students.user'])->findOrFail($moduleId);
+        $assignment = Assignment::findOrFail($assignmentId);
+        
+        $submissionsWithResources = \Illuminate\Support\Facades\DB::table('submissions')
+            ->join('resources', 'submissions.resource_id', '=', 'resources.id')
+            ->where('submissions.assignment_id', $assignmentId)
+            ->where('submissions.is_deleted', false)
+            ->select('submissions.*', 'resources.url as file_url', 'resources.caption as file_caption')
+            ->get()
+            ->keyBy('student_id');
+
+        $studentsData = $module->students->map(function ($student) use ($submissionsWithResources) {
+            $submission = $submissionsWithResources->get($student->user_id);
+
+            return [
+                'id' => $student->id, 
+                'user_id' => $student->user_id,
+                'name' => $student->user->name,
+                'avatar' => $student->user->avatar,
+                'submission' => $submission,
+            ];
+        });
+
+        return \Inertia\Inertia::render('Assignments/Grading/Main', [
+            'module' => $module,
+            'assignment' => $assignment,
+            'students' => $studentsData
+        ]);
+    }
+
+    public function storeGrade(Request $request, $submissionId)
+    {
+        if (!auth()->user()->isLecturer() && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'grade' => 'required|integer|min:0|max:100',
+            'feedback' => 'nullable|string|max:1000',
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('submissions')
+            ->where('id', $submissionId)
+            ->update([
+                'grade' => $validated['grade'],
+                'feedback' => $validated['feedback'],
+                'updated_at' => now(),
+            ]);
+
+        return redirect()->back()->with('success', true)->with('message', 'Grade saved successfully');
     }
 
 }

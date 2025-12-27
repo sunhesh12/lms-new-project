@@ -23,6 +23,8 @@ class Module extends Model
         'maximum_students',
         'is_deleted',
         'description',
+        'enrollment_key',
+        'cover_image_url',
     ];
 
     // Auto-generate UUID when creating

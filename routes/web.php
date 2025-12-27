@@ -3,13 +3,14 @@
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\ModuleEnrollmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\EventController;
-// use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 
 
@@ -23,6 +24,7 @@ Route::prefix('modules')->group(function () {
 
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
+        Route::get('/join', [ModuleController::class, 'joinPage'])->name('module.join_page');
         Route::post('/', [ModuleController::class, 'update'])->name('module.update');
         Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
@@ -45,6 +47,7 @@ Route::prefix('modules')->group(function () {
         // Enrollments
         Route::post('/enroll', [ModuleEnrollmentController::class, 'store'])->name('module.enroll');
         Route::delete('/enroll/{registrationId}', [ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
+        Route::delete('/enrollments/all', [ModuleEnrollmentController::class, 'destroyAll'])->name('module.unenroll-all');
     });
 });
 //->middleware('auth');
@@ -54,6 +57,10 @@ Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 
 Route::post("/assignments/{assignmentId}/submit", [AssignmentController::class, 'submit'])->name("assignment.submit");
 Route::post("/assignments/{assignmentId}/reset", [AssignmentController::class, 'reset'])->name("assignment.reset");
 
+// Grading Routes
+Route::get('/modules/{moduleId}/assignments/{assignmentId}/grading', [AssignmentController::class, 'grading'])->name('assignment.grading');
+Route::post('/assignments/submissions/{submissionId}/grade', [AssignmentController::class, 'storeGrade'])->name('assignment.grade.store');
+
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
 });
@@ -62,11 +69,11 @@ Route::get('/account', function () {
     return Inertia::render('Users/Main');
 });
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 // Route::get('/Courses', function () {
 //     return Inertia::render('Course');
@@ -81,8 +88,6 @@ Route::get('/', [homeController::class, 'index'])->name('home');
 
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-
-Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
 
@@ -93,11 +98,6 @@ Route::get('/register', [RegisterController::class, 'showForm'])->name('register
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.submit');
 
 Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware('auth');
-
-
-Route::get('/register', function () {
-    return Inertia::render('Auth/Register')->name('register');
-});
 
 
 
@@ -145,9 +145,13 @@ Route::middleware('auth')->group(function () {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
-            ->limit(10)
+            ->limit(50)
             ->get();
     })->name('students.search');
+
+    // Search for available students (not enrolled in a specific module)
+    Route::get('/api/modules/{moduleId}/available-students', [App\Http\Controllers\ModuleEnrollmentController::class, 'availableStudents'])
+        ->name('module.available-students');
 
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
@@ -167,11 +171,15 @@ Route::middleware('auth')->group(function () {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('email', 'like', "%{$query}%");
             })
-            ->limit(10)
+            ->limit(50)
             ->get();
     })->name('lecturers.search');
 
     Route::post('/modules/{module}/staff', [App\Http\Controllers\ModuleController::class, 'manageStaff'])->name('modules.staff.manage');
+    
+    // Enrollment Routes
+    Route::post('/modules/{moduleId}/enroll', [App\Http\Controllers\ModuleEnrollmentController::class, 'store'])->name('module.enroll');
+    Route::delete('/modules/{moduleId}/enrollments/{registrationId}', [App\Http\Controllers\ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
     Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
 
     // Quiz Management

@@ -8,12 +8,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class lecture extends Model
 {
     use HasFactory;
+    protected $table = 'lectures'; // Validated from migration
+    
+    // UUID Support
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
+        'id',
         'academic_level',
         'research_area',
         'lecture_type',
         'user_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function user()
     {
