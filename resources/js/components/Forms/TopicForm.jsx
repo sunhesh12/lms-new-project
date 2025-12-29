@@ -31,7 +31,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                     `resources[${index}][is_deleted]`,
                     res.is_deleted ?? 0
                 );
-            });
+            }); 
 
             return formData;
         });
@@ -153,6 +153,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                 onChange={(e) => {
                     formProps.setData("topic_name", e.target.value);
                 }}
+                error={formProps.errors.topic_name}
             />
             <TextInput
                 type="textarea"
@@ -163,6 +164,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                 onChange={(e) => {
                     formProps.setData("description", e.target.value);
                 }}
+                error={formProps.errors.description}
             />
             <InputLabel label="Resources" />
             <ItemList
@@ -189,6 +191,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                                 onChange={(e) => {
                                     updateCaption(id, e.target.value);
                                 }}
+                                error={formProps.errors[`resources.${index}.caption`]}
                             />
                             <UploadBox
                                 caption="Upload your materials"
@@ -198,6 +201,7 @@ export default function TopicForm({ formProps, moduleId, topicId, isUpdate }) {
                                 }}
                                 onReset={() => resetFile(id)}
                                 fileTypesCaption="Images, Pdfs, Word Documents"
+                                error={formProps.errors[`resources.${index}.file`]}
                             />
                             <Button
                                 type="button"

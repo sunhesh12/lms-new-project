@@ -81,3 +81,10 @@
     background-color: transparent;
     z-index: 200;
 }
+
+.errorText {
+    color: #d60000;
+    font-size: 13px;
+    margin-top: 5px;
+    z-index: 200;
+}

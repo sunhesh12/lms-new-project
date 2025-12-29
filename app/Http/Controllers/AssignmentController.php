@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignment;
 use App\Models\Module;
-use App\Models\Resource;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

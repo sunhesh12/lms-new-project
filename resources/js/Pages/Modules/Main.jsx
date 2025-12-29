@@ -28,6 +28,9 @@ export default function ModuleMain({ module }) {
     const topicId = useRef(null);
     const isTopicUpdate = useRef(false);
 
+    const [assignmentId, setAssignmentId] = useState(null);
+    const [isAssignmentUpdate, setIsAssignmentUpdate] = useState(false);
+
     // Form states
 
     // Topic Form
@@ -35,6 +38,16 @@ export default function ModuleMain({ module }) {
         topic_name: "",
         description: "",
         resources: [],
+    });
+
+    const assignmentFormProps = useForm({
+        title: "",
+        description: "",
+        started: "",
+        deadline: "",
+        resource_file: null,
+        resource_caption: "",
+        resource_id: "",
     });
 
     // Module Edit form
@@ -64,11 +77,11 @@ export default function ModuleMain({ module }) {
                             // Setting the initial values for the form
                             topicFormProps.setData(
                                 "topic_name",
-                                topic.topic_name
+                                topic.topic_name,
                             );
                             topicFormProps.setData(
                                 "description",
-                                topic.description
+                                topic.description,
                             );
 
                             topicFormProps.setData(
@@ -80,7 +93,7 @@ export default function ModuleMain({ module }) {
                                         is_deleted: resource.is_deleted,
                                         file: null,
                                     };
-                                })
+                                }),
                             );
 
                             // Since the topic form is an update
@@ -96,8 +109,57 @@ export default function ModuleMain({ module }) {
     );
 
     const AssignmentsView = () => (
-        <div></div>
-    )
+        <article id="assignments-container" className={styles.topicsContainer}>
+            {module.assignments.length > 0 ? (
+                module.assignments.map((assignment) => (
+                    <Topic
+                        key={assignment.id}
+                        resources={assignment.resources}
+                        topicName={assignment.title}
+                        description={assignment.description}
+                        formToggle={() => {
+                            setAssignmentFormVisible(true);
+
+                            assignmentFormProps.setData(
+                                "title",
+                                assignment.title,
+                            );
+                            assignmentFormProps.setData(
+                                "description",
+                                assignment.description,
+                            );
+                            assignmentFormProps.setData(
+                                "started",
+                                assignment.started,
+                            );
+                            assignmentFormProps.setData(
+                                "deadline",
+                                assignment.deadline,
+                            );
+
+                            // Handling resource specific data
+                            if (assignment.resources.length > 0) {
+                                const resource = assignment.resources[0];
+                                assignmentFormProps.setData(
+                                    "resource_caption",
+                                    resource.caption,
+                                );
+                                assignmentFormProps.setData(
+                                    "resource_id",
+                                    resource.id,
+                                );
+                            }
+
+                            setIsAssignmentUpdate(true);
+                            setAssignmentId(assignment.id);
+                        }}
+                    />
+                ))
+            ) : (
+                <p>No assignments available.</p>
+            )}
+        </article>
+    );
 
     return (
         <GuestLayout>
@@ -129,9 +191,17 @@ export default function ModuleMain({ module }) {
                 <FloatingWindowContainer
                     closeAction={() => {
                         setAssignmentFormVisible(false);
+                        setIsAssignmentUpdate(false);
+                        setAssignmentId(null);
+                        assignmentFormProps.reset();
                     }}
                 >
-                    <AssignmentForm />
+                    <AssignmentForm
+                        formProps={assignmentFormProps}
+                        isUpdate={isAssignmentUpdate}
+                        moduleId={module.id}
+                        assignmentId={assignmentId}
+                    />
                 </FloatingWindowContainer>
             )}
 
@@ -187,7 +257,7 @@ export default function ModuleMain({ module }) {
                     {
                         name: "Assignments",
                         icon: faClock,
-                        view: <TopicsView />,
+                        view: <AssignmentsView />,
                     },
                     {
                         name: "Quizes",

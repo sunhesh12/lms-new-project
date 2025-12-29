@@ -15,6 +15,7 @@ export default function UploadBox({
     onUpload,
     onReset,
     imagePreview,
+    error,
 }) {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [previewURL, setPreviewURL] = useState(imagePreview);
@@ -99,6 +100,7 @@ export default function UploadBox({
                         name={name}
                         id={name}
                     />
+                    {error && <span className={style.errorText}>{error}</span>}
                 </label>
             )}
         </div>
