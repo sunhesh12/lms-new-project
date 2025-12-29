@@ -6,11 +6,13 @@ use App\Models\Module;
 use App\Models\student;
 use App\Models\ModuleEnrollment;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ModuleEnrollmentController extends Controller
 {
     public function store(Request $request, $moduleId)
     {
+        // return Inertia::render('Modules/Join');
         $user = auth()->user();
         $module = Module::findOrFail($moduleId);
         
@@ -83,7 +85,7 @@ class ModuleEnrollmentController extends Controller
         if ($isAdminEnrollment) {
             return redirect()->back()->with('message', 'Student enrolled successfully');
         } else {
-            return redirect()->route('modules.show', $moduleId)->with('message', 'Successfully enrolled in module!');
+            return redirect()->route('module.show', $moduleId)->with('message', 'Successfully enrolled in module!');
         }
     }
 
