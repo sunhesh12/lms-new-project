@@ -28,19 +28,26 @@ export default function SideNavBarFooter({ isOpen }) {
     <>
       <div className={style["sideNavBar-footer"]}>
         <div 
-          className={style["sideNavBar-footer-settings"]}
+          className={style["settings-link"]}
           onClick={() => setShowSettingsModal(true)}
-          style={{ cursor: 'pointer' }}
         >
           <Settings size={20} />
-          {!isOpen && <span>Settings</span>}
+          {isOpen && <span>Settings</span>}
         </div>
         
-        <Link href="/profile">
-          <div className={style["sideNavBar-footer-logout"]}>
-            <User size={20} />
-            {!isOpen && <span>{formatName(user?.name)}</span>}
-          </div>
+        <Link href="/profile" className={style["user-profile-card"]}>
+          <img 
+            src={user?.avatar_url || "/images/default-avatar.png"} // Fallback or user avatar
+            alt="Profile" 
+            className={style.avatar}
+            onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"; }}
+          />
+          {isOpen && (
+            <div className={style["user-info"]}>
+              <span className={style["user-name"]}>{user?.name}</span>
+              <span className={style["user-email"]}>{user?.email}</span>
+            </div>
+          )}
         </Link>
       </div>
 

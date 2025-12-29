@@ -14,7 +14,7 @@ export default function Join({ module }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("module.enroll", { moduleId: module.id }));
+        post(route("module.join", { moduleId: module.id }));
     };
 
     const enrolledCount = module.students_count || 0;

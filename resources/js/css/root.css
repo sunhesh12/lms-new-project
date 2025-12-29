@@ -19,6 +19,21 @@
     --orange: #F7931E;
     --red: #880808;
 
+    /* Semantic Aliases */
+    --primary: var(--blue);
+    --secondary: var(--orange);
+    --accent: var(--black);
+    
+    /* UI Variations */
+    --primary-hover: #003d4c;
+    --primary-light: #e6f0f2;
+    --primary-subtle: #b3cbd1;
+    
+    --secondary-hover: #e08316;
+    
+    --text-main: var(--black);
+    --text-muted: #666666;
+
 }
 
 * {
