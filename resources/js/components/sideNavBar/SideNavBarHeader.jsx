@@ -3,37 +3,42 @@ import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import style from "@/css/dashboard.module.css";
 import style from "@/css/sideNavBar.module.css";
+import { motion } from "framer-motion";
 
 export default function SideNavBarHeader({ isOpen, toggleSidebar }) {
     return (
-        <div className={style["sideNavBar-header"]}>
-            <img
-                src="/images/usjp-logo.png"
-                alt="University Logo"
-                className={style["sideNavBar-logo"]}
-            />
-            <div>
-                {!isOpen && (
-                    <p className={style["sideNavBar-header-title"]}>
-                        University Of Sri Jayawardenepura
-                    </p>
+        <div className={style["sideNavBar-header-container"]}>
+            <div className={style["sideNavBar-header"]}>
+                <img
+                    src="/images/usjp-logo.png"
+                    alt="University Logo"
+                    className={style["sideNavBar-logo"]}
+                />
+                
+                {isOpen && (
+                    <motion.div 
+                        className={style["header-text-container"]}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <p className={style["sideNavBar-header-title"]}>
+                            Learning management System
+                        </p>
+                        <p className={style["sideNavBar-header-sub-title"]}>
+                            Faculty of computing
+                        </p>
+                    </motion.div>
                 )}
-                {!isOpen && (
-                    <p className={style["sideNavBar-header-sub-title"]}>
-                        Faculty of Computing
-                    </p>
-                )}
+
+                <button
+                    className={style["sideNavBar-toggle"]}
+                    onClick={toggleSidebar}
+                >
+                    {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+                </button>
             </div>
-            <button
-                className={style["sideNavBar-toggle"]}
-                onClick={toggleSidebar}
-            >
-                {isOpen ? (
-                    <ChevronRight size={25} />
-                ) : (
-                    <ChevronLeft size={25} />
-                )}
-            </button>
+            {/* Search bar removed as per request */}
         </div>
     );
 }
