@@ -21,6 +21,9 @@ Route::prefix('modules')->group(function () {
     
     // Student Quiz Page (specific route must come before parameterizedmoduleId)
     Route::get('/quiz', [App\Http\Controllers\QuizController::class, 'page'])->name('modules.quiz');
+    
+    // Browse All Modules Page
+    Route::get('/browse', [ModuleController::class, 'browse'])->name('modules.browse');
 
     Route::prefix('/{moduleId}')->group(function () {
         Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
@@ -45,7 +48,7 @@ Route::prefix('modules')->group(function () {
         Route::post("/assignments/create", [AssignmentController::class, 'create'])->name("assignment.create");
 
         // Enrollments
-        Route::post('/enroll', [ModuleEnrollmentController::class, 'store'])->name('module.enroll');
+        Route::post('/join', [ModuleController::class, 'join'])->name('module.join');
         Route::delete('/enroll/{registrationId}', [ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
         Route::delete('/enrollments/all', [ModuleEnrollmentController::class, 'destroyAll'])->name('module.unenroll-all');
     });

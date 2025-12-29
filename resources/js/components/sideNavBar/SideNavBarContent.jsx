@@ -29,8 +29,14 @@ export default function SideNavBarContent({ isOpen }) {
     { 
         label: "Courses", 
         href: "/modules", 
-        icon: Users, // Image has a users-like icon for courses? Or stacked box. Let's use generic.
-        active: component.startsWith('Modules/')
+        icon: Users, 
+        active: component === 'Modules/Index' || component === 'Modules/Main'
+    },
+    { 
+        label: "Browse All", 
+        href: "/modules/browse", 
+        icon: BookOpen, 
+        active: component === 'Modules/Browse'
     },
     { 
         label: "Examinations", 
