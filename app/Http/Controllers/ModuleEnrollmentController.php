@@ -6,11 +6,13 @@ use App\Models\Module;
 use App\Models\student;
 use App\Models\ModuleEnrollment;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ModuleEnrollmentController extends Controller
 {
     public function store(Request $request, $moduleId)
     {
+        // return Inertia::render('Modules/Join');
         $user = auth()->user();
         $module = Module::findOrFail($moduleId);
         
