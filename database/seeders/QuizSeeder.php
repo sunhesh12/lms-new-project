@@ -15,14 +15,16 @@ class QuizSeeder extends Seeder
         $moduleId = \App\Models\Module::first()?->id;
 
         // JavaScript Fundamentals Quiz
-        $jsQuiz = Quiz::create([
-            'title' => 'JavaScript Fundamentals',
-            'description' => 'Test your knowledge of JavaScript basics',
-            'duration' => 1800, // 30 minutes
-            'passing_score' => 70,
-            'is_active' => true,
-            'module_id' => $moduleId,
-        ]);
+        $jsQuiz = Quiz::firstOrCreate(
+            ['title' => 'JavaScript Fundamentals'],
+            [
+                'description' => 'Test your knowledge of JavaScript basics',
+                'duration' => 1800, // 30 minutes
+                'passing_score' => 70,
+                'is_active' => true,
+                'module_id' => $moduleId,
+            ]
+        );
 
         $jsQuestions = [
             [
@@ -88,20 +90,25 @@ class QuizSeeder extends Seeder
         ];
 
         foreach ($jsQuestions as $questionData) {
-            Question::create([
-                'quiz_id' => $jsQuiz->id,
-                ...$questionData
-            ]);
+            Question::firstOrCreate(
+                [
+                    'quiz_id' => $jsQuiz->id,
+                    'question' => $questionData['question']
+                ],
+                $questionData
+            );
         }
 
-        $reactQuiz = Quiz::create([
-            'title' => 'React Basics',
-            'description' => 'Evaluate your React knowledge',
-            'duration' => 1200, // 20 minutes
-            'passing_score' => 70,
-            'is_active' => true,
-            'module_id' => \App\Models\Module::skip(1)->first()?->id ?? $moduleId,
-        ]);
+        $reactQuiz = Quiz::firstOrCreate(
+            ['title' => 'React Basics'],
+            [
+                'description' => 'Evaluate your React knowledge',
+                'duration' => 1200, // 20 minutes
+                'passing_score' => 70,
+                'is_active' => true,
+                'module_id' => \App\Models\Module::skip(1)->first()?->id ?? $moduleId,
+            ]
+        );
 
         $reactQuestions = [
             [
@@ -167,21 +174,26 @@ class QuizSeeder extends Seeder
         ];
 
         foreach ($reactQuestions as $questionData) {
-            Question::create([
-                'quiz_id' => $reactQuiz->id,
-                ...$questionData
-            ]);
+            Question::firstOrCreate(
+                [
+                    'quiz_id' => $reactQuiz->id,
+                    'question' => $questionData['question']
+                ],
+                $questionData
+            );
         }
 
         // PHP & Laravel Quiz
-        $phpQuiz = Quiz::create([
-            'title' => 'PHP & Laravel',
-            'description' => 'Test your PHP and Laravel framework knowledge',
-            'duration' => 1500, // 25 minutes
-            'passing_score' => 65,
-            'is_active' => true,
-            'module_id' => \App\Models\Module::skip(2)->first()?->id ?? $moduleId,
-        ]);
+        $phpQuiz = Quiz::firstOrCreate(
+            ['title' => 'PHP & Laravel'],
+            [
+                'description' => 'Test your PHP and Laravel framework knowledge',
+                'duration' => 1500, // 25 minutes
+                'passing_score' => 65,
+                'is_active' => true,
+                'module_id' => \App\Models\Module::skip(2)->first()?->id ?? $moduleId,
+            ]
+        );
 
         $phpQuestions = [
             [
@@ -247,10 +259,13 @@ class QuizSeeder extends Seeder
         ];
 
         foreach ($phpQuestions as $questionData) {
-            Question::create([
-                'quiz_id' => $phpQuiz->id,
-                ...$questionData
-            ]);
+            Question::firstOrCreate(
+                [
+                    'quiz_id' => $phpQuiz->id,
+                    'question' => $questionData['question']
+                ],
+                $questionData
+            );
         }
 
         $this->command->info('Quizzes seeded successfully!');

@@ -48,12 +48,20 @@ class AdminUserSeeder extends Seeder
         ];
 
         foreach ($admins as $adminData) {
-            $user = User::create($adminData);
+            $user = User::where('email', $adminData['email'])->first();
             
-            system_admin::create([
-                'user_id' => $user->id,
-                'type' => 'super_admin',
-            ]);
+            if (!$user) {
+                $user = User::create($adminData);
+            }
+
+            // Ensure system_admin record exists
+            $adminRecord = system_admin::where('user_id', $user->id)->first();
+            if (!$adminRecord) {
+                system_admin::create([
+                    'user_id' => $user->id,
+                    'type' => 'super_admin',
+                ]);
+            }
         }
     }
 }

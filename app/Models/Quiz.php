@@ -12,12 +12,11 @@ class Quiz extends Model
 {
     use HasFactory;
 
-    // UUID Support
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // UUID Support - Disabled to match DB Schema (Integer ID)
+    // public $incrementing = false;
+    // protected $keyType = 'string';
 
     protected $fillable = [
-        'id',
         'title',
         'description',
         'duration',
@@ -27,16 +26,15 @@ class Quiz extends Model
         'allow_multiple_attempts',
         'max_attempts',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) \Illuminate\Support\Str::uuid();
-            }
-        });
-    }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::creating(function ($model) {
+    //         if (empty($model->id)) {
+    //             $model->id = (string) \Illuminate\Support\Str::uuid();
+    //         }
+    //     });
+    // }
 
     protected $casts = [
         'is_active' => 'boolean',
