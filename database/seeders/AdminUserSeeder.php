@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\system_admin;
+use App\Models\SystemAdmin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -55,9 +55,9 @@ class AdminUserSeeder extends Seeder
             }
 
             // Ensure system_admin record exists
-            $adminRecord = system_admin::where('user_id', $user->id)->first();
+            $adminRecord = SystemAdmin::where('user_id', $user->id)->first();
             if (!$adminRecord) {
-                system_admin::create([
+                SystemAdmin::create([
                     'user_id' => $user->id,
                     'type' => 'super_admin',
                 ]);

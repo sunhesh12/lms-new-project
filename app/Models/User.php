@@ -52,9 +52,9 @@ class User extends Authenticatable
 
     }
 
-    public function system_admin()
+    public function systemAdmin()
     {
-        return $this->hasOne(System_admin::class);
+        return $this->hasOne(SystemAdmin::class);
     }
 
     public function faculty()
@@ -85,9 +85,9 @@ class User extends Authenticatable
     // Role checks
     public function isAdmin()
     {
-        return $this->relationLoaded('system_admin') 
-            ? $this->system_admin !== null 
-            : $this->system_admin()->exists();
+        return $this->relationLoaded('systemAdmin') 
+            ? $this->systemAdmin !== null 
+            : $this->systemAdmin()->exists();
     }
 
     public function isLecturer()

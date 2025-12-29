@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import styles from '@/css/Calendar.module.css'
+import styles from '@/css/calendar.module.css'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import axios from 'axios';
 

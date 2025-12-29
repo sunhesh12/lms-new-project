@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\system_admin;
+use App\Models\SystemAdmin;
 use Illuminate\Http\Request;
 
 class SystemAdminController extends Controller
@@ -34,7 +34,7 @@ class SystemAdminController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(system_admin $system_admin)
+    public function show(SystemAdmin $systemAdmin)
     {
         //
     }
@@ -42,7 +42,7 @@ class SystemAdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(system_admin $system_admin)
+    public function edit(SystemAdmin $systemAdmin)
     {
         //
     }
@@ -50,7 +50,7 @@ class SystemAdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, system_admin $system_admin)
+    public function update(Request $request, SystemAdmin $systemAdmin)
     {
         //
     }
@@ -58,7 +58,7 @@ class SystemAdminController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(system_admin $system_admin)
+    public function destroy(SystemAdmin $systemAdmin)
     {
         //
     }

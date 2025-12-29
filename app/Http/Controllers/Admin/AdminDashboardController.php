@@ -26,7 +26,7 @@ class AdminDashboardController extends Controller
             'total_modules' => Module::count(),
         ];
 
-        $recent_users = User::with(['student', 'lecture', 'system_admin'])
+        $recent_users = User::with(['student', 'lecture', 'systemAdmin'])
             ->latest()
             ->limit(5)
             ->get();
@@ -91,7 +91,7 @@ class AdminDashboardController extends Controller
         $roleDistribution = [
             ['role' => 'Students', 'count' => $stats['total_students']],
             ['role' => 'Lecturers', 'count' => $stats['total_lecturers']],
-            ['role' => 'Admins', 'count' => User::has('system_admin')->count()],
+            ['role' => 'Admins', 'count' => User::has('systemAdmin')->count()],
         ];
 
         // 3. Modules per Course
@@ -117,7 +117,7 @@ class AdminDashboardController extends Controller
     public function users()
     {
         return Inertia::render('Admin/Users', [
-            'users' => User::with(['student', 'lecture', 'system_admin'])->get()
+            'users' => User::with(['student', 'lecture', 'systemAdmin'])->get()
         ]);
     }
 
@@ -130,12 +130,12 @@ class AdminDashboardController extends Controller
         // Remove existing roles
         $user->student()->delete();
         $user->lecture()->delete();
-        $user->system_admin()->delete();
+        $user->systemAdmin()->delete();
 
         // Add new role
         switch ($request->role) {
             case 'admin':
-                $user->system_admin()->create(['type' => 'super_admin']);
+                $user->systemAdmin()->create(['type' => 'super_admin']);
                 break;
             case 'lecturer':
                 $user->lecture()->create(['faculty_id' => null]); // Default null or handle faculty assignment
