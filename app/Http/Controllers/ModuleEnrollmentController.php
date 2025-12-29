@@ -83,7 +83,7 @@ class ModuleEnrollmentController extends Controller
         if ($isAdminEnrollment) {
             return redirect()->back()->with('message', 'Student enrolled successfully');
         } else {
-            return redirect()->route('modules.show', $moduleId)->with('message', 'Successfully enrolled in module!');
+            return redirect()->route('module.show', $moduleId)->with('message', 'Successfully enrolled in module!');
         }
     }
 
