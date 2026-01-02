@@ -7,52 +7,60 @@ use Illuminate\Support\Facades\Log;
 
 class DeepSeekService
 {
-    protected string $apiKey = env('DEEPSEEK_API_KEY');
+    protected string $apiKey;
     protected string $baseUrl = 'https://api.deepseek.com/v1/chat/completions';
 
     public function __construct()
     {
-        $this->apiKey = config('services.deepseek.key') ?? env('DEEPSEEK_API_KEY', '');
+        $this->apiKey = config('services.deepseek.key', '');
     }
 
-    public function generateResponse(string $prompt): ?string
+    public function generateResponse(string $prompt): string
     {
         if (empty($this->apiKey)) {
-            Log::error('DeepSeek API key is not set.');
-            return "I'm sorry, but my brain (API Key) is currently disconnected. Please contact the administrator.";
+            Log::error('DeepSeek API key is missing.');
+            return "System configuration error. Please contact the administrator.";
         }
 
         try {
-            $systemPrompt = "You are a professional Academic Assistant for an LMS (Learning Management System). 
-            Your goal is to help students and lecturers with academic queries, explain complex concepts, and provide study guidance.
-            Keep your responses concise, professional, and encouraging.
-            If a question is completely non-academic, politely guide the user back to educational topics.
-            Do not provide direct answers for assignments without explanation; focus on helping the user learn.";
+            $systemPrompt = <<<PROMPT
+You are a professional Academic Assistant for an LMS (Learning Management System).
+Help students and lecturers with academic questions.
+Explain concepts clearly and encourage learning.
+Do not give direct answers to assignments without explanation.
+If the question is non-academic, politely redirect to educational topics.
+PROMPT;
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl, [
-                'model' => 'deepseek-chat',
-                'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user', 'content' => $prompt]
-                ],
-                'temperature' => 0.7,
-                'max_tokens' => 1024,
-            ]);
+            $response = Http::timeout(20)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type'  => 'application/json',
+                ])
+                ->post($this->baseUrl, [
+                    'model' => 'deepseek-chat',
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $prompt],
+                    ],
+                    'temperature' => 0.7,
+                    'max_tokens' => 800,
+                ]);
 
             if ($response->successful()) {
-                $data = $response->json();
-                return $data['choices'][0]['message']['content'] ?? "I'm having trouble processing that right now.";
+                return $response->json('choices.0.message.content')
+                    ?? "I couldn't generate a response this time.";
             }
 
-            Log::error('DeepSeek API Error: ' . $response->body());
-            return "I'm currently experiencing some technical difficulties. Please try again in a moment.";
+            Log::error('DeepSeek API error', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
 
-        } catch (\Exception $e) {
-            Log::error('DeepSeek Service Exception: ' . $e->getMessage());
-            return "Something went wrong while I was thinking. Let's try that again.";
+            return "The AI service is temporarily unavailable. Please try again.";
+
+        } catch (\Throwable $e) {
+            Log::error('DeepSeek exception', ['error' => $e->getMessage()]);
+            return "An internal error occurred while processing your request.";
         }
     }
 }
