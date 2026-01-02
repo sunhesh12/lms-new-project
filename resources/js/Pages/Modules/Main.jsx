@@ -168,29 +168,36 @@ export default function ModuleMain({ module }) {
                                         </div>
                                     </div>
 
-                                    {/* Student Grade Display */}
-                                    {assignment.submissions && assignment.submissions.length > 0 && (
+                                    {/* Student Submission Status and Grade Display */}
+                                    {!isModuleStaff && assignment.submissions && assignment.submissions.length > 0 && (
                                         <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: assignment.submissions[0].feedback ? '0.5rem' : '0' }}>
-                                                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Grade:</span>
-                                                <span style={{
-                                                    fontWeight: '700',
-                                                    color: assignment.submissions[0].grade >= 50 ? '#16a34a' : '#dc2626',
-                                                    fontSize: '1.1rem'
-                                                }}>
-                                                    {assignment.submissions[0].grade !== null ? `${assignment.submissions[0].grade}/100` : 'Pending'}
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Status:</span>
+                                                <span style={{ fontSize: '0.9rem', color: '#16a34a', fontWeight: '600' }}>
+                                                    ✓ Submitted {new Date(assignment.submissions[0].created_at).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            {assignment.submissions[0].feedback && (
-                                                <div style={{ fontSize: '0.9rem', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '0.5rem' }}>
-                                                    <strong>Feedback:</strong> {assignment.submissions[0].feedback}
-                                                </div>
+                                            {assignment.submissions[0].grade !== null && (
+                                                <>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: assignment.submissions[0].feedback ? '0.5rem' : '0', paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0' }}>
+                                                        <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Grade:</span>
+                                                        <span style={{
+                                                            fontWeight: '700',
+                                                            color: assignment.submissions[0].grade >= 50 ? '#16a34a' : '#dc2626',
+                                                            fontSize: '1.1rem'
+                                                        }}>
+                                                            {assignment.submissions[0].grade}/100
+                                                        </span>
+                                                    </div>
+                                                    {assignment.submissions[0].feedback && (
+                                                        <div style={{ fontSize: '0.9rem', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
+                                                            <strong>Feedback:</strong> {assignment.submissions[0].feedback}
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     )}
-
-                                    {/* Student Grade Display would go here if data was available */}
-                                    {/* We will fix the data fetching in ModuleController in the next step to ensure students see their grades */}
                                 </div>
                             </div>
 
@@ -217,7 +224,7 @@ export default function ModuleMain({ module }) {
                                     {isModuleStaff ? (
                                         <><FontAwesomeIcon icon={faEdit} /> Edit</>
                                     ) : (
-                                        <><FontAwesomeIcon icon={faUpload} /> Submit</>
+                                        <><FontAwesomeIcon icon={faUpload} /> {assignment.submissions && assignment.submissions.length > 0 ? 'Resubmit' : 'Submit'}</>
                                     )}
                                 </button>
                             </div>
