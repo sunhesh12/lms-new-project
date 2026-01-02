@@ -15,6 +15,13 @@ export default function AuthenticatedLayout({ header, children }) {
       />
 
       <div className={style["page-main-container"]}>
+        {header && (
+          <header className={style["layout-header"]}>
+            <div className={style["header-inner"]}>
+              {header}
+            </div>
+          </header>
+        )}
         <main>{children}</main>
       </div>
     </div>

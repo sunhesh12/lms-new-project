@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     User,
     Lock,
@@ -21,7 +21,32 @@ import HelpSupport from './Partials/HelpSupport';
 import styles from './css/profile-edit.module.css';
 
 export default function Edit({ mustVerifyEmail, status }) {
-    const [activeTab, setActiveTab] = useState('profile');
+    // Initialize tab from URL query param if present
+    const queryParams = new URLSearchParams(window.location.search);
+    const initialTab = queryParams.get('tab') || 'profile';
+    const [activeTab, setActiveTab] = useState(initialTab);
+
+    // Sync tab state with URL changes
+    useEffect(() => {
+        const handleLocationChange = () => {
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get('tab');
+            if (tab && tab !== activeTab) {
+                setActiveTab(tab);
+            }
+        };
+
+        window.addEventListener('popstate', handleLocationChange);
+        return () => window.removeEventListener('popstate', handleLocationChange);
+    }, [activeTab]);
+
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+        // Update URL without full page reload
+        const url = new URL(window.location);
+        url.searchParams.set('tab', tabId);
+        window.history.pushState({}, '', url);
+    };
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: User },
@@ -98,9 +123,8 @@ export default function Edit({ mustVerifyEmail, status }) {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`${styles.tabBtn} ${activeTab === tab.id ? styles.activeTab : ''
-                                    }`}
+                                onClick={() => handleTabChange(tab.id)}
+                                className={`${styles.tabBtn} ${activeTab === tab.id ? styles.activeTab : ''}`}
                             >
                                 <tab.icon className={styles.icon} size={18} />
                                 {tab.label}

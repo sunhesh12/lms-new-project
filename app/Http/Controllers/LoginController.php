@@ -195,8 +195,27 @@ public function logout(Request $request)
             $notifications = $user->notifications()->latest()->limit(10)->get();
         }
 
+        // --- Fetch Frequent Modules ---
+        $frequent_modules = [];
+        if ($user->isAdmin()) {
+            $frequent_modules = \App\Models\Module::withCount('students')
+                ->orderBy('students_count', 'desc')
+                ->limit(5)
+                ->get();
+        } elseif ($user->isLecturer() && $user->lecture) {
+            $frequent_modules = $user->lecture->modules()
+                ->withCount('students')
+                ->limit(5)
+                ->get();
+        } elseif ($user->isStudent() && $user->student) {
+            $frequent_modules = $user->student->enrolledModules()
+                ->limit(5)
+                ->get();
+        }
+
         return Inertia::render('Dashboard', [
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'frequent_modules' => $frequent_modules,
         ]);
     }
 }

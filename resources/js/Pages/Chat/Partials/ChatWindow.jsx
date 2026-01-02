@@ -15,11 +15,15 @@ import {
     Check,
     X,
     ChevronLeft,
-    MoreVertical
+    MoreVertical,
+    Cpu,
+    Sparkles
 } from 'lucide-react';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
 import style from '@/css/chatwindow.module.css';
+
+const AI_UUID = '00000000-0000-0000-0000-000000000000';
 
 export default function ChatWindow({ user, conversation, onBack }) {
     const [messages, setMessages] = useState([]);
@@ -29,6 +33,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
     const chatWindowRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
+    const [isAiTyping, setIsAiTyping] = useState(false);
 
     // Context Menu States
     const [messageContext, setMessageContext] = useState(null);
@@ -60,6 +65,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
         setSelectedMessages([]);
         reset();
         setData('conversation_id', conversation?.id);
+        setIsAiTyping(false);
         scrollToBottom();
     }, [conversation]);
 
@@ -72,6 +78,9 @@ export default function ChatWindow({ user, conversation, onBack }) {
             window.Echo.private(`chat.${conversation.id}`)
                 .listen('.message.sent', (e) => {
                     setMessages(prev => [...prev, e.message]);
+                    if (e.message.user_id === AI_UUID) {
+                        setIsAiTyping(false);
+                    }
                     scrollToBottom();
                 });
 
@@ -91,12 +100,20 @@ export default function ChatWindow({ user, conversation, onBack }) {
         e.preventDefault();
         if (processing || (!data.body && !data.attachment)) return;
 
+        const isToAi = conversation.users?.some(u => u.id === AI_UUID);
+        if (isToAi) {
+            setIsAiTyping(true);
+        }
+
         post(route('chat.store'), {
             onSuccess: () => {
                 reset('body', 'attachment', 'reply_to_id');
                 setReplyTo(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 scrollToBottom();
+            },
+            onError: () => {
+                setIsAiTyping(false);
             },
             preserveScroll: true
         });
@@ -235,6 +252,7 @@ export default function ChatWindow({ user, conversation, onBack }) {
 
     const renderMessage = (msg) => {
         const isMe = msg.user_id === user.id;
+        const isAi = msg.user_id === AI_UUID;
         const isSelected = selectedMessages.includes(msg.id);
 
         return (
@@ -251,7 +269,13 @@ export default function ChatWindow({ user, conversation, onBack }) {
                         </div>
                     </div>
                 )}
-                <div className={`${style.bubble} ${isMe ? style.bubbleSender : style.bubbleReceiver} ${isSelected ? style.selectionRing : ''}`}>
+                <div className={`${style.bubble} ${isMe ? style.bubbleSender : (isAi ? style.aiBubble : style.bubbleReceiver)} ${isSelected ? style.selectionRing : ''}`}>
+                    {isAi && (
+                        <div className={style.aiBadge}>
+                            <Sparkles size={10} />
+                            Academic AI
+                        </div>
+                    )}
                     {msg.reply_to && (
                         <div className={`${style.replyQuote} ${isMe ? style.replySender : style.replyReceiver}`}>
                             <p className="font-bold opacity-80">{msg.reply_to.user?.name}</p>
@@ -361,6 +385,15 @@ export default function ChatWindow({ user, conversation, onBack }) {
 
             <div className={style.messagesArea}>
                 {messages.map(renderMessage)}
+                {isAiTyping && (
+                    <div className={style.messageRow} style={{ justifyContent: 'flex-start' }}>
+                        <div className={style.typingIndicator}>
+                            <div className={style.dot}></div>
+                            <div className={style.dot}></div>
+                            <div className={style.dot}></div>
+                        </div>
+                    </div>
+                )}
                 <div ref={messagesEndRef} />
             </div>
 

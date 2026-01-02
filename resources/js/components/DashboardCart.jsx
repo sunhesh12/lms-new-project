@@ -101,16 +101,16 @@ export default function DashboardJourney() {
   const cards = role === 'admin' ? adminCards : (role === 'lecturer' ? lecturerCards : studentCards);
 
   return (
-    <div className={styles["dashboard-continue-journey-container"]}>
-      <div className={styles["dashboard-grid-two-column"]}>
+    <div className={styles["journey-container"]}>
+      <div className={styles["journey-grid"]}>
         {cards.map((card, index) => (
           <Link
             key={index}
             href={card.link}
-            className={styles["dashboard-card"]}
+            className={styles["journey-card"]}
           >
-            <div className={styles["dashboard-icon"]}>{card.icon}</div>
-            <div className={styles["dashboard-text"]}>
+            <div className={styles["journey-icon"]}>{card.icon}</div>
+            <div className={styles["journey-content"]}>
               <h3>{card.title}</h3>
               <p>{card.desc}</p>
             </div>

@@ -58,6 +58,14 @@ export default function SideNavBarContent({ isOpen }) {
       active: component === 'Admin/Dashboard',
       isAdmin: true
     });
+
+    navItems.push({
+      label: "Users",
+      href: route('admin.users.index'),
+      icon: Users,
+      active: component === 'Admin/Users' || component === 'Admin/Users/Edit',
+      isAdminOnly: true
+    });
   }
 
   const filteredNavItems = navItems.filter(item => !item.isAdminOnly || isAdmin);

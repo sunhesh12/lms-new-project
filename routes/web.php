@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/messages/delete-multiple', [App\Http\Controllers\ChatController::class, 'deleteMultiple'])->name('messages.delete.multiple');
     Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::get('/ai-assistant', [App\Http\Controllers\ChatController::class, 'aiAssistant'])->name('ai.assistant');
     Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
     Route::get('/api/students/search', function (Request $request) {
         $query = $request->query('query');

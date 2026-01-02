@@ -48,6 +48,11 @@ class ChatController extends Controller
             return collect();
         }
 
+        $aiUuid = '00000000-0000-0000-0000-000000000000';
+        if ($user->id !== $aiUuid) {
+            $this->ensureAiConversation($user, $aiUuid);
+        }
+
         return $user->conversations()
             ->with(['messages' => function($query) use ($user) {
                 $query->where(function ($q) use ($user) {
@@ -84,6 +89,22 @@ class ChatController extends Controller
     {
         $this->markAsReadInternal($conversation);
         return response()->json(['success' => true]);
+    }
+
+    private function ensureAiConversation($user, $aiUuid)
+    {
+        $exists = $user->conversations()
+            ->where('type', 'private')
+            ->whereHas('participants', function ($q) use ($aiUuid) {
+                $q->where('user_id', $aiUuid);
+            })
+            ->exists();
+
+        if (!$exists) {
+            $conversation = \App\Models\Conversation::create(['type' => 'private']);
+            $conversation->participants()->create(['user_id' => $user->id]);
+            $conversation->participants()->create(['user_id' => $aiUuid]);
+        }
     }
 
     private function markAsReadInternal(Conversation $conversation)
@@ -131,6 +152,32 @@ class ChatController extends Controller
         $message->append('attachment_url');
         
         broadcast(new \App\Events\MessageSent($message))->toOthers();
+
+        // Check if message is for the AI Assistant
+        $aiUuid = '00000000-0000-0000-0000-000000000000';
+        if ($conversation->users->contains($aiUuid) && Auth::id() !== $aiUuid) {
+            // Process AI response in the background (or inline for simplicity now)
+            try {
+                $gemini = new \App\Services\GeminiService();
+                $aiResponse = $gemini->generateResponse($message->body);
+
+                if ($aiResponse) {
+                    $aiMessage = $conversation->messages()->create([
+                        'user_id' => $aiUuid,
+                        'body' => $aiResponse,
+                        'reply_to_id' => $message->id,
+                    ]);
+
+                    $aiMessage->load(['user', 'replyTo.user']);
+                    $aiMessage->append('attachment_url');
+                    
+                    // Broadcast the AI response
+                    broadcast(new \App\Events\MessageSent($aiMessage));
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('AI Response Failed: ' . $e->getMessage());
+            }
+        }
 
         return back();
     }

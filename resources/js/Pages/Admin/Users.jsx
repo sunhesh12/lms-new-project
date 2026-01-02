@@ -1,10 +1,13 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
-import { UserCog } from "lucide-react";
+import { Head, router, Link } from "@inertiajs/react";
+import { UserCog, Search, Edit3 } from "lucide-react";
+import { useState } from "react";
 import styles from "@/css/admin.module.css";
 import Table from "@/components/Tables/Table";
 
 export default function Users({ users }) {
+    const [searchTerm, setSearchTerm] = useState("");
+
     const handleRoleUpdate = (userId, newRole) => {
         if (confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
             router.post(route('admin.users.role.update', userId), {
@@ -20,15 +23,23 @@ export default function Users({ users }) {
         }
     };
 
+    const filteredUsers = users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const columns = [
         {
             accessor: "name",
             label: "User Name",
             render: (row) => (
                 <div className={styles.userInfo}>
-                    <div className={styles.userAvatar}>
-                        {row.name[0]}
-                    </div>
+                    <img
+                        src={row.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(row.name)}&background=random`}
+                        className={styles.userAvatarSmall}
+                        alt=""
+                    />
                     <span className={styles.userName}>{row.name}</span>
                 </div>
             ),
@@ -38,7 +49,7 @@ export default function Users({ users }) {
             accessor: "role",
             label: "Role",
             render: (row) => (
-                <span className={styles.roleBadge}>
+                <span className={`${styles.roleBadge} ${styles['role-' + row.role]}`}>
                     {row.role}
                 </span>
             ),
@@ -73,6 +84,14 @@ export default function Users({ users }) {
                     >
                         {row.status === 'active' ? 'Block' : 'Unblock'}
                     </button>
+
+                    <Link
+                        href={route('admin.users.edit', row.id)}
+                        className={styles.editDetailBtn}
+                        title="Detailed Edit"
+                    >
+                        <Edit3 size={18} />
+                    </Link>
                 </div>
             ),
         },
@@ -86,17 +105,30 @@ export default function Users({ users }) {
 
             <div className={styles.adminContainer}>
                 <header className={styles.header}>
-                    <h1 className={`${styles.title} ${styles.titleGroup}`}>
-                        <UserCog size={32} className={styles.titleIcon} />
-                        Manage System Users
-                    </h1>
-                    <p className={styles.subtitle}>Update user roles and access levels.</p>
+                    <div className={styles.titleSection}>
+                        <h1 className={`${styles.title} ${styles.titleGroup}`}>
+                            <UserCog size={32} className={styles.titleIcon} />
+                            Manage System Users
+                        </h1>
+                        <p className={styles.subtitle}>Update user roles, status, and view detailed academic profiles.</p>
+                    </div>
+
+                    <div className={styles.searchContainer}>
+                        <Search className={styles.searchIcon} size={20} />
+                        <input
+                            type="text"
+                            placeholder="Search by name, email or role..."
+                            className={styles.searchInput}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </header>
 
                 <div className={styles.tableCard}>
                     <Table
                         columns={columns}
-                        data={users}
+                        data={filteredUsers}
                     />
                 </div>
             </div>

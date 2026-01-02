@@ -24,7 +24,22 @@ class AdminDashboardController extends Controller
             'total_lecturers' => lecture::count(),
             'total_courses' => Course::count(),
             'total_modules' => Module::count(),
+            'active_users' => User::where('status', 'active')->count(),
+            'blocked_users' => User::where('status', 'blocked')->count(),
         ];
+
+        $popular_modules = Module::withCount('students')
+            ->orderBy('students_count', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($module) {
+                return [
+                    'id' => $module->id,
+                    'name' => $module->name,
+                    'code' => $module->module_code,
+                    'enrolled_count' => $module->students_count,
+                ];
+            });
 
         $recent_users = User::with(['student', 'lecture', 'systemAdmin'])
             ->latest()
@@ -105,6 +120,7 @@ class AdminDashboardController extends Controller
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
             'recent_users' => $recent_users,
+            'popular_modules' => $popular_modules,
             'notifications' => $notifications,
             'charts' => [
                 'registrationTrends' => $registrationTrends,
@@ -154,6 +170,84 @@ class AdminDashboardController extends Controller
         $user->update(['status' => $newStatus]);
 
         return redirect()->back()->with('message', "User status updated to {$newStatus}");
+    }
+
+    public function editUser(User $user)
+    {
+        // Load relationships
+        $user->load(['student.enrolledModules.module', 'lecture.modules', 'systemAdmin']);
+        
+        // Format enrolled modules for student if they are a student
+        $enrolledModules = [];
+        if ($user->isStudent() && $user->student) {
+            $enrolledModules = $user->student->enrolledModules->map(function($module) {
+                return [
+                    'id' => $module->id,
+                    'name' => $module->name,
+                    'code' => $module->module_code,
+                    'status' => $module->pivot->status,
+                    'enrolled_at' => $module->pivot->created_at->format('M d, Y')
+                ];
+            });
+        }
+
+        return Inertia::render('Admin/Users/Edit', [
+            'managedUser' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'status' => $user->status,
+                'address' => $user->address,
+                'user_phone_no' => $user->user_phone_no,
+                'user_dob' => $user->user_dob,
+                'avatar_url' => $user->avatar_url,
+                'enrolled_modules' => $enrolledModules,
+            ]
+        ]);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'address' => 'nullable|string',
+            'user_phone_no' => 'nullable|string',
+            'user_dob' => 'nullable|date',
+            'status' => 'required|in:active,blocked',
+            'role' => 'required|in:admin,lecturer,student'
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'address' => $request->address,
+            'user_phone_no' => $request->user_phone_no,
+            'user_dob' => $request->user_dob,
+            'status' => $request->status,
+        ]);
+
+        // Update role if changed
+        if ($request->role !== $user->role) {
+            $user->student()->delete();
+            $user->lecture()->delete();
+            $user->systemAdmin()->delete();
+
+            switch ($request->role) {
+                case 'admin':
+                    $user->systemAdmin()->create(['type' => 'super_admin']);
+                    break;
+                case 'lecturer':
+                    $user->lecture()->create(['faculty_id' => null]);
+                    break;
+                case 'student':
+                    $user->student()->create(['academic_year' => date('Y')]);
+                    break;
+            }
+        }
+
+        return redirect()->route('admin.users.index')->with('message', 'User updated successfully');
     }
 
     public function systemHealth()
