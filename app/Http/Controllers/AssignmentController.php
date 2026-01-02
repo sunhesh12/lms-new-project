@@ -8,6 +8,7 @@ use App\Models\Resource;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AssignmentController extends Controller
 {
@@ -49,6 +50,7 @@ class AssignmentController extends Controller
                 'description' => $validatedData['description'],
                 'deadline' => $validatedData['deadline'],
                 'topic_id' => $validatedData['topic_id'] ?? null,
+                'is_deleted' => false,
             ]);
 
             $resource = $assignment->resources()->create([

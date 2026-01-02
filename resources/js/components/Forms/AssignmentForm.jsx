@@ -6,7 +6,7 @@ import { faClock, faPlus, faUpload, faFile } from "@fortawesome/free-solid-svg-i
 import Button from "../Input/Button";
 import { useForm } from "@inertiajs/react";
 
-export default function AssignmentForm({ assignment, isModuleStaff, moduleId }) {
+export default function AssignmentForm({ assignment, isModuleStaff, moduleId, topicId }) {
     const { data, setData, post, processing, errors, transform } = useForm({
         // Fields for creation (Staff)
         title: assignment?.title || "",
@@ -16,6 +16,8 @@ export default function AssignmentForm({ assignment, isModuleStaff, moduleId }) 
         resource_caption: "",
         resource_file: null,
         // Fields for submission (Student)
+        resource_file: null,
+        topic_id: assignment?.topic_id || topicId || "",
     });
 
     const handleSubmit = (e) => {
