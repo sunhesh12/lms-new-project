@@ -1,8 +1,8 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import styles from "@/css/module.module.css";
-import assignmentStyles from "@/css/components/assignments.module.css";
 import Topic from "@/components/Accordion/Topic";
+import Assignment from "@/components/Accordion/Assignment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ModuleHeader from "@/components/Module/ModuleHeader";
 import ModuleToolbar from "@/components/Module/ModuleToolbar";
@@ -127,116 +127,31 @@ export default function ModuleMain({ module }) {
     );
 
     const AssignmentsView = () => (
-        <div className={assignmentStyles.container}>
+        <article id="assignments-container" className={styles.topicsContainer}>
             {module.assignments.length > 0 ? (
-                module.assignments.map((assignment) => {
-                    const now = new Date();
-                    const startDate = new Date(assignment.started);
-                    const deadline = new Date(assignment.deadline);
-                    const isActive = now >= startDate && now <= deadline;
-
-                    // Determine if student has a grade
-                    // We need to pass submission info to student view. 
-                    // The current module.assignments probably doesn't have student submission info deep nested unless I eager loaded it?
-                    // I eager loaded 'resources' but not 'submissions'.
-                    // For now, I will assume I might need to update the ModuleController to eager load submissions for the current student.
-                    // But for the grading button, it's fine.
-
-                    return (
-                        <div key={assignment.id} className={assignmentStyles.card}>
-                            <div className={assignmentStyles.content}>
-                                <div className={assignmentStyles.iconWrapper}>
-                                    <FontAwesomeIcon icon={faClock} size="lg" />
-                                </div>
-                                <div className={assignmentStyles.info}>
-                                    <h3 className={assignmentStyles.title}>{assignment.title}</h3>
-                                    <p className={assignmentStyles.description}>{assignment.description}</p>
-
-                                    <div className={assignmentStyles.meta}>
-                                        <div className={assignmentStyles.metaItem}>
-                                            <span>Start: {startDate.toLocaleDateString()} {startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                        </div>
-                                        <div className={assignmentStyles.metaItem}>
-                                            <span>Due: {deadline.toLocaleDateString()} {deadline.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                        </div>
-                                        <div className={assignmentStyles.metaItem}>
-                                            {isActive ? (
-                                                <span className={assignmentStyles.statusActive}>● Open</span>
-                                            ) : (
-                                                <span className={assignmentStyles.statusClosed}>● Closed</span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Student Submission Status and Grade Display */}
-                                    {!isModuleStaff && assignment.submissions && assignment.submissions.length > 0 && (
-                                        <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Status:</span>
-                                                <span style={{ fontSize: '0.9rem', color: '#16a34a', fontWeight: '600' }}>
-                                                    ✓ Submitted {new Date(assignment.submissions[0].created_at).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            {assignment.submissions[0].grade !== null && (
-                                                <>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: assignment.submissions[0].feedback ? '0.5rem' : '0', paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0' }}>
-                                                        <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Grade:</span>
-                                                        <span style={{
-                                                            fontWeight: '700',
-                                                            color: assignment.submissions[0].grade >= 50 ? '#16a34a' : '#dc2626',
-                                                            fontSize: '1.1rem'
-                                                        }}>
-                                                            {assignment.submissions[0].grade}/100
-                                                        </span>
-                                                    </div>
-                                                    {assignment.submissions[0].feedback && (
-                                                        <div style={{ fontSize: '0.9rem', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
-                                                            <strong>Feedback:</strong> {assignment.submissions[0].feedback}
-                                                        </div>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                {isModuleStaff && (
-                                    <Link
-                                        href={route('assignment.grading', [module.id, assignment.id])}
-                                        className={`${assignmentStyles.actionBtn} ${assignmentStyles.btnSecondary}`}
-                                    >
-                                        <FontAwesomeIcon icon={faClipboardList} /> Grade
-                                    </Link>
-                                )}
-
-                                <button
-                                    className={`${assignmentStyles.actionBtn} ${assignmentStyles.btnSecondary}`}
-                                    onClick={isModuleStaff ? () => {
-                                        setSelectedAssignment(assignment);
-                                        setAssignmentFormVisible(true);
-                                    } : () => {
-                                        setSelectedAssignment(assignment);
-                                        setAssignmentFormVisible(true);
-                                    }}
-                                >
-                                    {isModuleStaff ? (
-                                        <><FontAwesomeIcon icon={faEdit} /> Edit</>
-                                    ) : (
-                                        <><FontAwesomeIcon icon={faUpload} /> {assignment.submissions && assignment.submissions.length > 0 ? 'Resubmit' : 'Submit'}</>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    );
-                })
+                module.assignments.map((assignment) => (
+                    <Assignment
+                        key={assignment.id}
+                        assignment={assignment}
+                        isModuleStaff={isModuleStaff}
+                        moduleId={module.id}
+                        onEdit={(assignment) => {
+                            setSelectedAssignment(assignment);
+                            setAssignmentFormVisible(true);
+                        }}
+                        onDelete={(assignment) => {
+                            // Handle delete if needed
+                            console.log('Delete assignment:', assignment.id);
+                        }}
+                        onGrading={(assignment) => {
+                            router.get(route('assignment.grading', [module.id, assignment.id]));
+                        }}
+                    />
+                ))
             ) : (
-                <div className={assignmentStyles.emptyState}>
-                    <p>No assignments available for this module yet.</p>
-                </div>
+                <p>No assignments available for this module yet.</p>
             )}
-        </div>
+        </article>
     );
 
     const QuizzesView = () => (
@@ -329,7 +244,7 @@ export default function ModuleMain({ module }) {
                     <EditModule
                         formProps={moduleEditFormProps}
                         moduleId={module.id}
-                        defaultCoverImage={`/storage/uploads/modules/${module.cover_image_url}`}
+                        defaultCoverImage={module.cover_image_url ? `/storage/uploads/modules/${module.cover_image_url}` : null}
                     />
                 </FloatingWindowContainer>
             )}
@@ -361,7 +276,7 @@ export default function ModuleMain({ module }) {
             <ModuleHeader
                 moduleName={`${module.name}`}
                 subTitle={module.description}
-                coverImage={`/storage/uploads/modules/${module.cover_image_url}`}
+                coverImage={module.cover_image_url}
             />
             <div id="module-content" className={styles.moduleContent}>
                 <ModuleToolbar
