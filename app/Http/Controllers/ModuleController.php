@@ -82,14 +82,14 @@ class ModuleController extends Controller
                     },
                     'assignments' => function ($assignmentsQuery) use ($user) {
                         $assignmentsQuery->where('is_deleted', false)->with(['submissions' => function($q) use ($user) {
-                             $q->where('student_id', $user->id);
+                             $q->where('student_id', $user->id)->where('is_deleted', false);
                         }]);
                     }
                 ]);
             },
             'assignments' => function ($query) use ($user) {
                 $query->where('is_deleted', false)->with(['resources', 'submissions' => function ($q) use ($user) {
-                    $q->where('student_id', $user->id);
+                    $q->where('student_id', $user->id)->where('is_deleted', false);
                 }]);
             },
             'quizzes' => function ($query) {

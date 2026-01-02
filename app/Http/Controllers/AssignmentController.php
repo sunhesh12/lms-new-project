@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assignment;
 use App\Models\Module;
 use App\Models\Resource;
+use App\Models\Submission;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -90,16 +91,33 @@ class AssignmentController extends Controller
                 'caption' => $validatedData['resource_caption'] ?? 'Submission: ' . $user->name,
             ]);
 
-            // Create submission record
-            // Mapping student_id to user_id as per migration
-            DB::table('submissions')->insert([
-                'id' => (string) \Illuminate\Support\Str::uuid(),
-                'student_id' => $user->id,
-                'assignment_id' => $assignment->id,
-                'resource_id' => $resource->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // Check if student already has a submission for this assignment
+            $existingSubmission = Submission::where('student_id', $user->id)
+                ->where('assignment_id', $assignment->id)
+                ->where('is_deleted', false)
+                ->first();
+
+            if ($existingSubmission) {
+                // Update existing submission (soft delete old resource if needed)
+                if ($existingSubmission->resource) {
+                    $existingSubmission->resource->is_deleted = true;
+                    $existingSubmission->resource->save();
+                }
+                
+                // Update submission with new resource
+                $existingSubmission->resource_id = $resource->id;
+                $existingSubmission->grade = null; // Reset grade on resubmission
+                $existingSubmission->feedback = null; // Reset feedback on resubmission
+                $existingSubmission->save();
+            } else {
+                // Create new submission record
+                Submission::create([
+                    'student_id' => $user->id,
+                    'assignment_id' => $assignment->id,
+                    'resource_id' => $resource->id,
+                    'is_deleted' => false,
+                ]);
+            }
 
             return redirect()->back()->with('message', 'Assignment submitted successfully!');
         } catch (Exception $e) {
