@@ -7,7 +7,7 @@ import style from "@/css/sideNavBar.module.css";
 export default function SideNavBar({ isOpen, toggleSidebar }) {
   return (
     <motion.div
-      className={style.sideNavBar}
+      className={`${style.sideNavBar} ${!isOpen ? style.minimized : ''}`}
       initial={{ width: isOpen ? 260 : 80 }}
       animate={{ width: isOpen ? 260 : 80 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}

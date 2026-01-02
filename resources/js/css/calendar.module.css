@@ -1858,3 +1858,78 @@
     min-height: 80px;
   }
 }
+/* Event Visibility and Sections */
+.eventsListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eventSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eventSectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.eventItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.publicBadge {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.createdByBadge {
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.publicEvent {
+  border-left-color: #10b981 !important;
+}
+
+.sharedEvent {
+  border-left-color: #6366f1 !important;
+  background-color: #f8fafc;
+}
+
+.visibilityOptions {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.radioLabel input {
+  cursor: pointer;
+}
+

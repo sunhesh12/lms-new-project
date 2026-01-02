@@ -1,6 +1,7 @@
 /* Side Navbar Container */
 .sideNavBar {
-    background-color: var(--accent); /* Dark background */
+    background-color: var(--accent);
+    /* Dark background */
     color: #9ca3af;
     display: flex;
     flex-direction: column;
@@ -16,18 +17,30 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    transition: padding 0.3s ease;
+}
+
+.sideNavBar-header-container.minimized {
+    padding: 20px 10px;
 }
 
 .sideNavBar-header {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+}
+
+.minimized .sideNavBar-header {
+    flex-direction: column;
+    gap: 15px;
 }
 
 .sideNavBar-logo {
     width: 32px;
     height: 32px;
-    min-width: 32px; /* Prevent shrinking */
+    min-width: 32px;
+    /* Prevent shrinking */
 }
 
 .header-text-container {
@@ -66,6 +79,19 @@
 
 .sideNavBar-toggle:hover {
     color: white;
+}
+
+.header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.minimized .header-actions {
+    margin-left: 0;
+    flex-direction: column;
+    gap: 10px;
 }
 
 /* Navigation Section */
@@ -118,7 +144,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
     font-weight: 600;
-    border-left: 3px solid var(--white); /* Subtle active indicator if desired, or remove */
+    border-left: 3px solid white;
 }
 
 /* Footer Section */
@@ -148,6 +174,11 @@
     color: white;
 }
 
+.sideNavBar.minimized .settings-link {
+    justify-content: center;
+    padding: 12px 0;
+}
+
 .user-profile-card {
     display: flex;
     align-items: center;
@@ -158,10 +189,17 @@
     margin-top: 10px;
     text-decoration: none;
     overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.sideNavBar.minimized .user-profile-card {
+    justify-content: center;
+    padding: 12px 0;
 }
 
 .user-profile-card:hover {
-    background-color: rgba(255, 255, 255, 0.08); /* Lighter on hover */
+    background-color: rgba(255, 255, 255, 0.08);
+    /* Lighter on hover */
 }
 
 .avatar {
@@ -195,3 +233,41 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.nav-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-mini-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+}
+
+.nav-label-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.nav-count-badge {
+    background-color: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
+}
+

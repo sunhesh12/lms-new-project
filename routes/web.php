@@ -66,7 +66,7 @@ Route::post('/assignments/submissions/{submissionId}/grade', [AssignmentControll
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
-});
+})->name('calendar');
 
 Route::get('/account', function () {
     return Inertia::render('Users/Main');
@@ -191,6 +191,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/quizzes/{id}', [App\Http\Controllers\QuizController::class, 'destroy'])->name('quizzes.destroy');
     Route::post('/quizzes/{id}/questions', [App\Http\Controllers\QuizController::class, 'syncQuestions'])->name('quizzes.questions.sync');
     Route::delete('/quizzes/{quizId}/questions/{questionId}', [App\Http\Controllers\QuizController::class, 'deleteQuestion'])->name('quizzes.questions.delete');
+
+    // Notifications
+    Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/api/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/api/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 

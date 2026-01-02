@@ -1,66 +1,82 @@
-.dashboard-notification {
-    top: 20px;
-    right: 20px;
-    background-color: var(--whiteop);
-    border: 1px solid var(--white);
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-
+.notificationCard {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
     display: flex;
-    align-items: start;
-    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f3f4f6;
+    transition: transform 0.2s;
 }
 
-.dashboard-notification {
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 10px 0;
-    font-weight: 500;
-    /* color: #fff; */
+.notificationCard:hover {
+    transform: translateY(-2px);
 }
 
-.dashboard-notification-success {
-    background-color: var(--successNotify);
-    /* green */
-}
-
-.dashboard-notification-fail {
-    background-color: var(--errorNotify);
-    /* red */
-    color: var(--white);
-}
-
-.dashboard-notification-noting {
-    background-color: var(--notingNotify);
-}
-
-.notification-link {
-    margin-left: 8px;
-    /* color: #fff; */
-    text-decoration: underline;
-}
-
-
-.notificationIconContent {
-    display: flex;
-    justify-content: flex-start;
-    gap: 20px;
-}
-
-.notification-icon-container {
-    width: max-content;
-    height: 100%;
+.iconContainer {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
-.notificationIconContent h1 {
-    font-size: large;
+.iconSuccess {
+    color: #10b981;
 }
 
-.notificationIconContent p {
-    font-size: small;
+.iconError {
+    color: #ef4444;
+}
+
+.iconNoting {
+    color: #f59e0b;
+}
+
+.iconInfo {
+    color: #6b7280;
+}
+
+.content {
+    flex: 1;
+}
+
+.topic {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.message {
+    margin: 0;
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.actionLink {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.actionLink:hover {
+    text-decoration: underline;
+}
+
+/* Color accents based on type if needed */
+.notificationCard.success {
+    border-left: 4px solid #10b981;
+}
+
+.notificationCard.error {
+    border-left: 4px solid #ef4444;
+}
+
+.notificationCard.noting {
+    border-left: 4px solid #3b82f6;
 }

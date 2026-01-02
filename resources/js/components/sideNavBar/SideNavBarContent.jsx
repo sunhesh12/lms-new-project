@@ -1,7 +1,7 @@
 // src/components/sideNavBar/SideNavBarContent.jsx
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { Home, BookOpen, FileText, Users, MessageSquare, Calendar, ShieldCheck, LayoutDashboard } from "lucide-react";
+import { Home, BookOpen, FileText, Users, MessageSquare, Calendar as CalendarIcon, ShieldCheck, LayoutDashboard, Search, GraduationCap } from "lucide-react";
 import style from "@/css/sideNavBar.module.css";
 import { motion } from "framer-motion";
 
@@ -11,55 +11,52 @@ export default function SideNavBarContent({ isOpen }) {
   const { component } = usePage();
 
   const navItems = [
-    { 
-        label: "Calendar", 
-        href: "/calendar", 
-        icon: Home, // Using Home icon for Calendar as per image, or use Calendar icon? Image shows 'Home' icon for Calendar item? No, image has "Calendar" with Home icon likely, or just misplaced. Let's stick to semantic icons if possible, or match image strictly. Image: Home icon -> text "Calendar"? 
-        // Image shows: Home icon -> Calendar label. Dashboard icon -> Dashboard label.
-        // Let's use Home icon for first item as shown in image roughly
-        icon: Home,
-        active: component === 'Calendar/Main'
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+      icon: Home,
+      active: component === 'Dashboard'
     },
-    { 
-        label: "Dashboard", 
-        href: "/dashboard", 
-        icon: LayoutDashboard,
-        active: component === 'Dashboard'
+    {
+      label: "Calendar",
+      href: "/calendar",
+      icon: CalendarIcon,
+      active: component === 'Calendar/Main'
     },
-    { 
-        label: "Courses", 
-        href: "/modules", 
-        icon: Users, 
-        active: component === 'Modules/Index' || component === 'Modules/Main'
+    {
+      label: "Courses",
+      href: "/modules",
+      icon: GraduationCap,
+      active: component === 'Modules/Index' || component === 'Modules/Main'
     },
-    { 
-        label: "Browse All", 
-        href: "/modules/browse", 
-        icon: BookOpen, 
-        active: component === 'Modules/Browse'
+    {
+      label: "Browse All",
+      href: "/modules/browse",
+      icon: Search,
+      active: component === 'Modules/Browse'
     },
-    { 
-        label: "Examinations", 
-        href: "#", 
-        icon: FileText,
-        active: false 
+    {
+      label: "Examinations",
+      href: "#",
+      icon: FileText,
+      active: false
     },
-    { 
-        label: "Messages", 
-        href: "/chat", 
-        icon: MessageSquare,
-        active: component === 'Chat'
+    {
+      label: "Messages",
+      href: "/chat",
+      icon: MessageSquare,
+      active: component === 'Chat'
     },
   ];
 
   if (isAdmin) {
-      navItems.unshift({
-          label: "Admin Panel",
-          href: route('admin.dashboard'),
-          icon: ShieldCheck,
-          active: component === 'Admin/Dashboard',
-          isAdmin: true
-      });
+    navItems.unshift({
+      label: "Admin Panel",
+      href: route('admin.dashboard'),
+      icon: ShieldCheck,
+      active: component === 'Admin/Dashboard',
+      isAdmin: true
+    });
   }
 
   return (
@@ -72,15 +69,34 @@ export default function SideNavBarContent({ isOpen }) {
               href={item.href}
               className={`${style["nav-item"]} ${item.active ? style.active : ''}`}
             >
-              <item.icon size={20} strokeWidth={1.5} />
+              <div className={style["nav-icon-wrapper"]}>
+                <item.icon size={20} strokeWidth={1.5} />
+                {!isOpen && (
+                  (item.label === "Dashboard" && auth.user?.unreadNotificationsCount > 0) ||
+                  (item.label === "Messages" && auth.user?.unreadChatCount > 0)
+                ) && (
+                    <span className={style["nav-mini-badge"]}></span>
+                  )}
+              </div>
               {isOpen && (
-                <motion.span
+                <motion.div
+                  className={style["nav-label-container"]}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  {item.label}
-                </motion.span>
+                  <span>{item.label}</span>
+                  {item.label === "Dashboard" && auth.user?.unreadNotificationsCount > 0 && (
+                    <span className={style["nav-count-badge"]}>
+                      {auth.user.unreadNotificationsCount > 9 ? '9+' : auth.user.unreadNotificationsCount}
+                    </span>
+                  )}
+                  {item.label === "Messages" && auth.user?.unreadChatCount > 0 && (
+                    <span className={style["nav-count-badge"]}>
+                      {auth.user.unreadChatCount > 9 ? '9+' : auth.user.unreadChatCount}
+                    </span>
+                  )}
+                </motion.div>
               )}
             </Link>
           </li>

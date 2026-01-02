@@ -44,17 +44,22 @@ export default function Dashboard({ notifications = [] }) {
 
                 <div className={styles["dashboard-notifications-container"]}>
                     {notifications.length > 0 ? (
-                        notifications.map((notif) => (
-                            <Notification
-                                key={notif.id}
-                                topic={notif.topic}
-                                message={notif.message}
-                                type={notif.type}
-                                Link={notif.link}
-                            />
-                        ))
+                        <div className={styles.recentNotifications}>
+                            <h2 className={styles.sectionTitle}>Recent Updates</h2>
+                            {notifications.map((notif) => (
+                                <Notification
+                                    key={notif.id}
+                                    topic={notif.data?.topic || notif.topic}
+                                    message={notif.data?.message || notif.message}
+                                    type={notif.data?.type || notif.type}
+                                    Link={notif.data?.link || notif.link}
+                                />
+                            ))}
+                        </div>
                     ) : (
-                        <p className={styles.noNotifications}>No new notifications.</p>
+                        <div className={styles.welcomeInfo}>
+                            <p>You're all caught up! Check back later for new updates.</p>
+                        </div>
                     )}
                 </div>
                 <div>
