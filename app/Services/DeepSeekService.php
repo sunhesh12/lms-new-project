@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class DeepSeekService
 {
-    protected string $apiKey;
+    protected string $apiKey = env('DEEPSEEK_API_KEY');
     protected string $baseUrl = 'https://api.deepseek.com/v1/chat/completions';
 
     public function __construct()
