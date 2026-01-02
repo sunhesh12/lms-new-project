@@ -9,6 +9,30 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
+    public function aiAssistant()
+    {
+        $user = Auth::user();
+        $aiUuid = '00000000-0000-0000-0000-000000000000';
+        
+        $this->ensureAiConversation($user, $aiUuid);
+        
+        $conversation = $user->conversations()
+            ->where('type', 'private')
+            ->whereHas('participants', function ($q) use ($aiUuid) {
+                $q->where('user_id', $aiUuid);
+            })
+            ->with(['messages.user', 'messages.replyTo.user', 'users'])
+            ->first();
+
+        // Mark as read
+        $this->markAsReadInternal($conversation);
+
+        return Inertia::render('AIAssistant/Index', [
+            'conversation' => $conversation,
+            'conversations' => $this->getConversations($user)
+        ]);
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -158,8 +182,8 @@ class ChatController extends Controller
         if ($conversation->users->contains($aiUuid) && Auth::id() !== $aiUuid) {
             // Process AI response in the background (or inline for simplicity now)
             try {
-                $gemini = new \App\Services\GeminiService();
-                $aiResponse = $gemini->generateResponse($message->body);
+                $aiService = new \App\Services\DeepSeekService();
+                $aiResponse = $aiService->generateResponse($message->body);
 
                 if ($aiResponse) {
                     $aiMessage = $conversation->messages()->create([

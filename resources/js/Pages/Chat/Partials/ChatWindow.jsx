@@ -25,7 +25,7 @@ import style from '@/css/chatwindow.module.css';
 
 const AI_UUID = '00000000-0000-0000-0000-000000000000';
 
-export default function ChatWindow({ user, conversation, onBack }) {
+export default function ChatWindow({ user, conversation, onBack, isStandalone = false }) {
     const [messages, setMessages] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
@@ -327,9 +327,11 @@ export default function ChatWindow({ user, conversation, onBack }) {
         <div ref={chatWindowRef} className={style.wrapper}>
             <div className={`${style.header} ${selectionMode ? style.headerSelect : ''}`}>
                 <div className={style.headerLeft}>
-                    <button onClick={onBack} className={style.backButton}>
-                        <ChevronLeft size={24} />
-                    </button>
+                    {!isStandalone && (
+                        <button onClick={onBack} className={style.backButton}>
+                            <ChevronLeft size={24} />
+                        </button>
+                    )}
 
                     {/* Header Avatar */}
                     {(() => {
