@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import SideNavBarHeader from "./SideNavBarHeader";
 import SideNavBarContent from "./SideNavBarContent";
 import SideNavBarFooter from "./SideNavBarFooter";
@@ -15,6 +16,14 @@ export default function SideNavBar({ isOpen, toggleSidebar }) {
       <SideNavBarHeader isOpen={isOpen} toggleSidebar={toggleSidebar} />
       <SideNavBarContent isOpen={isOpen} />
       <SideNavBarFooter isOpen={isOpen} />
+
+      <button
+        className={style["sidebar-toggle-tab"]}
+        onClick={toggleSidebar}
+        title={isOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+      >
+        {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      </button>
     </motion.div>
   );
 }

@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\AdminDashboardController::class, 'editUser'])->name('admin.users.edit');
         Route::post('/users/{user}/update', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUser'])->name('admin.users.update');
         Route::get('/health', [App\Http\Controllers\Admin\AdminDashboardController::class, 'systemHealth'])->name('admin.health');
+        Route::get('/examinations', [App\Http\Controllers\Admin\AdminDashboardController::class, 'examinations'])->name('admin.examinations');
     });
 
     Route::get('/api/lecturers/search', function (Request $request) {

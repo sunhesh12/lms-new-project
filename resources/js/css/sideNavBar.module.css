@@ -8,7 +8,10 @@
     justify-content: space-between;
     height: 100vh;
     transition: width 0.3s ease;
-    overflow: hidden;
+    overflow: visible;
+    /* Allow toggle button to overlap */
+    position: relative;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Header Section */
@@ -66,19 +69,8 @@
 }
 
 .sideNavBar-toggle {
-    margin-left: auto;
-    background: transparent;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sideNavBar-toggle:hover {
-    color: white;
+    display: none;
+    /* Removed from header */
 }
 
 .header-actions {
@@ -233,6 +225,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .nav-icon-wrapper {
     position: relative;
     display: flex;
@@ -271,3 +264,32 @@
     line-height: 1;
 }
 
+/* New Sidebar Toggle Tab */
+.sidebar-toggle-tab {
+    position: absolute;
+    top: 32px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background-color: var(--accent);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle-tab:hover {
+    color: white;
+    background-color: #374151;
+    transform: scale(1.1);
+}
+
+.sidebar-toggle-tab svg {
+    transition: transform 0.3s ease;
+}

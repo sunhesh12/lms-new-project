@@ -37,9 +37,10 @@ export default function SideNavBarContent({ isOpen }) {
     },
     {
       label: "Examinations",
-      href: "#",
+      href: isAdmin ? route('admin.examinations') : "#",
       icon: FileText,
-      active: false
+      active: component === 'Admin/Examinations',
+      isAdminOnly: true
     },
     {
       label: "Messages",
@@ -59,11 +60,13 @@ export default function SideNavBarContent({ isOpen }) {
     });
   }
 
+  const filteredNavItems = navItems.filter(item => !item.isAdminOnly || isAdmin);
+
   return (
     <nav className={style["nav-section"]}>
       {isOpen && <div className={style["nav-label"]}>Navigation</div>}
       <ul className={style["nav-list"]}>
-        {navItems.map((item, index) => (
+        {filteredNavItems.map((item, index) => (
           <li key={index}>
             <Link
               href={item.href}

@@ -74,7 +74,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                                 setData('current_password', e.target.value)
                             }
                             type="password"
-                            className={`${styles.mt1} ${styles.block} w-full`}
+                            className={`${styles.mt1} ${styles.block}`}
                             autoComplete="current-password"
                         />
 
@@ -93,7 +93,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
                             type="password"
-                            className={`${styles.mt1} ${styles.block} w-full`}
+                            className={`${styles.mt1} ${styles.block}`}
                             autoComplete="new-password"
                         />
 
@@ -113,7 +113,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                                 setData('password_confirmation', e.target.value)
                             }
                             type="password"
-                            className={`${styles.mt1} ${styles.block} w-full`}
+                            className={`${styles.mt1} ${styles.block}`}
                             autoComplete="new-password"
                         />
 
@@ -124,7 +124,12 @@ export default function UpdatePasswordForm({ className = '' }) {
                     </div>
 
                     <div className={styles.flexCenterGap4}>
-                        <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                        <PrimaryButton
+                            disabled={processing}
+                            className={styles.saveButton}
+                        >
+                            Update Password
+                        </PrimaryButton>
 
                         <Transition
                             show={recentlySuccessful}

@@ -61,7 +61,10 @@ export default function DeleteUserForm({ className = '' }) {
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
+            <DangerButton
+                onClick={confirmUserDeletion}
+                className={styles.deleteButton}
+            >
                 Delete Account
             </DangerButton>
 
@@ -94,7 +97,7 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            className={`${styles.mt1} ${styles.block} w-3/4`}
+                            className={`${styles.mt1} ${styles.block}`}
                             isFocused
                             placeholder="Password"
                         />
@@ -110,8 +113,11 @@ export default function DeleteUserForm({ className = '' }) {
                             Cancel
                         </SecondaryButton>
 
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                        <DangerButton
+                            className={styles.deleteButton}
+                            disabled={processing}
+                        >
+                            Confirm Deletion
                         </DangerButton>
                     </div>
                 </form>

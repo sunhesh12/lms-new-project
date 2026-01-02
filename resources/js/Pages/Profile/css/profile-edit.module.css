@@ -1,58 +1,203 @@
 .pageHeader {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+    margin-bottom: 1rem;
 }
 
 .container {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-top: 4rem;
+    padding-bottom: 6rem;
+    background: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0, transparent 50%);
+    min-height: calc(100vh - 64px);
 }
 
 .innerContainer {
     margin-left: auto;
     margin-right: auto;
-    max-width: 80rem;
-    /* 7xl */
+    max-width: 64rem;
+    /* Reduced width for better focus */
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    /* space-y-6 */
+    gap: 2.5rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
     .innerContainer {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
     }
-}
 
-@media (min-width: 1024px) {
-    .innerContainer {
-        padding-left: 2rem;
-        padding-right: 2rem;
+    /* Sidebar Navigation */
+    .sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .tabBtn {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        padding: 0.875rem 1.25rem;
+        border-radius: 0.75rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #64748b;
+        /* slate-500 */
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+        text-align: left;
+    }
+
+    .tabBtn:hover {
+        background: rgba(255, 255, 255, 0.4);
+        color: #1e293b;
+        transform: translateX(4px);
+    }
+
+    .activeTab {
+        background: white !important;
+        color: #1e293b !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+        transform: translateX(4px);
+    }
+
+    .activeTab .icon {
+        color: #3b82f6;
+        /* blue-500 */
+    }
+
+    .icon {
+        transition: color 0.2s ease;
+    }
+
+    /* Content Area */
+    .contentArea {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-width: calc(100% - 312px);
     }
 }
 
 .sectionCard {
-    background-color: #ffffff;
-    padding: 1rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 15px -3px rgba(0, 0, 0, 0.03),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-@media (min-width: 640px) {
-    .sectionCard {
-        border-radius: 0.5rem;
-        padding: 2rem;
+.maxWidthXl {
+    max-width: 32rem;
+    width: 100%;
+}
+
+.grid2 {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .grid2 {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
+
+    .sectionCard {
+        padding: 1.5rem;
+    }
+}
+
+/* The following styles are from the provided change, but need to be placed correctly */
+/* The original .sectionCard, .maxWidthXl, and .grid2 rules were already present.
+   The change provided new definitions for them, which should replace the old ones.
+   The media queries for .innerContainer, .sidebar, .tabBtn, .contentArea, .grid2
+   and the @keyframes fadeIn are new and should be added. */
+
+/* Replacing existing .sectionCard, .maxWidthXl, .grid2 with new definitions */
+.sectionCard {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+    animation: fadeIn 0.4s ease forwards;
 }
 
 .maxWidthXl {
     max-width: 36rem;
-    /* xl */
-    width: 100%;
+}
+
+.grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .innerContainer {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        position: static;
+    }
+
+    .tabBtn {
+        flex-shrink: 0;
+        width: auto;
+    }
+
+    .contentArea {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .grid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

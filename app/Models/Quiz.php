@@ -25,6 +25,7 @@ class Quiz extends Model
         'module_id',
         'allow_multiple_attempts',
         'max_attempts',
+        'deadline',
     ];
     // protected static function boot()
     // {
@@ -42,6 +43,7 @@ class Quiz extends Model
         'duration' => 'integer',
         'passing_score' => 'integer',
         'max_attempts' => 'integer',
+        'deadline' => 'datetime',
     ];
 
     public function module(): \Illuminate\Database\Eloquent\Relations\BelongsTo

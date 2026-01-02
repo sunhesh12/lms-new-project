@@ -170,4 +170,39 @@ class AdminDashboardController extends Controller
             'health' => $health
         ]);
     }
+
+    public function examinations()
+    {
+        $assignments = \App\Models\Assignment::with('module:id,name')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'Assignment',
+                    'title' => $item->title,
+                    'module_name' => $item->module->name ?? 'N/A',
+                    'deadline' => $item->deadline,
+                    'edit_url' => route('module.show', $item->module_id), // Or specific edit route
+                ];
+            });
+
+        $quizzes = \App\Models\Quiz::with('module:id,name')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'Quiz',
+                    'title' => $item->title,
+                    'module_name' => $item->module->name ?? 'N/A',
+                    'deadline' => $item->deadline,
+                    'edit_url' => route('module.show', $item->module_id), // Or specific edit route
+                ];
+            });
+
+        $examinations = $assignments->concat($quizzes)->sortByDesc('deadline')->values();
+
+        return Inertia::render('Admin/Examinations', [
+            'examinations' => $examinations
+        ]);
+    }
 }

@@ -32,15 +32,9 @@ export default function SideNavBarHeader({ isOpen, toggleSidebar }) {
                     </motion.div>
                 )}
 
-                <div className={style["header-actions"]}>
-                    {/* <NotificationBell /> */}
-                    <button
-                        className={style["sideNavBar-toggle"]}
-                        onClick={toggleSidebar}
-                    >
-                        {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-                    </button>
-                </div>
+                {/* <div className={style["header-actions"]}>
+                    <NotificationBell />
+                </div> */}
             </div>
             {/* Search bar removed as per request */}
         </div>
