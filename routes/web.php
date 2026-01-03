@@ -230,6 +230,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz-history', [QuizController::class, 'history']);
 });
 
+Route::get('/test-ai', function (App\Services\DeepSeekService $ai) {
+    return $ai->generateResponse('Explain MVC architecture simply.');
+});
+
+
 
 
 require __DIR__ . '/auth.php';

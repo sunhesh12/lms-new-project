@@ -100,7 +100,7 @@ export default function Dashboard({ notifications = [], frequent_modules = [] })
 
                     {/* Right Column: Notifications/Updates */}
                     <aside className={styles.sideColumn}>
-                        <div className={`${styles["glass-card"]} ${styles["notifications-wrapper"]}`}>
+                        <div className={`${styles[".glass-card-right"]} ${styles["notifications-wrapper"]}`}>
                             <h2 className={styles["section-title"]}>
                                 <Bell className={styles["title-icon"]} size={20} />
                                 Recent Updates
