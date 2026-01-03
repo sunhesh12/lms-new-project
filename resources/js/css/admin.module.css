@@ -803,6 +803,151 @@
     width: 100%;
 }
 
+/* Admin Statuses: pagination and tweaks */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    align-items: center;
+}
+
+.pagination a,
+.pagination span {
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.5rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+.pagination a:hover {
+    background: #f8fafc;
+    border-color: #c7d2fe;
+    color: #1f2937;
+}
+
+.pagination .current,
+.pagination .active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.pagination .disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Small tweaks for status list items */
+.statusUserName {
+    font-weight: 700;
+    color: #111827;
+}
+
+.statusContent {
+    margin-top: 0.25rem;
+    color: #374151;
+}
+
+.statusDate {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* Search form & inputs */
+.searchForm {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.searchInput {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    min-width: 220px;
+    background: #fff;
+}
+
+.dateInput, .timeInput {
+    padding: 0.42rem 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+.btnPrimary {
+    padding: 0.5rem 0.75rem;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btnPrimary:hover { filter: brightness(0.95); }
+
+.btnSecondary {
+    padding: 0.5rem 0.75rem;
+    background: #f3f4f6;
+    color: #111827;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Status item refinements */
+.statusInner {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.statusMeta {
+    display: flex;
+    flex-direction: column;
+}
+
+.deleteBtn {
+    padding: 0.5rem 0.75rem;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.deleteBtn:hover { opacity: 0.95; transform: translateY(-1px); }
+
+.statusUserName {
+    font-weight: 700;
+    color: #111827;
+}
+
+.statusContent {
+    margin-top: 0.25rem;
+    color: #374151;
+}
+
+.statusDate {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+@media (max-width: 640px) {
+    .searchInput { min-width: 140px; }
+}
+
 .healthLink {
     display: flex;
     align-items: center;

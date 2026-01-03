@@ -26,6 +26,8 @@ export default function Edit({ managedUser }) {
         user_dob: managedUser.user_dob || "",
         status: managedUser.status || "active",
         role: managedUser.role || "student",
+        can_upload_feed: managedUser.can_upload_feed ?? true,
+        upload_blocked_until: managedUser.upload_blocked_until || '',
     });
 
     const handleSubmit = (e) => {
@@ -93,6 +95,26 @@ export default function Edit({ managedUser }) {
                                         <option value="lecturer">Lecturer</option>
                                         <option value="admin">Administrator</option>
                                     </select>
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <InputLabel value="Can Upload To Feed" className={styles.label} />
+                                    <select
+                                        className={styles.select}
+                                        value={data.can_upload_feed ? '1' : '0'}
+                                        onChange={e => setData('can_upload_feed', e.target.value === '1')}
+                                    >
+                                        <option value="1">Allowed</option>
+                                        <option value="0">Blocked Permanently</option>
+                                    </select>
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <InputLabel value="Block Uploads Until (optional)" className={styles.label} />
+                                    <input
+                                        type="datetime-local"
+                                        className={styles.select}
+                                        value={data.upload_blocked_until}
+                                        onChange={e => setData('upload_blocked_until', e.target.value)}
+                                    />
                                 </div>
                             </div>
                         </div>

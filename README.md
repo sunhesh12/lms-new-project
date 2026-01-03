@@ -183,10 +183,10 @@ Seeders should create initial users and sample data. Check `database/seeders` fo
 
 Place screenshots inside `public/screenshots` (create the folder) and name them descriptively. Example image links are below — replace with actual images once available:
 
-![Login Page](/screenshots/login.png)
-![Two Factor Challenge](/screenshots/two_factor.png)
-![Dashboard](/screenshots/dashboard.png)
-![Assignment Submission](/screenshots/assignment_submission.png)
+![Login Page](/screenshots/login.svg)
+![Two Factor Challenge](/screenshots/two_factor.svg)
+![Dashboard](/screenshots/dashboard.svg)
+![Assignment Submission](/screenshots/assignment_submission.svg)
 
 Notes:
 - On Windows the public path will be served by `php artisan serve` and image URLs will be `/screenshots/<name>.png` when placed in `public/screenshots`.

@@ -257,6 +257,9 @@ export default function Dashboard({ stats, recent_users, popular_modules = [], n
                             <Link href={route('admin.examinations')} className={styles.controlBtn}>
                                 <FileText size={16} /> Exams
                             </Link>
+                            <Link href={route('admin.statuses.index')} className={styles.controlBtn}>
+                                <Info size={16} /> Statuses
+                            </Link>
                             <Link href={route('admin.health')} className={styles.controlBtn}>
                                 <ShieldCheck size={16} /> Health
                             </Link>

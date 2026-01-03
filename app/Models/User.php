@@ -27,6 +27,8 @@ class User extends Authenticatable
         'course_id',
         'two_factor_code',
         'two_factor_expires_at',
+        'can_upload_feed',
+        'upload_blocked_until',
     ];
 
     protected $hidden = [
@@ -146,5 +148,21 @@ class User extends Authenticatable
         $this->two_factor_code = null;
         $this->two_factor_expires_at = null;
         $this->save();
+    }
+
+    /**
+     * Determine if the user is allowed to upload to feed/status.
+     */
+    public function canUploadFeed()
+    {
+        if (isset($this->can_upload_feed) && $this->can_upload_feed === false) {
+            return false;
+        }
+
+        if ($this->upload_blocked_until && \Carbon\Carbon::parse($this->upload_blocked_until)->isFuture()) {
+            return false;
+        }
+
+        return true;
     }
 }

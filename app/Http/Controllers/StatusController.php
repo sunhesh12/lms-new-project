@@ -40,6 +40,11 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
+        // Prevent users who are blocked from uploading to statuses
+        if (!auth()->user()->canUploadFeed()) {
+            return back()->withErrors(['blocked' => 'Your account is blocked from uploading statuses.']);
+        }
+
         $settings = FeedSetting::getInstance();
         
         // Check daily limit

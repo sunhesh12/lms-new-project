@@ -223,9 +223,12 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'index'])->name('feed-settings.index');
     Route::put('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'update'])->name('feed-settings.update');
+    // Admin: Manage statuses
+    Route::get('/statuses', [App\Http\Controllers\Admin\StatusController::class, 'index'])->name('statuses.index');
+    Route::delete('/statuses/{status}', [App\Http\Controllers\Admin\StatusController::class, 'destroy'])->name('statuses.destroy');
 });
 
 

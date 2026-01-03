@@ -198,6 +198,8 @@ class AdminDashboardController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
                 'status' => $user->status,
+                'can_upload_feed' => $user->can_upload_feed ?? true,
+                'upload_blocked_until' => $user->upload_blocked_until ? $user->upload_blocked_until->toDateTimeString() : null,
                 'address' => $user->address,
                 'user_phone_no' => $user->user_phone_no,
                 'user_dob' => $user->user_dob,
@@ -216,6 +218,8 @@ class AdminDashboardController extends Controller
             'user_phone_no' => 'nullable|string',
             'user_dob' => 'nullable|date',
             'status' => 'required|in:active,blocked',
+            'can_upload_feed' => 'nullable|boolean',
+            'upload_blocked_until' => 'nullable|date',
             'role' => 'required|in:admin,lecturer,student'
         ]);
 
@@ -226,6 +230,8 @@ class AdminDashboardController extends Controller
             'user_phone_no' => $request->user_phone_no,
             'user_dob' => $request->user_dob,
             'status' => $request->status,
+            'can_upload_feed' => $request->has('can_upload_feed') ? (bool)$request->can_upload_feed : true,
+            'upload_blocked_until' => $request->upload_blocked_until ? \Carbon\Carbon::parse($request->upload_blocked_until) : null,
         ]);
 
         // Update role if changed

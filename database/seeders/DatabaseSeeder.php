@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ChatSeeder::class,
             EventSeeder::class,
             QuizSeeder::class,
+            StatusSeeder::class,
         ]);
     }
 }

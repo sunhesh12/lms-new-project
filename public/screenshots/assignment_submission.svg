@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="100%" height="100%" fill="#ecfeff"/>
+  <text x="60" y="120" font-size="48" font-weight="700" fill="#065f46">Assignment Submission</text>
+  <g fill="#064e3b" font-family="Arial">
+    <rect x="60" y="160" width="520" height="280" rx="12" fill="#fff" stroke="#d1fae5"/>
+    <text x="80" y="210" font-size="20">Upload your assignment files here</text>
+    <rect x="80" y="240" width="360" height="36" rx="6" fill="#f0fdf4"/>
+    <rect x="80" y="290" width="140" height="40" rx="8" fill="#10b981"/>
+    <text x="100" y="318" font-size="16" fill="#fff">Submit</text>
+  </g>
+</svg>
