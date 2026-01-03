@@ -78,6 +78,13 @@ export default function SideNavBarContent({ isOpen }) {
       active: component === 'Admin/Users' || component === 'Admin/Users/Edit',
       isAdminOnly: true
     });
+        navItems.push({
+          label: "AI Providers",
+          href: route('admin.ai-providers.index'),
+          icon: Sparkles,
+          active: component === 'Admin/AiProviders',
+          isAdminOnly: true
+        });
   }
 
   const filteredNavItems = navItems.filter(item => !item.isAdminOnly || isAdmin);

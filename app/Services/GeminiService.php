@@ -7,6 +7,51 @@ use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
+    protected $apiKey;
+    protected $baseUrl = 'https://gemini.googleapis.com/v1/'; // placeholder
+
+    public function __construct()
+    {
+        $this->apiKey = config('services.gemini.key', env('GEMINI_API_KEY', ''));
+    }
+
+    public function generateResponse(string $prompt): string
+    {
+        if (empty($this->apiKey)) {
+            Log::error('Gemini API key is missing.');
+            return "AI configuration error (Gemini). Please contact admin.";
+        }
+
+        // Minimal implementation: caller should replace with real Gemini integration.
+        try {
+            // This is a placeholder request — adapt to actual Gemini API.
+            $resp = Http::withToken($this->apiKey)
+                ->post($this->baseUrl . 'chat:generate', [
+                    'model' => 'gemini-standard',
+                    'prompt' => $prompt,
+                ]);
+
+            if ($resp->successful()) {
+                return $resp->json('candidates.0.content') ?? 'No response.';
+            }
+
+            Log::error('Gemini API error', ['status' => $resp->status(), 'body' => $resp->body()]);
+            return 'Gemini service unavailable.';
+        } catch (\Throwable $e) {
+            Log::error('Gemini exception', ['error' => $e->getMessage()]);
+            return 'An internal error occurred while contacting Gemini.';
+        }
+    }
+}
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class GeminiService
+{
     protected string $apiKey;
     protected string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 

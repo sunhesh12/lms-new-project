@@ -7,6 +7,7 @@ import {
     GraduationCap,
     Shield,
     UserCheck,
+    Sparkles,
     Clock,
     BarChart3,
     TrendingUp,
@@ -262,6 +263,9 @@ export default function Dashboard({ stats, recent_users, popular_modules = [], n
                             </Link>
                             <Link href={route('admin.health')} className={styles.controlBtn}>
                                 <ShieldCheck size={16} /> Health
+                            </Link>
+                            <Link href={route('admin.ai-providers.index')} className={styles.controlBtn}>
+                                <Sparkles size={16} /> AI Providers
                             </Link>
                         </div>
                     </div>

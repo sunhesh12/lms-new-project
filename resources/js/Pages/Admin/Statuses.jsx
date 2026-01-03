@@ -31,12 +31,29 @@ export default function Statuses({ statuses, filters = {} }) {
         router.get(route('admin.statuses.index'));
     };
 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalSrc, setModalSrc] = useState(null);
+
+    const openMedia = (path, type) => {
+        // path is storage path like 'statuses/abc.jpg'
+        const url = path ? `/storage/${path}` : null;
+        if (!url) return;
+        setModalSrc({ url, type });
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setModalSrc(null);
+    };
+
     return (
         <AuthenticatedLayout header={<h2 className={styles.pageHeader}>Manage Statuses</h2>}>
             <Head title="Admin - Statuses" />
             <div style={{ padding: '1rem' }}>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <Link href={route('admin.dashboard')} className={styles.controlBtn}>Back to Dashboard</Link>
+                    <Link href={route('admin.feed-settings.index')} className={styles.btnPrimary}>Feed Settings</Link>
                 </div>
 
                 <div>
@@ -58,13 +75,19 @@ export default function Statuses({ statuses, filters = {} }) {
                         <div key={s.id} className={styles.userItem} style={{ justifyContent: 'space-between', gap: '1rem', marginBottom: '0.5rem' }}>
                             <div className={styles.statusInner}>
                                 <img src={s.user?.profile_pic ? `/storage/${s.user.profile_pic}` : `https://ui-avatars.com/api/?name=${s.user?.name}`} className={styles.userAvatarSmall} alt="" />
-                                <div className={styles.statusMeta}>
-                                    <div className={styles.statusUserName}>{s.user?.name}</div>
-                                    <div className={styles.statusDate}>{new Date(s.created_at).toLocaleString()}</div>
-                                    <div className={styles.statusContent}>{s.content}</div>
-                                </div>
+                                        <div className={styles.statusMeta}>
+                                            <div className={styles.statusUserName}>{s.user?.name}</div>
+                                            <div className={styles.statusDate}>{new Date(s.created_at).toLocaleString()}</div>
+                                            <div className={styles.statusContent}>{s.content}</div>
+                                        </div>
                             </div>
-                            <div>
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <Link href={route('admin.users.edit', s.user.id)} className={styles.btnSecondary}>Manage User</Link>
+                                {s.media_path && (
+                                    <button type="button" onClick={() => openMedia(s.media_path, s.media_type)} className={styles.btnSecondary}>
+                                        View Flyer
+                                    </button>
+                                )}
                                 <button onClick={() => handleDelete(s.id)} className={styles.deleteBtn}>Delete</button>
                             </div>
                         </div>
@@ -86,6 +109,21 @@ export default function Statuses({ statuses, filters = {} }) {
                         </div>
                     )}
                 </div>
+                {modalOpen && modalSrc && (
+                    <div className={styles.modalOverlay} onClick={closeModal}>
+                        <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                            <button className={styles.modalClose} onClick={closeModal}>✕</button>
+                            {modalSrc.type === 'video' ? (
+                                <video className={styles.mediaVideo} controls>
+                                    <source src={modalSrc.url} />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <img src={modalSrc.url} alt="Flyer" className={styles.mediaPreview} />
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </AuthenticatedLayout>
     );

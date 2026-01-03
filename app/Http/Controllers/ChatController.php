@@ -33,6 +33,8 @@ class ChatController extends Controller
         ]);
     }
 
+    
+
     public function index()
     {
         $user = Auth::user();
@@ -182,7 +184,12 @@ class ChatController extends Controller
         if ($conversation->users->contains($aiUuid) && Auth::id() !== $aiUuid) {
             // Process AI response in the background (or inline for simplicity now)
             try {
-                $aiService = new \App\Services\DeepSeekService();
+                $provider = $request->input('ai_provider') ?: null;
+                if (!$provider && auth()->check()) {
+                    $provider = auth()->user()->ai_provider;
+                }
+                $provider = $provider ?: config('services.ai.provider');
+                $aiService = \App\Services\AiProviderFactory::make($provider);
                 $aiResponse = $aiService->generateResponse($message->body);
 
                 if ($aiResponse) {

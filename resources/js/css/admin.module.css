@@ -859,6 +859,48 @@
     color: #6b7280;
 }
 
+/* Modal / Flyer preview */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+}
+
+.modalContent {
+    background: #fff;
+    border-radius: 0.75rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modalClose {
+    align-self: flex-end;
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mediaPreview {
+    max-width: 80vw;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.mediaVideo {
+    max-width: 80vw;
+    max-height: 80vh;
+}
+
 /* Search form & inputs */
 .searchForm {
     display: flex;
@@ -1195,3 +1237,127 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* AI Providers admin page styles */
+.aiProvidersWrapper {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.aiProvidersList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.aiProviderItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    border: 1px solid #eef2ff;
+    border-radius: 0.75rem;
+}
+
+.aiProviderMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.aiProviderMeta .name {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.aiProviderMeta .identifier {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.aiProviderActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.aiProviderForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.aiProviderForm .input,
+.aiProviderForm input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e6eefc;
+    border-radius: 0.5rem;
+}
+
+.aiProviderForm .full {
+    grid-column: 1 / -1;
+}
+
+.healthBadge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.healthBadge.ok {
+    background: #16a34a;
+}
+
+.healthBadge.fail {
+    background: #dc2626;
+}
+
+.btn {
+    background: #4f46e5;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn.secondary {
+    background: #f3f4f6;
+    color: #0f172a;
+}
+
+/* small utility classes used by AiProviders.jsx */
+.input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e6eefc;
+    border-radius: 0.5rem;
+    background: #fff;
+    font-size: 0.95rem;
+}
+
+.inlineFlex {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.labelText {
+    margin-left: 0.5rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.full { grid-column: 1 / -1; }
