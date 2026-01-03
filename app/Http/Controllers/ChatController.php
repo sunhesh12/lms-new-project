@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,11 @@ class ChatController extends Controller
 {
     public function aiAssistant()
     {
+        /** @var User|null $user */
         $user = Auth::user();
+        if (!$user) {
+            abort(401);
+        }
         $aiUuid = '00000000-0000-0000-0000-000000000000';
         
         $this->ensureAiConversation($user, $aiUuid);
@@ -33,9 +38,15 @@ class ChatController extends Controller
         ]);
     }
 
+    
+
     public function index()
     {
+        /** @var User|null $user */
         $user = Auth::user();
+        if (!$user) {
+            abort(401);
+        }
         $conversations = $this->getConversations($user);
 
         return Inertia::render('Chat/Index', [
@@ -68,7 +79,8 @@ class ChatController extends Controller
 
     private function getConversations($user)
     {
-        if (!$user) {
+        // ensure valid user model
+        if (!$user || !($user instanceof User)) {
             return collect();
         }
 
@@ -182,7 +194,12 @@ class ChatController extends Controller
         if ($conversation->users->contains($aiUuid) && Auth::id() !== $aiUuid) {
             // Process AI response in the background (or inline for simplicity now)
             try {
-                $aiService = new \App\Services\DeepSeekService();
+                $provider = $request->input('ai_provider') ?: null;
+                if (!$provider && Auth::check()) {
+                    $provider = Auth::user()->ai_provider;
+                }
+                $provider = $provider ?: config('services.ai.provider');
+                $aiService = \App\Services\AiProviderFactory::make($provider);
                 $aiResponse = $aiService->generateResponse($message->body);
 
                 if ($aiResponse) {

@@ -116,3 +116,41 @@
     background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
     filter: blur(40px);
 }
+
+/* Provider selector styles */
+.providerSelectWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.providerSelect {
+    appearance: none;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: white;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* Acknowledgement toast */
+.aiToast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: #111827;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(17,24,39,0.2);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 60;
+}
+
+.aiToast.show {
+    opacity: 1;
+    transform: translateY(0);
+}

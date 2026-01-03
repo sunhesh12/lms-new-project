@@ -16,7 +16,8 @@ class FeedSettingsSeeder extends Seeder
             'max_videos_per_post' => 1,
             'daily_post_limit' => 20,
             'daily_status_limit' => 10,
-            'status_duration_minutes' => 1,
+            // default status duration: 1 day (1440 minutes)
+            'status_duration_minutes' => 1440,
         ]);
     }
 }

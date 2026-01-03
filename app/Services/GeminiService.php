@@ -15,21 +15,22 @@ class GeminiService
         $this->apiKey = config('services.gemini.key') ?? env('GEMINI_API_KEY', '');
     }
 
-    public function generateResponse(string $prompt): ?string
+    /**
+     * Generate a text response from Gemini.
+     * Returns a user-friendly string on success or a helpful message on failure.
+     */
+    public function generateResponse(string $prompt): string
     {
         if (empty($this->apiKey)) {
             Log::error('Gemini API key is not set.');
-            return "I'm sorry, but my brain (API Key) is currently disconnected. Please contact the administrator.";
+            return "AI configuration error: Gemini API key missing. Please contact the administrator.";
         }
 
         try {
-            $systemPrompt = "You are a professional Academic Assistant for an LMS (Learning Management System). 
-            Your goal is to help students and lecturers with academic queries, explain complex concepts, and provide study guidance.
-            Keep your responses concise, professional, and encouraging.
-            If a question is completely non-academic, politely guide the user back to educational topics.
-            Do not provide direct answers for assignments without explanation; focus on helping the user learn.";
+            $systemPrompt = "You are a professional Academic Assistant for an LMS (Learning Management System). "
+                . "Provide concise, helpful academic guidance and avoid giving direct answers to assignment questions without explanation.";
 
-            $response = Http::post($this->baseUrl . '?key=' . $this->apiKey, [
+            $payload = [
                 'contents' => [
                     [
                         'role' => 'user',
@@ -44,19 +45,30 @@ class GeminiService
                     'topP' => 0.95,
                     'maxOutputTokens' => 1024,
                 ]
-            ]);
+            ];
+
+            $response = Http::post($this->baseUrl . '?key=' . $this->apiKey, $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
-                return $data['candidates'][0]['content']['parts'][0]['text'] ?? "I'm having trouble processing that right now.";
+
+                $text = null;
+                if (!empty($data['candidates']) && is_array($data['candidates'])) {
+                    $candidate = $data['candidates'][0] ?? null;
+                    if ($candidate && !empty($candidate['content']['parts'])) {
+                        $text = $candidate['content']['parts'][0]['text'] ?? null;
+                    }
+                }
+
+                return $text ?? "I'm having trouble generating a response right now.";
             }
 
-            Log::error('Gemini API Error: ' . $response->body());
-            return "I'm currently experiencing some technical difficulties. Please try again in a moment.";
+            Log::error('Gemini API Error', ['status' => $response->status(), 'body' => $response->body()]);
+            return "Gemini service unavailable. Please try again later.";
 
-        } catch (\Exception $e) {
-            Log::error('Gemini Service Exception: ' . $e->getMessage());
-            return "Something went wrong while I was thinking. Let's try that again.";
+        } catch (\Throwable $e) {
+            Log::error('Gemini Service Exception', ['error' => $e->getMessage()]);
+            return "An internal error occurred while contacting the Gemini service.";
         }
     }
 }

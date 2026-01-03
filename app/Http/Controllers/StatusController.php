@@ -40,11 +40,16 @@ class StatusController extends Controller
      */
     public function store(Request $request)
     {
+        // Prevent users who are blocked from uploading to statuses
+        if (!auth()->user()->canUploadFeed()) {
+            return back()->withErrors(['blocked' => 'Your account is blocked from uploading statuses.']);
+        }
+
         $settings = FeedSetting::getInstance();
         
         // Check daily limit
         $todayCount = Status::where('user_id', auth()->id())
-            ->whereDate('created_at', Carbon::today())
+            ->whereDate('created_at', Carbon::today()->toDateString())
             ->count();
             
         if ($todayCount >= $settings->daily_status_limit) {
@@ -53,9 +58,10 @@ class StatusController extends Controller
             ]);
         }
 
+        // Validate content and file type only; file size is checked per-type below
         $request->validate([
             'content' => 'nullable|string|max:500',
-            'media' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov|max:' . ($settings->max_video_size_mb * 1024),
+            'media' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov',
         ]);
 
         $mediaPath = null;
@@ -75,11 +81,26 @@ class StatusController extends Controller
                     'media' => "File size exceeds {$maxSize}MB limit"
                 ]);
             }
-            
-            $mediaPath = $file->store('statuses', 'public');
+
+            try {
+                $mediaPath = $file->store('statuses', 'public');
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Status media store failed: ' . $e->getMessage());
+                return back()->withErrors(['media' => 'Failed to store media file.']);
+            }
         }
 
-        $expiresAt = Carbon::now()->addMinutes($settings->status_duration_minutes);
+        // Determine expiration based on media type if specific durations provided
+        $defaultDuration = $settings->status_duration_minutes ?? 1440; // default 1 day
+        if ($mediaType === 'video' && !empty($settings->video_status_duration_minutes)) {
+            $duration = $settings->video_status_duration_minutes;
+        } elseif ($mediaType === 'image' && !empty($settings->photo_status_duration_minutes)) {
+            $duration = $settings->photo_status_duration_minutes;
+        } else {
+            $duration = $defaultDuration;
+        }
+
+        $expiresAt = Carbon::now()->addMinutes((int)$duration);
 
         $status = Status::create([
             'user_id' => auth()->id(),

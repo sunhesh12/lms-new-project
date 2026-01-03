@@ -27,6 +27,8 @@ class User extends Authenticatable
         'course_id',
         'two_factor_code',
         'two_factor_expires_at',
+        'can_upload_feed',
+        'upload_blocked_until',
     ];
 
     protected $hidden = [
@@ -65,9 +67,13 @@ class User extends Authenticatable
         return $this->hasOne(Faculty::class);
     }
 
+    //     public function conversations()
+    // {
+    //     return $this->belongsToMany(Conversation::class, 'participants');
+    // }
         public function conversations()
     {
-        return $this->belongsToMany(Conversation::class, 'participants');
+        return $this->belongsToMany(\App\Models\Conversation::class, 'participants', 'user_id', 'conversation_id')->withTimestamps();
     }
 
     public function messages()
@@ -80,9 +86,9 @@ class User extends Authenticatable
         return $this->hasMany(Event::class);
     }
 
-        public function quizAttempts()
+    public function quizAttempts()
     {
-        return $this->hasMany(quiz_attempt::class);
+        return $this->hasMany(QuizAttempt::class);
     }
 
     // Role checks
@@ -146,5 +152,21 @@ class User extends Authenticatable
         $this->two_factor_code = null;
         $this->two_factor_expires_at = null;
         $this->save();
+    }
+
+    /**
+     * Determine if the user is allowed to upload to feed/status.
+     */
+    public function canUploadFeed()
+    {
+        if (isset($this->can_upload_feed) && $this->can_upload_feed === false) {
+            return false;
+        }
+
+        if ($this->upload_blocked_until && \Carbon\Carbon::parse($this->upload_blocked_until)->isFuture()) {
+            return false;
+        }
+
+        return true;
     }
 }

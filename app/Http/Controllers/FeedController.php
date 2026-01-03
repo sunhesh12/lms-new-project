@@ -57,9 +57,16 @@ class FeedController extends Controller
 
     public function store(Request $request)
     {
+        // Prevent users who are blocked from uploading to feed
+        if (!auth()->user()->canUploadFeed()) {
+            return back()->withErrors(['blocked' => 'Your account is blocked from uploading to the feed.']);
+        }
+
+        $settings = \App\Models\FeedSetting::getInstance();
+
         $validated = $request->validate([
             'content' => 'nullable|string|max:1000',
-            'file' => 'nullable|file|max:51200', // 50MB max (for video)
+            'file' => 'nullable|file',
         ]);
 
         if (empty($validated['content']) && !$request->hasFile('file')) {
@@ -83,8 +90,17 @@ class FeedController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('uploads/posts', 'public');
-            
+            $file = $request->file('file');
+            $mime = $file->getMimeType();
+            $isVideo = str_starts_with($mime, 'video');
+
+            $maxSizeMb = $isVideo ? ($settings->max_video_size_mb ?? 50) : ($settings->max_photo_size_mb ?? 5);
+            if ($file->getSize() > $maxSizeMb * 1024 * 1024) {
+                return back()->withErrors(['file' => "File size exceeds {$maxSizeMb}MB limit"]);
+            }
+
+            $path = $file->store('uploads/posts', 'public');
+
             PostAttachment::create([
                 'post_id' => $post->id,
                 'file_path' => $path,

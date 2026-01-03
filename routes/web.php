@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\EventController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AiPreferenceController;
+use App\Http\Controllers\Admin\AiProviderController;
 
 
 
@@ -146,6 +148,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
     Route::get('/ai-assistant', [App\Http\Controllers\ChatController::class, 'aiAssistant'])->name('ai.assistant');
+    Route::post('/ai-assistant/set-provider', [App\Http\Controllers\AiPreferenceController::class, 'store'])->name('ai.preference.store');
+    
+    // expose enabled providers list to authenticated users
+    Route::get('/admin/ai-providers/list', [App\Http\Controllers\Admin\AiProviderController::class, 'list'])->name('admin.ai-providers.list');
     Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
     Route::get('/api/students/search', function (Request $request) {
         $query = $request->query('query');
@@ -172,6 +178,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/update', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUser'])->name('admin.users.update');
         Route::get('/health', [App\Http\Controllers\Admin\AdminDashboardController::class, 'systemHealth'])->name('admin.health');
         Route::get('/examinations', [App\Http\Controllers\Admin\AdminDashboardController::class, 'examinations'])->name('admin.examinations');
+        // Admin AI provider management
+        Route::get('/ai-providers', [App\Http\Controllers\Admin\AiProviderController::class, 'index'])->name('admin.ai-providers.index');
+        Route::post('/ai-providers', [App\Http\Controllers\Admin\AiProviderController::class, 'store'])->name('admin.ai-providers.store');
+        Route::put('/ai-providers/{aiProvider}', [App\Http\Controllers\Admin\AiProviderController::class, 'update'])->name('admin.ai-providers.update');
+        Route::delete('/ai-providers/{aiProvider}', [App\Http\Controllers\Admin\AiProviderController::class, 'destroy'])->name('admin.ai-providers.destroy');
+        Route::get('/ai-providers/{aiProvider}/health', [App\Http\Controllers\Admin\AiProviderController::class, 'health'])->name('admin.ai-providers.health');
     });
 
     Route::get('/api/lecturers/search', function (Request $request) {
@@ -223,9 +235,15 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'index'])->name('feed-settings.index');
     Route::put('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'update'])->name('feed-settings.update');
+    // Admin: Manage statuses
+    Route::get('/statuses', [App\Http\Controllers\Admin\StatusController::class, 'index'])->name('statuses.index');
+    Route::delete('/statuses/{status}', [App\Http\Controllers\Admin\StatusController::class, 'destroy'])->name('statuses.destroy');
+    // Admin: Manage posts (separate from statuses)
+    Route::get('/posts', [App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
+    Route::delete('/posts/{post}', [App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 
