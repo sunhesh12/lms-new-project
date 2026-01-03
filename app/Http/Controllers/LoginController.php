@@ -80,10 +80,19 @@ class LoginController extends Controller
     // ---------------------------
     Auth::login($user, $request->remember);
 
-    // Notify user of successful login
-    $user->notify(new \App\Notifications\LoginNotification());
+    $user->generateTwoFactorCode();
 
-    return redirect()->route('dashboard');
+    // Send email
+    try {
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
+    } catch (\Exception $e) {
+        // Log error but continue
+        \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
+    }
+
+    $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
+
+    return redirect()->route('two-factor.index')->withCookie($cookie);
     }
 }
 
