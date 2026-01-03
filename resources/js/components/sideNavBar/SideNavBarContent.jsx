@@ -1,7 +1,7 @@
 // src/components/sideNavBar/SideNavBarContent.jsx
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { Home, BookOpen, FileText, Users, MessageSquare, Calendar as CalendarIcon, ShieldCheck, LayoutDashboard, Search, GraduationCap, Sparkles } from "lucide-react";
+import { Home, BookOpen, FileText, Users, MessageSquare, Calendar as CalendarIcon, ShieldCheck, LayoutDashboard, Search, GraduationCap, Sparkles, Activity } from "lucide-react";
 import style from "@/css/sideNavBar.module.css";
 import { motion } from "framer-motion";
 
@@ -16,6 +16,12 @@ export default function SideNavBarContent({ isOpen }) {
       href: "/dashboard",
       icon: Home,
       active: component === 'Dashboard'
+    },
+    {
+      label: "Campus Feed",
+      href: "/feed",
+      icon: Activity,
+      active: component === 'Feed/Index'
     },
     {
       label: "Calendar",

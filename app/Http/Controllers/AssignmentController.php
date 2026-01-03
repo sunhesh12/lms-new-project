@@ -47,17 +47,16 @@ class AssignmentController extends Controller
 
             // Prepare file upload
             $filePath = Storage::disk('public')->path('/uploads/resources/');
-<<<<<<< HEAD
             $fileName = $validatedData['resource_file']->getClientOriginalName();
 
             if (file_exists($filePath . $fileName)) {
                  unlink($filePath . $fileName);
-=======
+            }
             
             // Ensure directory exists
             if (!file_exists($filePath)) {
                 mkdir($filePath, 0755, true);
->>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
+
             }
 
             // Sanitize filename
@@ -103,6 +102,10 @@ class AssignmentController extends Controller
                 'resource_id' => $result['resource']->id
             ]);
 
+            // Notify all enrolled students
+            $students = $currentModule->students()->with('user')->get()->pluck('user');
+            \Illuminate\Support\Facades\Notification::send($students, new \App\Notifications\AssignmentCreatedNotification($currentModule->assignments()->find($result['assignment']->id)));
+
             return redirect()->back()
                 ->with('success', true)
                 ->with('message', 'Successfully created an assignment');
@@ -116,17 +119,6 @@ class AssignmentController extends Controller
                 'errors' => $e->errors(),
                 'module_id' => $moduleId,
             ]);
-<<<<<<< HEAD
-
-            // Notify all enrolled students
-            $students = $currentModule->students()->with('user')->get()->pluck('user');
-            \Illuminate\Support\Facades\Notification::send($students, new \App\Notifications\AssignmentCreatedNotification($assignment));
-
-            return redirect()->back()->with('success', true)->with('message', 'Successfully created an assignment');
-        } catch (Exception $error) {
-            return redirect()->back()->with('success', false)->with('message', 'Internal server error');
-=======
-            
             throw $e; // Re-throw to let Laravel handle validation errors
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Clean up uploaded file if module not found
@@ -159,7 +151,6 @@ class AssignmentController extends Controller
                 ->with('success', false)
                 ->with('error', 'Failed to create assignment: ' . $e->getMessage())
                 ->withInput();
->>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
         }
     }
 
@@ -189,10 +180,6 @@ class AssignmentController extends Controller
                 return redirect()->back()->with('error', 'Assignment has not started yet.');
             }
 
-<<<<<<< HEAD
-            // Notify student of successful submission
-            $user->notify(new \App\Notifications\AssignmentSubmittedNotification($assignment));
-=======
             // Validate assignment deadline has not passed
             if ($assignment->isPastDeadline()) {
                 return redirect()->back()->with('error', 'Assignment deadline has passed.');
@@ -269,7 +256,9 @@ class AssignmentController extends Controller
                     $resource->save();
                 }
             });
->>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
+
+            // Notify student of successful submission
+            $user->notify(new \App\Notifications\AssignmentSubmittedNotification($assignment));
 
             return redirect()->back()->with('message', 'Assignment submitted successfully!');
         } catch (\Illuminate\Validation\ValidationException $e) {
