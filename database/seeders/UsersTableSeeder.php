@@ -44,20 +44,26 @@ class UsersTableSeeder extends Seeder
 
         DB::table('users')->insert($users);
 
-        DB::table('users')->insert([
-            'name' => 'Test User',
-            'email' => 'abc@gmail.com',
-            'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
-            'profile_pic' => 'profile/default.png',
-            'user_dob' => $faker->date('Y-m-d'),
-            'address' => $faker->address(),
-            'status' => 'active',
-            'faculty_id' => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
-            'password' => Hash::make('password123'),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'course_id' => $faker->randomElement($courseIds),
-        ]);
+        // Check if test user exists
+        $testUserEmail = 'abc@gmail.com';
+        $existingUser = DB::table('users')->where('email', $testUserEmail)->first();
+
+        if (!$existingUser) {
+            DB::table('users')->insert([
+                'name' => 'Test User',
+                'email' => $testUserEmail,
+                'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
+                'profile_pic' => 'profile/default.png',
+                'user_dob' => $faker->date('Y-m-d'),
+                'address' => $faker->address(),
+                'status' => 'active',
+                'faculty_id' => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
+                'password' => Hash::make('password123'),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'course_id' => $faker->randomElement($courseIds),
+            ]);
+        }
 
     }
 }

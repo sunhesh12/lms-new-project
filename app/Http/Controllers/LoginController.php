@@ -80,9 +80,19 @@ class LoginController extends Controller
     // ---------------------------
     Auth::login($user, $request->remember);
 
+    $user->generateTwoFactorCode();
+
+    // Send email
+    try {
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
+    } catch (\Exception $e) {
+        // Log error but continue
+        \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
+    }
+
     $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
 
-    return redirect()->route('dashboard')->withCookie($cookie);;
+    return redirect()->route('two-factor.index')->withCookie($cookie);
     }
 }
 
@@ -118,75 +128,104 @@ public function logout(Request $request)
     public function dashboard()
     {
         $user = Auth::user();
-        $notifications = [];
+        
+        // 1. Check for upcoming personal events within 2 days
+        $upcomingEvents = \App\Models\Event::where('user_id', $user->id)
+            ->where('date', '>=', now()->toDateString())
+            ->where('date', '<=', now()->addDays(2)->toDateString())
+            ->get();
 
-        if ($user->isStudent()) {
+        foreach ($upcomingEvents as $event) {
+            // Check if a notification for this event already exists to avoid duplicates
+            // We can use the created_at or some other logic, but for simplicity, 
+            // lets just check if there's a notification with this title and date in data
+            $alreadyNotified = $user->notifications()
+                ->where('data->event_id', $event->id)
+                ->exists();
+
+            if (!$alreadyNotified) {
+                $user->notify(new \App\Notifications\SystemNotification([
+                    'topic' => 'Upcoming Event',
+                    'message' => "Reminder: {$event->title} is scheduled for {$event->date->format('M d')} at {$event->start_time}",
+                    'type' => 'noting',
+                    'link' => route('calendar'), // Adjust route if named differently
+                    'event_id' => $event->id,
+                ]));
+            }
+        }
+
+        // 2. Also check for PUBLIC events from others within 2 days
+        $publicEvents = \App\Models\Event::where('user_id', '!=', $user->id)
+            ->where('visibility', 'public')
+            ->where('date', '>=', now()->toDateString())
+            ->where('date', '<=', now()->addDays(2)->toDateString())
+            ->get();
+
+        foreach ($publicEvents as $event) {
+            $alreadyNotified = $user->notifications()
+                ->where('data->event_id', $event->id)
+                ->exists();
+
+            if (!$alreadyNotified) {
+                $user->notify(new \App\Notifications\SystemNotification([
+                    'topic' => 'Public Event',
+                    'message' => "Public Event: {$event->title} by {$event->user->name} on {$event->date->format('M d')}",
+                    'type' => 'noting',
+                    'link' => route('calendar'),
+                    'event_id' => $event->id,
+                ]));
+            }
+        }
+
+        // Fetch real database notifications for the view
+        $notifications = $user->notifications()->latest()->limit(10)->get();
+
+        // If no database notifications and user is student, generate sample assignments
+        if ($notifications->isEmpty() && $user->isStudent()) {
             $student = $user->student;
-            
-            // 1. Fetch upcoming assignments for enrolled modules (next 14 days)
             $enrolledModuleIds = \App\Models\ModuleEnrollment::where('student_id', $student->id)->pluck('module_id');
             
             $upcomingAssignments = \App\Models\Assignment::whereIn('module_id', $enrolledModuleIds)
                 ->where('deadline', '>', now())
                 ->where('deadline', '<', now()->addDays(14))
                 ->with('module')
+                ->limit(3)
                 ->get();
 
             foreach ($upcomingAssignments as $assignment) {
-                $notifications[] = [
-                    'id' => 'assignment_' . $assignment->id,
+                $user->notify(new \App\Notifications\SystemNotification([
                     'topic' => 'Assignment Due',
                     'message' => "{$assignment->title} is due on {$assignment->deadline->format('M d, H:i')}",
-                    'type' => 'error', // Use error for deadlines
+                    'type' => 'error',
                     'link' => route('module.show', $assignment->module_id),
-                    'date' => $assignment->deadline,
-                ];
+                ]));
             }
 
-            // 2. Fetch active quizzes for enrolled modules
-            $upcomingQuizzes = \App\Models\Quiz::whereIn('module_id', $enrolledModuleIds)
-                ->where('is_active', true)
-                ->with('module')
-                ->get();
-
-            foreach ($upcomingQuizzes as $quiz) {
-                $notifications[] = [
-                    'id' => 'quiz_' . $quiz->id,
-                    'topic' => 'Active Quiz',
-                    'message' => "{$quiz->title} is available in {$quiz->module->name}",
-                    'type' => 'success',
-                    'link' => route('modules.quiz', ['initialQuizId' => $quiz->id]),
-                    'date' => $quiz->created_at,
-                ];
-            }
-
-            // 3. Fetch user-specific events
-            $upcomingEvents = $user->events()
-                ->where('date', '>=', now()->toDateString())
-                ->orderBy('date')
-                ->orderBy('start_time')
-                ->limit(5)
-                ->get();
-
-            foreach ($upcomingEvents as $event) {
-                $notifications[] = [
-                    'id' => 'event_' . $event->id,
-                    'topic' => 'Event',
-                    'message' => "{$event->title} on {$event->date->format('M d')} at {$event->start_time->format('H:i')}",
-                    'type' => 'noting',
-                    'link' => '/calendar',
-                    'date' => $event->date,
-                ];
-            }
+            // Re-fetch now that we've added some
+            $notifications = $user->notifications()->latest()->limit(10)->get();
         }
 
-        // Sort notifications by date (newest first or closest deadline)
-        usort($notifications, function($a, $b) {
-            return $a['date'] <=> $b['date'];
-        });
+        // --- Fetch Frequent Modules ---
+        $frequent_modules = [];
+        if ($user->isAdmin()) {
+            $frequent_modules = \App\Models\Module::withCount('students')
+                ->orderBy('students_count', 'desc')
+                ->limit(5)
+                ->get();
+        } elseif ($user->isLecturer() && $user->lecture) {
+            $frequent_modules = $user->lecture->modules()
+                ->withCount('students')
+                ->limit(5)
+                ->get();
+        } elseif ($user->isStudent() && $user->student) {
+            $frequent_modules = $user->student->enrolledModules()
+                ->limit(5)
+                ->get();
+        }
 
         return Inertia::render('Dashboard', [
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'frequent_modules' => $frequent_modules,
         ]);
     }
 }

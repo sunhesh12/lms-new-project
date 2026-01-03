@@ -15,46 +15,48 @@ use Illuminate\Http\Request;
 
 
 // All the routes related modules
-Route::prefix('modules')->group(function () {
+Route::middleware(['auth'])->prefix('modules')->group(function () {
     Route::get('/', [ModuleController::class, 'index'])->name('modules.index');
-    Route::post('/', [ModuleController::class, 'create'])->name('module.create'); //->middleware('auth');
+    Route::post('/', [ModuleController::class, 'create'])->name('module.create');
     
     // Student Quiz Page (specific route must come before parameterizedmoduleId)
     Route::get('/quiz', [App\Http\Controllers\QuizController::class, 'page'])->name('modules.quiz');
+    
+    // Browse All Modules Page
+    Route::get('/browse', [ModuleController::class, 'browse'])->name('modules.browse');
 
     Route::prefix('/{moduleId}')->group(function () {
-        Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
+        Route::get('/', [ModuleController::class, 'show'])->name('module.show');
         Route::get('/join', [ModuleController::class, 'joinPage'])->name('module.join_page');
         Route::post('/', [ModuleController::class, 'update'])->name('module.update');
         Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
         // For creating new topics for a module
-        Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create"); //->middleware('auth
+        Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create");
         Route::post('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
-        Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete"); //->middleware('auth
-        Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset"); //->middleware('auth
+        Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete");
+        Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset");
 
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
             return Inertia::render('Modules/Assignment', [
                 'moduleId' => $moduleId,
                 'assignmentId' => $assignmentId
             ]);
-        }); //->middleware('auth');
+        });
 
         // For creating new assignments for a module
         Route::post("/assignments/create", [AssignmentController::class, 'create'])->name("assignment.create");
 
         // Enrollments
-        Route::post('/enroll', [ModuleEnrollmentController::class, 'store'])->name('module.enroll');
+        Route::post('/join', [ModuleController::class, 'join'])->name('module.join');
         Route::delete('/enroll/{registrationId}', [ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
         Route::delete('/enrollments/all', [ModuleEnrollmentController::class, 'destroyAll'])->name('module.unenroll-all');
     });
 });
-//->middleware('auth');
 
 Route::post("/assignments/{assignmentId}/update", [AssignmentController::class, 'update'])->name("assignment.update");
 Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 'delete'])->name("assignment.delete");
-Route::post("/assignments/{assignmentId}/submit", [AssignmentController::class, 'submit'])->name("assignment.submit");
+// Submission route moved to auth middleware group below (line 187)
 Route::post("/assignments/{assignmentId}/reset", [AssignmentController::class, 'reset'])->name("assignment.reset");
 
 // Grading Routes
@@ -63,7 +65,7 @@ Route::post('/assignments/submissions/{submissionId}/grade', [AssignmentControll
 
 Route::get('/calendar', function () {
     return Inertia::render('Calendar/Main');
-});
+})->name('calendar');
 
 Route::get('/account', function () {
     return Inertia::render('Users/Main');
@@ -97,7 +99,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.submit');
 
-Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+    Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', \App\Http\Middleware\TwoFactorMiddleware::class]);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'index'])->name('two-factor.index');
+    Route::post('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'store'])->name('two-factor.store');
+    Route::get('verify-2fa/resend', [App\Http\Controllers\TwoFactorController::class, 'resend'])->name('two-factor.resend');
+});
 
 
 
@@ -137,6 +145,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/messages/delete-multiple', [App\Http\Controllers\ChatController::class, 'deleteMultiple'])->name('messages.delete.multiple');
     Route::post('/chat/{conversation}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::get('/ai-assistant', [App\Http\Controllers\ChatController::class, 'aiAssistant'])->name('ai.assistant');
     Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
     Route::get('/api/students/search', function (Request $request) {
         $query = $request->query('query');
@@ -162,6 +171,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\AdminDashboardController::class, 'editUser'])->name('admin.users.edit');
         Route::post('/users/{user}/update', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUser'])->name('admin.users.update');
         Route::get('/health', [App\Http\Controllers\Admin\AdminDashboardController::class, 'systemHealth'])->name('admin.health');
+        Route::get('/examinations', [App\Http\Controllers\Admin\AdminDashboardController::class, 'examinations'])->name('admin.examinations');
     });
 
     Route::get('/api/lecturers/search', function (Request $request) {
@@ -180,7 +190,7 @@ Route::middleware('auth')->group(function () {
     // Enrollment Routes
     Route::post('/modules/{moduleId}/enroll', [App\Http\Controllers\ModuleEnrollmentController::class, 'store'])->name('module.enroll');
     Route::delete('/modules/{moduleId}/enrollments/{registrationId}', [App\Http\Controllers\ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
-    Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
+    Route::post('/assignments/{assignmentId}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
 
     // Quiz Management
     Route::post('/quizzes', [App\Http\Controllers\QuizController::class, 'store'])->name('quizzes.store');
@@ -188,6 +198,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/quizzes/{id}', [App\Http\Controllers\QuizController::class, 'destroy'])->name('quizzes.destroy');
     Route::post('/quizzes/{id}/questions', [App\Http\Controllers\QuizController::class, 'syncQuestions'])->name('quizzes.questions.sync');
     Route::delete('/quizzes/{quizId}/questions/{questionId}', [App\Http\Controllers\QuizController::class, 'deleteQuestion'])->name('quizzes.questions.delete');
+
+    // Notifications
+    Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/api/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/api/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 
@@ -219,6 +234,11 @@ Route::middleware(['auth'])->group(function () {
     // Get user's quiz history
     Route::get('/quiz-history', [QuizController::class, 'history']);
 });
+
+Route::get('/test-ai', function (App\Services\DeepSeekService $ai) {
+    return $ai->generateResponse('Explain MVC architecture simply.');
+});
+
 
 
 

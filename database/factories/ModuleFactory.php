@@ -22,6 +22,7 @@ class ModuleFactory extends Factory
             'credit_value' => $this->faker->randomElement(['2', '3', '4']),
             'maximum_students' => $this->faker->numberBetween(50, 200),
             'description' => $this->faker->sentence(8),
+            'enrollment_key' => '1234',
         ];
     }
 }

@@ -37,7 +37,19 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'role' => $request->user()->role,
+                    'address' => $request->user()->address,
+                    'user_phone_no' => $request->user()->user_phone_no,
+                    'user_dob' => $request->user()->user_dob,
+                    'profile_pic' => $request->user()->profile_pic,
+                    'avatar_url' => $request->user()->avatar_url,
+                    'unreadNotificationsCount' => $request->user()->unreadNotifications()->count(),
+                    'unreadChatCount' => $request->user()->unreadChatCount(),
                 ] : null,
+            ],
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

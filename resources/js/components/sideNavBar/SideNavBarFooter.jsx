@@ -1,7 +1,7 @@
 // src/components/sideNavBar/SideNavBarFooter.jsx
 import React, { useState } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-import { Settings, User, LogOut, Bell, Lock, HelpCircle, X } from "lucide-react";
+import { Settings, User, LogOut, Bell, Lock, HelpCircle, X, ShieldCheck } from "lucide-react";
 import style from "@/css/sideNavBar.module.css";
 import modalStyle from "@/css/settingsModal.module.css";
 
@@ -27,36 +27,43 @@ export default function SideNavBarFooter({ isOpen }) {
   return (
     <>
       <div className={style["sideNavBar-footer"]}>
-        <div 
-          className={style["sideNavBar-footer-settings"]}
+        <div
+          className={style["settings-link"]}
           onClick={() => setShowSettingsModal(true)}
-          style={{ cursor: 'pointer' }}
         >
           <Settings size={20} />
-          {!isOpen && <span>Settings</span>}
+          {isOpen && <span>Settings</span>}
         </div>
-        
-        <Link href="/profile">
-          <div className={style["sideNavBar-footer-logout"]}>
-            <User size={20} />
-            {!isOpen && <span>{formatName(user?.name)}</span>}
-          </div>
+
+        <Link href="/profile" className={style["user-profile-card"]}>
+          <img
+            src={user?.avatar_url || "/images/default-avatar.png"} // Fallback or user avatar
+            alt="Profile"
+            className={style.avatar}
+            onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"; }}
+          />
+          {isOpen && (
+            <div className={style["user-info"]}>
+              <span className={style["user-name"]}>{user?.name}</span>
+              <span className={style["user-email"]}>{user?.email}</span>
+            </div>
+          )}
         </Link>
       </div>
 
       {/* Settings Modal */}
       {showSettingsModal && (
-        <div 
-          className={modalStyle.settingsModalOverlay} 
+        <div
+          className={modalStyle.settingsModalOverlay}
           onClick={() => setShowSettingsModal(false)}
         >
-          <div 
-            className={modalStyle.settingsModal} 
+          <div
+            className={modalStyle.settingsModal}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={modalStyle.settingsModalHeader}>
               <h2>Settings</h2>
-              <button 
+              <button
                 className={modalStyle.closeBtn}
                 onClick={() => setShowSettingsModal(false)}
               >
@@ -65,29 +72,29 @@ export default function SideNavBarFooter({ isOpen }) {
             </div>
 
             <div className={modalStyle.settingsModalBody}>
-              <Link href="/profile" className={modalStyle.settingsItem}>
+              <Link href="/profile?tab=profile" className={modalStyle.settingsItem} onClick={() => setShowSettingsModal(false)}>
                 <User size={18} />
                 <span>Profile Settings</span>
               </Link>
 
-              <Link href="#" className={modalStyle.settingsItem}>
+              <Link href="/profile?tab=notifications" className={modalStyle.settingsItem} onClick={() => setShowSettingsModal(false)}>
                 <Bell size={18} />
                 <span>Notifications</span>
               </Link>
 
-              <Link href="#" className={modalStyle.settingsItem}>
-                <Lock size={18} />
+              <Link href="/profile?tab=privacy" className={modalStyle.settingsItem} onClick={() => setShowSettingsModal(false)}>
+                <ShieldCheck size={18} />
                 <span>Privacy & Security</span>
               </Link>
 
-              <Link href="#" className={modalStyle.settingsItem}>
+              <Link href="/profile?tab=help" className={modalStyle.settingsItem} onClick={() => setShowSettingsModal(false)}>
                 <HelpCircle size={18} />
                 <span>Help & Support</span>
               </Link>
 
               <div className={modalStyle.settingsDivider}></div>
 
-              <button 
+              <button
                 className={`${modalStyle.settingsItem} ${modalStyle.logoutItem}`}
                 onClick={handleLogout}
               >

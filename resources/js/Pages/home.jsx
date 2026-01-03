@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import Button from "@/components/Input/Button";
 
 // Styles
@@ -8,74 +9,84 @@ import GuestLayout from "@/Layouts/GuestLayout";
 export default function Welcome() {
     return (
         <GuestLayout>
-            <div className={styles["landing-NavBar"]}>
-                <div className={styles["landing-NavBar-first-Container"]}>
-                    <div className={styles["landing-NavBar-Elements"]}>
+            <motion.nav
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className={styles.landingNavBar}
+            >
+                <div className={styles.navLinks}>
+                    <div className={styles.navItem}>
                         <img
                             src="/icons/home.ico"
-                            alt="LMS Logo"
-                            height="50px"
+                            alt="Home"
                         />
                         <h1>Home</h1>
                     </div>
-                    <div className={styles["landing-NavBar-Elements"]}>
+                    <div className={styles.navItem}>
                         <img
                             src="/icons/contact.ico"
-                            alt="LMS Logo"
-                            height="50px"
+                            alt="Contact"
                         />
                         <h1>Contact</h1>
                     </div>
-
-                    <div className={styles["landing-NavBar-Elements"]}>
+                    <div className={styles.navItem}>
                         <img
                             src="/icons/help.ico"
-                            alt="LMS Logo"
-                            height="50px"
+                            alt="Help"
                         />
                         <h1>Need Help</h1>
                     </div>
                 </div>
-                <div className={styles["landing-NavBar-Second-Container"]}>
-                    <div className={styles["Landing-NavBar-logo"]}>
-                        <div>
-                            <img
-                                src="/images/usjp-logo.png"
-                                alt="LMS Logo"
-                                height="70px"
-                            />
-                        </div>
-                        <div className={styles["Landing-NavBar-logo-Text"]}>
-                            <h1>University of Sri Jayawardenepura</h1>
-                            <p>Learning Management System</p>
-                        </div>
+                
+                <div className={styles.universityBranding}>
+                    <img
+                        src="/images/usjp-logo.png"
+                        alt="USJP Logo"
+                        className={styles.universityLogo}
+                    />
+                    <div className={styles.logoText}>
+                        <h1>University of Sri Jayawardenepura</h1>
+                        <p>Learning Management System</p>
                     </div>
                 </div>
-            </div>
+            </motion.nav>
+
             <div className={styles.heroContainer}>
                 <article className={styles.hero}>
-                    <div>
+                    <motion.div
+                        className={styles.heroImageContainer}
+                        initial={{ x: -100, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
                         <img
                             src="/images/welcome-image.png"
                             className={styles.heroArt}
                             alt="Welcome Image"
                         />
-                    </div>
-                    <div className={styles.right}>
+                    </motion.div>
+                    
+                    <motion.div
+                        className={styles.right}
+                        initial={{ x: 100, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
                         <h1 className={styles.heroTitle}>
                             <span className={styles.blackText}>Organize.</span>{" "}
                             <span className={styles.blueText}>Learn.</span>{" "}
                             <span className={styles.orangeText}>Create.</span>
                         </h1>
                         <p className={styles.heroSubtitle}>
-                            Welcome to the learning management System <br></br>
+                            Welcome to the learning management System <br />
                             of the <b>University of Sri Jayawardenepura.</b>
                         </p>
                         <div className={styles.buttonGroup}>
                             <Button href={route("login")}>Login</Button>
                             <Button href={route("register")}>Register</Button>
                         </div>
-                    </div>
+                    </motion.div>
                 </article>
             </div>
         </GuestLayout>

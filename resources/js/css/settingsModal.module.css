@@ -4,31 +4,48 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .settingsModal {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 1.5rem;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  max-width: 360px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  animation: modalSlideIn 0.3s ease-out;
+  animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -36,71 +53,82 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .settingsModalHeader h2 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
 }
 
 .closeBtn {
-  background: none;
-  border: none;
+  background: white;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background 0.2s;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: #64748b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .closeBtn:hover {
-  background: #f3f4f6;
-  color: #1f2937;
+  background: #f8fafc;
+  color: #1e293b;
+  transform: rotate(90deg);
 }
 
 .settingsModalBody {
-  padding: 10px;
+  padding: 0.75rem;
 }
 
 .settingsItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 8px;
-  transition: all 0.2s;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-decoration: none;
-  color: #374151;
-  font-size: 15px;
+  color: #475569;
+  font-size: 0.9375rem;
+  font-weight: 600;
   width: 100%;
   border: none;
-  background: none;
+  background: transparent;
   text-align: left;
   font-family: inherit;
 }
 
 .settingsItem:hover {
-  background: #f3f4f6;
-  transform: translateX(2px);
+  background: white;
+  color: #3b82f6;
+  transform: translateX(4px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .settingsItem svg {
-  color: #6b7280;
+  color: #94a3b8;
+  transition: color 0.2s ease;
   flex-shrink: 0;
+}
+
+.settingsItem:hover svg {
+  color: #3b82f6;
 }
 
 .settingsDivider {
   height: 1px;
-  background: #e5e7eb;
-  margin: 10px 0;
+  background: rgba(229, 231, 235, 0.5);
+  margin: 0.75rem 1rem;
 }
 
 .logoutItem {
@@ -108,30 +136,23 @@
 }
 
 .logoutItem:hover {
-  background: #fee2e2;
+  background: rgba(254, 226, 226, 0.8);
+  color: #dc2626;
 }
 
 .logoutItem svg {
+  color: #fca5a5;
+}
+
+.logoutItem:hover svg {
   color: #ef4444;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
   .settingsModal {
-    width: 95%;
+    width: calc(100% - 2rem);
     max-width: none;
-  }
-
-  .settingsModalHeader {
-    padding: 16px;
-  }
-
-  .settingsModalHeader h2 {
-    font-size: 18px;
-  }
-
-  .settingsItem {
-    padding: 12px 14px;
-    font-size: 14px;
+    margin: 1rem;
   }
 }

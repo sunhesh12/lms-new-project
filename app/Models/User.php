@@ -24,6 +24,8 @@ class User extends Authenticatable
         'user_dob',
         'faculty_id',
         'course_id',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     protected $hidden = [
@@ -52,9 +54,9 @@ class User extends Authenticatable
 
     }
 
-    public function system_admin()
+    public function systemAdmin()
     {
-        return $this->hasOne(System_admin::class);
+        return $this->hasOne(SystemAdmin::class);
     }
 
     public function faculty()
@@ -85,9 +87,9 @@ class User extends Authenticatable
     // Role checks
     public function isAdmin()
     {
-        return $this->relationLoaded('system_admin') 
-            ? $this->system_admin !== null 
-            : $this->system_admin()->exists();
+        return $this->relationLoaded('systemAdmin') 
+            ? $this->systemAdmin !== null 
+            : $this->systemAdmin()->exists();
     }
 
     public function isLecturer()
@@ -110,5 +112,24 @@ class User extends Authenticatable
         if ($this->isLecturer()) return 'lecturer';
         if ($this->isStudent()) return 'student';
         return 'user';
+    }
+
+    public function unreadChatCount()
+    {
+        return $this->conversations()->with(['participants' => function($query) {
+            $query->where('user_id', $this->id);
+        }])->get()->sum(function ($conversation) {
+            $participant = $conversation->participants->first();
+            $lastReadAt = $participant ? $participant->last_read_at : '1970-01-01';
+            
+            return $conversation->messages()
+                ->where('created_at', '>', $lastReadAt ?? '1970-01-01')
+                ->where('user_id', '!=', $this->id)
+                ->where(function ($query) {
+                    $query->whereNull('deleted_by')
+                          ->orWhereJsonDoesntContain('deleted_by', $this->id);
+                })
+                ->count();
+        });
     }
 }

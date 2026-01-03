@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
-import styles from '@/css/Calendar.module.css'
+import styles from '@/css/calendar.module.css'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import axios from 'axios';
 
 function CalendarApp({ auth }) {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [events, setEvents] = useState([])
-  const [filteredEvents, setFilteredEvents] = useState([])
+  const [personalEvents, setPersonalEvents] = useState([])
+  const [publicEvents, setPublicEvents] = useState([])
+  const [eventVisibility, setEventVisibility] = useState('private')
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState(null)
   const [eventTitle, setEventTitle] = useState('')
@@ -14,7 +15,7 @@ function CalendarApp({ auth }) {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('10:00')
   const [loading, setLoading] = useState(false)
-  
+
   // Filter states
   const [filterYear, setFilterYear] = useState(new Date().getFullYear())
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1)
@@ -22,6 +23,11 @@ function CalendarApp({ auth }) {
   const [eventFilter, setEventFilter] = useState('this-month') // 'all' or 'this-month'
   const [notificationFilter, setNotificationFilter] = useState('today') // 'all' or 'today'
   const [todayEvents, setTodayEvents] = useState([])
+
+  // Computed events
+  const allEvents = [...personalEvents, ...publicEvents]
+  const [filteredPersonal, setFilteredPersonal] = useState([])
+  const [filteredPublic, setFilteredPublic] = useState([])
 
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December']
@@ -36,7 +42,7 @@ function CalendarApp({ auth }) {
   useEffect(() => {
     applyFilters();
     updateTodayEvents();
-  }, [events, filterYear, filterMonth, searchDate, eventFilter])
+  }, [personalEvents, publicEvents, filterYear, filterMonth, searchDate, eventFilter])
 
   // Update filters when currentDate changes
   useEffect(() => {
@@ -46,7 +52,7 @@ function CalendarApp({ auth }) {
 
   const updateTodayEvents = () => {
     const today = formatDate(new Date());
-    const eventsToday = events.filter(event => event.date === today);
+    const eventsToday = personalEvents.filter(event => event.date === today);
     setTodayEvents(eventsToday);
   }
 
@@ -54,7 +60,8 @@ function CalendarApp({ auth }) {
     try {
       setLoading(true);
       const response = await axios.get('/api/events');
-      setEvents(response.data);
+      setPersonalEvents(response.data.personal || []);
+      setPublicEvents(response.data.public || []);
     } catch (error) {
       console.error('Error fetching events:', error);
       alert('Failed to load events');
@@ -64,25 +71,22 @@ function CalendarApp({ auth }) {
   }
 
   const applyFilters = () => {
-    let filtered = [...events];
+    const filterFn = (items) => {
+      let filtered = [...items];
 
-    // If specific date is searched, show only that date's events
-    if (searchDate) {
-      filtered = filtered.filter(event => event.date === searchDate);
-    } 
-    // Otherwise apply event filter (all or this month)
-    else if (eventFilter === 'this-month') {
-      filtered = filtered.filter(event => {
-        const eventDate = new Date(event.date);
-        const eventYear = eventDate.getFullYear();
-        const eventMonth = eventDate.getMonth() + 1;
-        
-        return eventYear === filterYear && eventMonth === filterMonth;
-      });
-    }
-    // If 'all', no filtering needed - show all events
+      if (searchDate) {
+        filtered = filtered.filter(event => event.date === searchDate);
+      } else if (eventFilter === 'this-month') {
+        filtered = filtered.filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate.getFullYear() === filterYear && (eventDate.getMonth() + 1) === filterMonth;
+        });
+      }
+      return filtered;
+    };
 
-    setFilteredEvents(filtered);
+    setFilteredPersonal(filterFn(personalEvents));
+    setFilteredPublic(filterFn(publicEvents));
   }
 
   const getDaysInMonth = (date) => {
@@ -92,7 +96,7 @@ function CalendarApp({ auth }) {
     const lastDay = new Date(year, month + 1, 0)
     const daysInMonth = lastDay.getDate()
     const startingDayOfWeek = firstDay.getDay()
-    
+
     return { daysInMonth, startingDayOfWeek, year, month }
   }
 
@@ -104,7 +108,7 @@ function CalendarApp({ auth }) {
   }
 
   const getEventsForDate = (dateStr) => {
-    return events.filter(event => event.date === dateStr)
+    return allEvents.filter(event => event.date === dateStr)
   }
 
   const handleDateClick = (day) => {
@@ -129,23 +133,27 @@ function CalendarApp({ auth }) {
         date: selectedDate,
         start_time: startTime,
         end_time: endTime,
+        visibility: eventVisibility,
       });
 
-      setEvents([...events, response.data]);
-      
+      setPersonalEvents([...personalEvents, response.data]);
+
       // Reset form
       setEventTitle('')
       setEventDescription('')
       setStartTime('09:00')
       setEndTime('10:00')
+      setEventVisibility('private')
       setShowModal(false)
-      
+
       alert('Event added successfully!');
     } catch (error) {
       console.error('Error adding event:', error);
       if (error.response?.data?.errors) {
         const errorMessages = Object.values(error.response.data.errors).flat().join('\n');
         alert('Validation errors:\n' + errorMessages);
+      } else if (error.response?.data?.message) {
+        alert(error.response.data.message);
       } else {
         alert('Failed to add event. Please try again.');
       }
@@ -162,7 +170,7 @@ function CalendarApp({ auth }) {
     try {
       setLoading(true);
       await axios.delete(`/api/events/${eventId}`);
-      setEvents(events.filter(event => event.id !== eventId));
+      setPersonalEvents(personalEvents.filter(event => event.id !== eventId));
       alert('Event deleted successfully!');
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -207,7 +215,7 @@ function CalendarApp({ auth }) {
   const handleDateSearch = (e) => {
     const selectedDate = e.target.value;
     setSearchDate(selectedDate);
-    
+
     // Move calendar to the selected date's month and year
     if (selectedDate) {
       const date = new Date(selectedDate);
@@ -231,29 +239,29 @@ function CalendarApp({ auth }) {
     if (notificationFilter === 'today') {
       return todayEvents;
     } else {
-      // Show all upcoming events (today and future)
+      // Show all upcoming personal events
       const today = formatDate(new Date());
-      return events.filter(event => event.date >= today).sort((a, b) => new Date(a.date) - new Date(b.date));
+      return personalEvents.filter(event => event.date >= today).sort((a, b) => new Date(a.date) - new Date(b.date));
     }
   }
 
   const renderMonthView = () => {
     const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentDate)
     const days = []
-    
+
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(<div key={`empty-${i}`} className={`${styles.calendarDay} ${styles.empty}`}></div>)
     }
-    
+
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day))
       const dayEvents = getEventsForDate(dateStr)
       const isToday = dateStr === formatDate(new Date())
       const isSearchedDate = searchDate && dateStr === searchDate
-      
+
       days.push(
-        <div 
-          key={day} 
+        <div
+          key={day}
           className={`${styles.calendarDay} ${isToday ? styles.today : ''} ${isSearchedDate ? styles.searchedDate : ''}`}
           onClick={() => handleDateClick(day)}
         >
@@ -274,7 +282,7 @@ function CalendarApp({ auth }) {
         </div>
       )
     }
-    
+
     return days
   }
 
@@ -292,13 +300,13 @@ function CalendarApp({ auth }) {
               📢 {notificationFilter === 'today' ? "Today's Events" : 'Upcoming Events'}
             </h3>
             <div className={styles.notificationFilterButtons}>
-              <button 
+              <button
                 className={`${styles.notifFilterBtn} ${notificationFilter === 'today' ? styles.notifFilterBtnActive : ''}`}
                 onClick={() => setNotificationFilter('today')}
               >
                 Today
               </button>
-              <button 
+              <button
                 className={`${styles.notifFilterBtn} ${notificationFilter === 'all' ? styles.notifFilterBtnActive : ''}`}
                 onClick={() => setNotificationFilter('all')}
               >
@@ -306,7 +314,7 @@ function CalendarApp({ auth }) {
               </button>
             </div>
           </div>
-          
+
           <div className={styles.notificationList}>
             {getNotificationsToDisplay().length === 0 ? (
               <div className={styles.noNotifications}>
@@ -328,30 +336,30 @@ function CalendarApp({ auth }) {
         </div>
 
         {loading && (
-          <div style={{ 
-            position: 'fixed', 
-            top: '20px', 
-            right: '20px', 
-            background: '#4F46E5', 
-            color: 'white', 
-            padding: '12px 24px', 
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: '#4F46E5',
+            color: 'white',
+            padding: '12px 24px',
             borderRadius: '8px',
-            zIndex: 1000 
+            zIndex: 1000
           }}>
             Loading...
           </div>
         )}
-        
+
         <div className={styles.calendarContainer}>
           <div className={styles.calendarMain}>
             <div className={styles.calendarHeader}>
               <div className={styles.calendarTitle}>
                 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
               </div>
-              
+
               {/* Search Date Filter */}
               <div className={styles.searchDateContainer}>
-                <input 
+                <input
                   type="date"
                   value={searchDate}
                   onChange={handleDateSearch}
@@ -386,19 +394,19 @@ function CalendarApp({ auth }) {
           <div className={styles.calendarSidebar}>
             <div className={styles.sidebarHeader}>
               <h2 className={styles.sidebarTitle}>
-                {getSidebarTitle()} ({filteredEvents.length})
+                {getSidebarTitle()} ({filteredPersonal.length + filteredPublic.length})
               </h2>
-              
+
               {/* Event Filter Buttons */}
               {!searchDate && (
                 <div className={styles.eventFilterButtons}>
-                  <button 
+                  <button
                     className={`${styles.filterBtn} ${eventFilter === 'this-month' ? styles.filterBtnActive : ''}`}
                     onClick={() => setEventFilter('this-month')}
                   >
                     This Month
                   </button>
-                  <button 
+                  <button
                     className={`${styles.filterBtn} ${eventFilter === 'all' ? styles.filterBtnActive : ''}`}
                     onClick={() => setEventFilter('all')}
                   >
@@ -407,8 +415,8 @@ function CalendarApp({ auth }) {
                 </div>
               )}
             </div>
-            
-            {filteredEvents.length === 0 ? (
+
+            {filteredPersonal.length === 0 && filteredPublic.length === 0 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyStateIcon}>📅</div>
                 <p style={{ fontWeight: 600, fontSize: '16px' }}>No events found</p>
@@ -417,27 +425,60 @@ function CalendarApp({ auth }) {
                 </p>
               </div>
             ) : (
-              filteredEvents
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .map((event) => (
-                  <div key={event.id} className={styles.eventItem}>
-                    <div className={styles.eventItemTitle}>{event.title}</div>
-                    <div className={styles.eventItemDate}>{event.date}</div>
-                    <div className={styles.eventItemTime}>
-                      {event.start_time} - {event.end_time}
-                    </div>
-                    {event.description && (
-                      <div className={styles.eventItemDescription}>{event.description}</div>
-                    )}
-                    <button 
-                      className={styles.deleteBtn}
-                      onClick={() => handleDeleteEvent(event.id)}
-                      disabled={loading}
-                    >
-                      Delete Event
-                    </button>
+              <div className={styles.eventsListContainer}>
+                {filteredPersonal.length > 0 && (
+                  <div className={styles.eventSection}>
+                    <h3 className={styles.eventSectionTitle}>My Events</h3>
+                    {filteredPersonal
+                      .sort((a, b) => new Date(a.date) - new Date(b.date))
+                      .map((event) => (
+                        <div key={event.id} className={`${styles.eventItem} ${event.visibility === 'public' ? styles.publicEvent : ''}`}>
+                          <div className={styles.eventItemHeader}>
+                            <div className={styles.eventItemTitle}>{event.title}</div>
+                            {event.visibility === 'public' && <span className={styles.publicBadge}>Public</span>}
+                          </div>
+                          <div className={styles.eventItemDate}>{event.date}</div>
+                          <div className={styles.eventItemTime}>
+                            {event.start_time} - {event.end_time}
+                          </div>
+                          {event.description && (
+                            <div className={styles.eventItemDescription}>{event.description}</div>
+                          )}
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={() => handleDeleteEvent(event.id)}
+                            disabled={loading}
+                          >
+                            Delete Event
+                          </button>
+                        </div>
+                      ))}
                   </div>
-                ))
+                )}
+
+                {filteredPublic.length > 0 && (
+                  <div className={styles.eventSection}>
+                    <h3 className={styles.eventSectionTitle}>Public Events</h3>
+                    {filteredPublic
+                      .sort((a, b) => new Date(a.date) - new Date(b.date))
+                      .map((event) => (
+                        <div key={event.id} className={`${styles.eventItem} ${styles.sharedEvent}`}>
+                          <div className={styles.eventItemHeader}>
+                            <div className={styles.eventItemTitle}>{event.title}</div>
+                            <span className={styles.createdByBadge}>by {event.user?.name}</span>
+                          </div>
+                          <div className={styles.eventItemDate}>{event.date}</div>
+                          <div className={styles.eventItemTime}>
+                            {event.start_time} - {event.end_time}
+                          </div>
+                          {event.description && (
+                            <div className={styles.eventItemDescription}>{event.description}</div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -446,7 +487,7 @@ function CalendarApp({ auth }) {
           <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <h2 className={styles.modalHeader}>Add New Event</h2>
-              
+
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Date</label>
                 <input
@@ -500,15 +541,43 @@ function CalendarApp({ auth }) {
                 </div>
               </div>
 
+              {(auth.user.role === 'admin' || auth.user.role === 'lecturer') && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Visibility</label>
+                  <div className={styles.visibilityOptions}>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="private"
+                        checked={eventVisibility === 'private'}
+                        onChange={(e) => setEventVisibility(e.target.value)}
+                      />
+                      Private
+                    </label>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="public"
+                        checked={eventVisibility === 'public'}
+                        onChange={(e) => setEventVisibility(e.target.value)}
+                      />
+                      Public
+                    </label>
+                  </div>
+                </div>
+              )}
+
               <div className={styles.buttonGroup}>
-                <button 
-                  onClick={handleAddEvent} 
+                <button
+                  onClick={handleAddEvent}
                   className={`${styles.btn} ${styles.btnPrimary}`}
                   disabled={loading}
                 >
                   {loading ? 'Adding...' : 'Add Event'}
                 </button>
-                <button 
+                <button
                   onClick={() => setShowModal(false)}
                   className={`${styles.btn} ${styles.btnSecondary}`}
                   disabled={loading}
@@ -519,7 +588,7 @@ function CalendarApp({ auth }) {
             </div>
           </div>
         )}
-        
+
       </div>
     </AuthenticatedLayout>
   )

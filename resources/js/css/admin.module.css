@@ -1,7 +1,8 @@
 .adminContainer {
-    padding: 2rem;
-    max-width: 80rem;
+    padding: 1rem 2.5rem 2.5rem;
+    max-width: 1280px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .header {
@@ -565,4 +566,487 @@
     background-color: #f9fafb;
     border-color: #d1d5db;
     color: #111827;
+}
+
+.titleSection {
+    flex: 1;
+}
+
+.searchContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.userAvatarSmall {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.roleBadge.role-admin {
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border-color: #c7d2fe;
+}
+
+.roleBadge.role-lecturer {
+    background-color: #f5f3ff;
+    color: #7c3aed;
+    border-color: #ddd6fe;
+}
+
+.roleBadge.role-student {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
+}
+
+.editDetailBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.editDetailBtn:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .searchContainer {
+        max-width: none;
+    }
+}
+
+.statMain {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.statInfo {
+    flex: 1;
+}
+
+.statLink {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #94a3b8;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+
+.statCard:hover .statLink {
+    opacity: 1;
+    color: #3b82f6;
+    transform: translate(2px, -2px);
+}
+
+.marginTop {
+    margin-top: 2rem;
+}
+
+.titleSection p {
+    margin: 0;
+}
+
+.actionSection {
+    display: flex;
+    gap: 1rem;
+}
+
+.controlBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.controlBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.popularModulesCard {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.moduleGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.moduleItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 1rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.moduleItem:hover {
+    background: white;
+    border-color: #3b82f6;
+    transform: translateX(4px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.moduleIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: #eff6ff;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.moduleMain {
+    flex: 1;
+    margin-left: 1rem;
+}
+
+.moduleLabel {
+    font-weight: 700;
+    color: #1e293b;
+    display: block;
+}
+
+.moduleSub {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.enrollmentBadge {
+    background: #f0fdf4;
+    color: #166534;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.headerLayout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.healthLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.healthLink:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.chartContainer {
+    width: 100%;
+    height: 350px;
+    margin-top: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.documentationCard {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    border: 1px solid #e2e8f0;
+    margin-top: 2rem;
+    line-height: 1.6;
+}
+
+.docTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.docContent {
+    color: #475569;
+    font-size: 0.9375rem;
+}
+
+.docSection {
+    margin-bottom: 2rem;
+}
+
+.docSection h4 {
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.printBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #1e293b;
+    color: white;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.printBtn:hover {
+    background: #0f172a;
+    transform: translateY(-1px);
+}
+
+/* Print Styles */
+@media print {
+
+    :global(.sideNavBar),
+    :global(.sideNavBar-header-container),
+    :global(.sideNavBar-footer),
+    :global(.sidebar-toggle-tab),
+    .headerActions,
+    .masterControlsCard,
+    .statLink,
+    .viewAllLink,
+    .printBtn,
+    .healthLink,
+    .backBtn {
+        display: none !important;
+    }
+
+    body,
+    html {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: black !important;
+    }
+
+    .adminContainer {
+        max-width: 100% !important;
+        padding: 2cm !important;
+        /* Standard margin for reports */
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    .pageHeader {
+        font-size: 24pt !important;
+        text-align: center;
+        margin-bottom: 2cm !important;
+        border-bottom: 2px solid #333;
+        padding-bottom: 0.5cm;
+    }
+
+    .pageHeader::before {
+        content: "LMS ADMINISTRATIVE SYSTEM REPORT";
+        display: block;
+        font-size: 10pt !important;
+        color: #666 !important;
+        letter-spacing: 4px;
+        margin-bottom: 10px;
+    }
+
+    .pageHeader::after {
+        content: "Generated on: " attr(data-date);
+        display: block;
+        font-size: 9pt !important;
+        font-weight: normal;
+        margin-top: 10px;
+        color: #999;
+    }
+
+    .statsGrid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1cm !important;
+        margin-bottom: 2cm !important;
+        page-break-inside: avoid;
+    }
+
+    .statCard {
+        break-inside: avoid;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        background: white !important;
+        padding: 15pt !important;
+    }
+
+    .analyticsGrid {
+        display: block !important;
+    }
+
+    .chartCard,
+    .popularModulesCard,
+    .recentUsersCard,
+    .documentationCard {
+        width: 100% !important;
+        margin-bottom: 2cm !important;
+        break-inside: avoid;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        background: white !important;
+        padding: 20pt !important;
+    }
+
+    .chartTitle {
+        font-size: 16pt !important;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10pt;
+        margin-bottom: 15pt;
+    }
+
+    .chartContainer {
+        height: 350pt !important;
+        width: 100% !important;
+    }
+
+    .userItem {
+        background: white !important;
+        border-bottom: 1px solid #eee !important;
+        padding: 10pt 0 !important;
+    }
+
+    .roleBadge {
+        border: 1px solid #ccc !important;
+        color: black !important;
+        background: white !important;
+    }
+
+    .docTitle {
+        font-size: 18pt !important;
+        color: black !important;
+    }
+
+    .docContent p {
+        font-size: 11pt !important;
+        color: #333 !important;
+    }
+}
+
+.statBadgeGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.statBadge {
+    display: flex;
+    flex-direction: column;
+}
+
+.badgeLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+}
+
+.badgeValue {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.dashboardHeader {
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+@media (max-width: 1024px) {
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
 }

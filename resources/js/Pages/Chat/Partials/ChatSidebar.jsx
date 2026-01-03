@@ -6,6 +6,8 @@ import CreateGroupModal from './CreateGroupModal';
 import ProfileSettingsModal from './ProfileSettingsModal';
 import style from '@/css/chatSidebar.module.css';
 
+const AI_UUID = '00000000-0000-0000-0000-000000000000';
+
 export default function ChatSidebar({ auth, conversations, selectedConversation, isMobile, showSidebar }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -120,65 +122,81 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
         setShowGroupModal(false);
     };
 
+    const getOtherUser = (conversation) => {
+        return conversation.users?.find(u => u.id !== auth.user.id);
+    };
+
     const filteredConversations = localConversations.filter(c => {
         if (filter === 'all') return true;
         if (filter === 'groups') return c.type === 'group';
         if (filter === 'direct') return c.type === 'private' || !c.type;
         return true;
+    }).sort((a, b) => {
+        // Pin AI to top
+        const aIsAi = getOtherUser(a)?.id === AI_UUID;
+        const bIsAi = getOtherUser(b)?.id === AI_UUID;
+        if (aIsAi) return -1;
+        if (bIsAi) return 1;
+        return 0;
     });
 
     const getConversationName = (conversation) => {
         if (conversation.name) return conversation.name;
-        const otherUser = conversation.users?.find(u => u.id !== auth.user.id);
+        const otherUser = getOtherUser(conversation);
         return otherUser?.name || 'Unknown User';
     };
 
-    const renderConversation = (conversation) => (
-        <Link
-            key={conversation.id}
-            href={route('chat.show', conversation.id)}
-            className={`${style.convItem} ${selectedConversation?.id === conversation.id ? style.convSelected : ''}`}
-            preserveState
-        >
-            <div className={style.convHeader}>
-                <div className={style.convAvatar}>
-                    {(() => {
-                        if (conversation.type === 'group') {
-                            return getConversationName(conversation).charAt(0).toUpperCase();
-                        }
-                        const otherUser = conversation.users?.find(u => u.id !== auth.user.id);
-                        if (otherUser?.avatar_url) {
-                            return <img src={otherUser.avatar_url} alt={otherUser.name} className={style.img_full_rounded} />;
-                        }
-                        return getConversationName(conversation).charAt(0).toUpperCase();
-                    })()}
-                    <span className={style.statusDot}></span>
-                </div>
-                <div className={style.convContent}>
-                    <div className={style.convTop}>
-                        <p className={style.convName}>
-                            {getConversationName(conversation)}
-                        </p>
-                        <p className={style.convTime}>
-                            {conversation.messages.length > 0 &&
-                                new Date(conversation.messages[0].created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const renderConversation = (conversation) => {
+        const otherUser = getOtherUser(conversation);
+        const isAi = otherUser?.id === AI_UUID;
+
+        return (
+            <Link
+                key={conversation.id}
+                href={route('chat.show', conversation.id)}
+                className={`${style.convItem} ${selectedConversation?.id === conversation.id ? style.convSelected : ''} ${isAi ? style.aiContact : ''}`}
+                preserveState
+            >
+                <div className={style.convHeader}>
+                    <div className={`${style.convAvatar} ${isAi ? style.aiAvatar : ''}`}>
+                        {(() => {
+                            if (conversation.type === 'group') {
+                                return getConversationName(conversation).charAt(0).toUpperCase();
                             }
-                        </p>
+                            if (otherUser?.avatar_url) {
+                                return <img src={otherUser.avatar_url} alt={otherUser.name} className={style.img_full_rounded} />;
+                            }
+                            return getConversationName(conversation).charAt(0).toUpperCase();
+                        })()}
+                        <span className={style.statusDot}></span>
                     </div>
-                    <div className={style.flex_between_center}>
-                        <p className={style.convPreview}>
-                            {conversation.messages.length > 0 ? conversation.messages[0].body : 'No messages yet'}
-                        </p>
-                        {conversation.unread_count > 0 && (
-                            <span className={style.unreadBadge}>
-                                {conversation.unread_count}
-                            </span>
-                        )}
+                    <div className={style.convContent}>
+                        <div className={style.convTop}>
+                            <p className={style.convName}>
+                                {getConversationName(conversation)}
+                                {isAi && <span className={style.aiLabel}>AI</span>}
+                            </p>
+                            <p className={style.convTime}>
+                                {conversation.messages.length > 0 &&
+                                    new Date(conversation.messages[0].created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                }
+                            </p>
+                        </div>
+                        <div className={style.flex_between_center}>
+                            <p className={style.convPreview}>
+                                {conversation.messages.length > 0 ? conversation.messages[0].body : (isAi ? 'Ask me anything about your studies!' : 'No messages yet')}
+                            </p>
+                            {conversation.unread_count > 0 && (
+                                <span className={style.unreadBadge}>
+                                    {conversation.unread_count}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Link>
-    );
+            </Link>
+        );
+    };
 
     return (
         <div className={`${style.sidebar} ${isMobile && !showSidebar ? 'hidden' : 'block'} chat-sidebar`}>

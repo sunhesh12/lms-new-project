@@ -55,14 +55,37 @@ class ModuleController extends Controller
             abort(403);
         }
 
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:100',
             'credit_value' => 'required|integer|min:0',
             'maximum_students' => 'required|integer|min:0',
             'description' => 'required|string|max:500',
+            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max
+            'enrollment_key' => 'nullable|string|max:50',
         ]);
 
-        $module = Module::create($request->all());
+        // Handle cover image upload if provided
+        if ($request->hasFile('cover_image_url')) {
+            $filePath = Storage::disk('public')->path('/uploads/modules/');
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+            }
+
+            // Sanitize and create unique filename
+            $originalFileName = $validatedData['cover_image_url']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $fileName = time() . '_' . $sanitizedFileName;
+
+            // Move uploaded file
+            $validatedData['cover_image_url']->move($filePath, $fileName);
+            $validatedData['cover_image_url'] = $fileName;
+        } else {
+            $validatedData['cover_image_url'] = null;
+        }
+
+        $module = Module::create($validatedData);
 
         return redirect()->route('module.show', $module->id)->with('message', 'Module created successfully');
     }
@@ -82,14 +105,14 @@ class ModuleController extends Controller
                     },
                     'assignments' => function ($assignmentsQuery) use ($user) {
                         $assignmentsQuery->where('is_deleted', false)->with(['submissions' => function($q) use ($user) {
-                             $q->where('student_id', $user->id);
+                             $q->where('student_id', $user->id)->where('is_deleted', false);
                         }]);
                     }
                 ]);
             },
             'assignments' => function ($query) use ($user) {
                 $query->where('is_deleted', false)->with(['resources', 'submissions' => function ($q) use ($user) {
-                    $q->where('student_id', $user->id);
+                    $q->where('student_id', $user->id)->where('is_deleted', false);
                 }]);
             },
             'quizzes' => function ($query) {
@@ -166,24 +189,46 @@ class ModuleController extends Controller
             'credit_value' => 'integer|min:0',
             'maximum_students' => 'integer|min:0',
             'description' => 'string|max:500',
-            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max
             'enrollment_key' => 'nullable|string|max:50',
         ]);
 
         $module = Module::findOrFail($moduleId);
+        $oldCoverImage = $module->cover_image_url;
 
         // If the request contains a file
         if ($request->hasFile('cover_image_url')) {
             $filePath = Storage::disk('public')->path('/uploads/modules/');
+<<<<<<< HEAD
             $fileName = $validatedData['cover_image_url']->getClientOriginalName();
 
             // Delete old image if exists
             if ($module->cover_image_url && file_exists($filePath . $fileName)) {
-                // unlink($filePath . $fileName); // Keep for safety or implement proper deletion
+                unlink($filePath . $fileName); 
+=======
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+>>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
             }
 
-            $request->cover_image_url->move($filePath, $fileName);
+            // Sanitize and create unique filename
+            $originalFileName = $validatedData['cover_image_url']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $fileName = time() . '_' . $sanitizedFileName;
+
+            // Delete old image if exists
+            if ($oldCoverImage && file_exists($filePath . $oldCoverImage)) {
+                @unlink($filePath . $oldCoverImage);
+            }
+
+            // Move uploaded file
+            $validatedData['cover_image_url']->move($filePath, $fileName);
             $validatedData['cover_image_url'] = $fileName;
+        } else {
+            // If no file is uploaded, don't update the cover_image_url field
+            unset($validatedData['cover_image_url']);
         }
 
         $module->update($validatedData);
@@ -228,5 +273,110 @@ class ModuleController extends Controller
         return Inertia::render('Modules/Join', [
             'module' => $module
         ]);
+    }
+    /**
+     * Display a listing of all modules for self-enrollment.
+     */
+    public function browse()
+    {
+        $user = auth()->user();
+        
+        // Get all active modules with their relationship to the current user (if enrolled)
+        $modules = Module::where('is_deleted', false)
+            ->with(['lecturers.user']) // eager load lecturers for display
+            ->get()
+            ->map(function ($module) use ($user) {
+                // Check if user is enrolled
+                $module->is_enrolled = false;
+                if ($user->student) {
+                    $module->is_enrolled = $module->students()->where('student_id', $user->student->id)->exists();
+                }
+                return $module;
+            });
+
+        return Inertia::render('Modules/Browse', [
+            'modules' => $modules
+        ]);
+    }
+
+    /**
+     * Handle student joining a module.
+     */
+    public function join(Request $request, $moduleId)
+    {
+        $user = auth()->user();
+        $module = Module::findOrFail($moduleId);
+        
+        // Determine if this is admin/lecturer adding a student or self-enrollment
+        $isAdminEnrollment = $request->student_id && ($user->isAdmin() || $user->isLecturer());
+        
+        // STEP 1: Validate enrollment key FIRST (for self-enrollment only)
+        if (!$isAdminEnrollment && !empty($module->enrollment_key)) {
+            // Check if key already validated in session
+            $sessionKey = "module_{$moduleId}_key_validated";
+            
+            if (!session($sessionKey)) {
+                // Validate enrollment key before doing anything else
+                $request->validate([
+                    'enrollment_key' => 'required|string'
+                ]);
+                
+                if ($request->enrollment_key !== $module->enrollment_key) {
+                    return redirect()->back()->withErrors([
+                        'enrollment_key' => 'Invalid enrollment key. Please try again.'
+                    ]);
+                }
+                
+                // Store validated key in session so we don't ask again
+                session([$sessionKey => true]);
+            }
+        }
+        
+        // STEP 2: Determine student ID
+        if ($isAdminEnrollment) {
+            // Admin/lecturer enrolling a specific student
+            $studentId = $request->student_id;
+        } else {
+            // Student self-enrolling - create student record if needed
+            if (!$user->student) {
+                $user->student()->create([
+                    'academic_year' => date('Y'),
+                ]);
+                $user->load('student');
+            }
+            $studentId = $user->student->id;
+        }
+
+        if (!$studentId) {
+            return redirect()->back()->with('error', 'Student ID is required');
+        }
+        
+        // STEP 3: Check if already enrolled
+        $existing = \App\Models\ModuleEnrollment::where('module_id', $moduleId)
+            ->where('student_id', $studentId)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('message', 'Already enrolled in this module');
+        }
+        
+        // STEP 4: Check capacity
+        if ($module->maximum_students > 0 && $module->students()->count() >= $module->maximum_students) {
+            return redirect()->back()->with('error', 'Module is full. No seats available.');
+        }
+
+        // STEP 5: Create enrollment (only after all validations pass)
+        \App\Models\ModuleEnrollment::create([
+            'module_id' => $moduleId,
+            'student_id' => $studentId,
+            'status' => 'active'
+        ]);
+
+        // Redirect to module page after successful enrollment
+        if ($isAdminEnrollment) {
+            return redirect()->back()->with('message', 'Student enrolled successfully');
+        } else {
+            return redirect()->route('module.show', $moduleId)->with('message', 'Successfully enrolled in module!');
+        }
     }
 }

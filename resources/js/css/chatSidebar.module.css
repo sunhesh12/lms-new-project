@@ -517,10 +517,31 @@
     line-height: 1.5;
 }
 
-.img_Cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.aiLabel {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+}
+
+.aiContact {
+    border-left: 3px solid #4f46e5;
+    background: rgba(79, 70, 229, 0.03);
+}
+
+.aiAvatar {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white !important;
+    font-weight: 800;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
 }
 
 .img_full_rounded {

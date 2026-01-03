@@ -13,6 +13,7 @@ class Event extends Model
         'user_id',
         'title',
         'description',
+        'visibility',
         'date',
         'start_time',
         'end_time',
@@ -23,6 +24,7 @@ class Event extends Model
         'date' => 'date',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
+        'visibility' => 'string',
     ];
 
     /**

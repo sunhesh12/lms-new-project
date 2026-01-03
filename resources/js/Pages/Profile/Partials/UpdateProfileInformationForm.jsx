@@ -4,6 +4,8 @@ import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/Input/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Edit2, X, Check } from 'lucide-react';
 import styles from '../css/profile.module.css';
 
 export default function UpdateProfileInformation({
@@ -12,105 +14,197 @@ export default function UpdateProfileInformation({
     className = '',
 }) {
     const user = usePage().props.auth.user;
+    const [isEditing, setIsEditing] = useState(false);
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, patch, errors, processing, recentlySuccessful, reset } =
         useForm({
             name: user.name,
             email: user.email,
+            address: user.address || '',
+            user_phone_no: user.user_phone_no || '',
+            user_dob: user.user_dob || '',
         });
 
     const submit = (e) => {
         e.preventDefault();
+        patch(route('profile.update'), {
+            onSuccess: () => setIsEditing(false),
+        });
+    };
 
-        patch(route('profile.update'));
+    const cancelEdit = () => {
+        reset();
+        setIsEditing(false);
     };
 
     return (
         <section className={className}>
-            <header>
-                <h2 className={styles.sectionTitle}>
-                    Profile Information
-                </h2>
-
-                <p className={styles.sectionSubtitle}>
-                    Update your account's profile information and email address.
-                </p>
+            <header className={styles.headerActions}>
+                {!isEditing ? (
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className={styles.editToggleBtn}
+                    >
+                        <Edit2 size={16} />
+                        Edit Profile
+                    </button>
+                ) : (
+                    <button
+                        onClick={cancelEdit}
+                        className={styles.editToggleBtn}
+                    >
+                        <X size={16} />
+                        Cancel
+                    </button>
+                )
+                }
             </header>
 
-            <form onSubmit={submit} className={styles.formGroup}>
-                <div className={styles.spacingY6}>
-                    <div>
-                        <InputLabel htmlFor="name" value="Name" />
-
-                        <TextInput
-                            id="name"
-                            className={`${styles.mt1} ${styles.block} w-full`}
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            required
-                            isFocused
-                            autoComplete="name"
-                        />
-
-                        <InputError className={styles.inputError} message={errors.name} />
+            {!isEditing ? (
+                <div className={styles.viewContainer}>
+                    <div className={styles.dataGroup}>
+                        <span className={styles.dataLabel}>Full Name</span>
+                        <span className={styles.dataValue}>{user.name}</span>
                     </div>
 
-                    <div>
-                        <InputLabel htmlFor="email" value="Email" />
-
-                        <TextInput
-                            id="email"
-                            type="email"
-                            className={`${styles.mt1} ${styles.block} w-full`}
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            required
-                            autoComplete="username"
-                        />
-
-                        <InputError className={styles.inputError} message={errors.email} />
+                    <div className={styles.dataGroup}>
+                        <span className={styles.dataLabel}>Email Address</span>
+                        <span className={styles.dataValue}>{user.email}</span>
                     </div>
 
-                    {mustVerifyEmail && user.email_verified_at === null && (
-                        <div>
-                            <p className={`${styles.mt1} ${styles.mutedText}`}>
-                                Your email address is unverified.
-                                <Link
-                                    href={route('verification.send')}
-                                    method="post"
-                                    as="button"
-                                    className={styles.link}
-                                >
-                                    Click here to re-send the verification email.
-                                </Link>
-                            </p>
+                    <div className={styles.dataGroup}>
+                        <span className={styles.dataLabel}>Address</span>
+                        <span className={styles.dataValue}>{user.address || 'Not provided'}</span>
+                    </div>
 
-                            {status === 'verification-link-sent' && (
-                                <div className={`${styles.mt1} ${styles.successText}`}>
-                                    A new verification link has been sent to your
-                                    email address.
-                                </div>
-                            )}
+                    <div className={styles.grid2}>
+                        <div className={styles.dataGroup}>
+                            <span className={styles.dataLabel}>Phone Number</span>
+                            <span className={styles.dataValue}>{user.user_phone_no || 'Not provided'}</span>
                         </div>
-                    )}
 
-                    <div className={styles.flexCenterGap4}>
-                        <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                        <Transition
-                            show={recentlySuccessful}
-                            enter="transition ease-in-out"
-                            enterFrom="opacity-0"
-                            leave="transition ease-in-out"
-                            leaveTo="opacity-0"
-                        >
-                            <p className={styles.mutedText}>
-                                Saved.
-                            </p>
-                        </Transition>
+                        <div className={styles.dataGroup}>
+                            <span className={styles.dataLabel}>Date of Birth</span>
+                            <span className={styles.dataValue}>{user.user_dob || 'Not provided'}</span>
+                        </div>
                     </div>
                 </div>
-            </form>
+            ) : (
+                <form onSubmit={submit} className={styles.formGroup}>
+                    <div className={styles.spacingY6}>
+                        <div>
+                            <TextInput
+                                id="name"
+                                label="Full Name"
+                                className={`${styles.mt1} ${styles.block}`}
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                                isFocused
+                                autoComplete="name"
+                                error={errors.name}
+                            />
+                        </div>
+
+                        <div>
+                            <TextInput
+                                id="email"
+                                label="Email Address"
+                                type="email"
+                                className={`${styles.mt1} ${styles.block}`}
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                                autoComplete="username"
+                                error={errors.email}
+                            />
+                        </div>
+
+                        <div>
+                            <TextInput
+                                id="address"
+                                label="Address"
+                                className={`${styles.mt1} ${styles.block}`}
+                                value={data.address}
+                                onChange={(e) => setData('address', e.target.value)}
+                                autoComplete="street-address"
+                                error={errors.address}
+                            />
+                        </div>
+
+                        <div className={styles.grid2}>
+                            <div>
+                                <TextInput
+                                    id="user_phone_no"
+                                    label="Phone Number"
+                                    className={`${styles.mt1} ${styles.block}`}
+                                    value={data.user_phone_no}
+                                    onChange={(e) => setData('user_phone_no', e.target.value)}
+                                    autoComplete="tel"
+                                    error={errors.user_phone_no}
+                                />
+                            </div>
+
+                            <div>
+                                <TextInput
+                                    id="user_dob"
+                                    label="Date of Birth"
+                                    type="date"
+                                    className={`${styles.mt1} ${styles.block}`}
+                                    value={data.user_dob}
+                                    onChange={(e) => setData('user_dob', e.target.value)}
+                                    error={errors.user_dob}
+                                />
+                            </div>
+                        </div>
+
+                        {mustVerifyEmail && user.email_verified_at === null && (
+                            <div>
+                                <p className={`${styles.mt1} ${styles.mutedText}`}>
+                                    Your email address is unverified.
+                                    <Link
+                                        href={route('verification.send')}
+                                        method="post"
+                                        as="button"
+                                        className={styles.link}
+                                    >
+                                        Click here to re-send the verification email.
+                                    </Link>
+                                </p>
+
+                                {status === 'verification-link-sent' && (
+                                    <div className={`${styles.mt1} ${styles.successText}`}>
+                                        A new verification link has been sent to your
+                                        email address.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <div className={styles.flexCenterGap4}>
+                            <PrimaryButton
+                                disabled={processing}
+                                className={styles.saveButton}
+                            >
+                                <Check size={18} className="mr-2" />
+                                Save Changes
+                            </PrimaryButton>
+
+                            <Transition
+                                show={recentlySuccessful}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
+                                <p className={styles.mutedText}>
+                                    Saved successfully.
+                                </p>
+                            </Transition>
+                        </div>
+                    </div>
+                </form>
+            )}
         </section>
     );
 }
