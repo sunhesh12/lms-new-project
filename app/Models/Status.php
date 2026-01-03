@@ -45,6 +45,10 @@ class Status extends Model
      */
     public function getIsExpiredAttribute(): bool
     {
+        if (!$this->expires_at) {
+            return false;
+        }
+
         return Carbon::now()->isAfter($this->expires_at);
     }
 

@@ -54,6 +54,7 @@ export default function Statuses({ statuses, filters = {} }) {
                 <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <Link href={route('admin.dashboard')} className={styles.controlBtn}>Back to Dashboard</Link>
                     <Link href={route('admin.feed-settings.index')} className={styles.btnPrimary}>Feed Settings</Link>
+                    <Link href={route('admin.posts.index')} className={styles.btnSecondary}>Manage Posts</Link>
                 </div>
 
                 <div>

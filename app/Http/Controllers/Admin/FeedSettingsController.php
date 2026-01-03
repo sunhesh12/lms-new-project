@@ -34,6 +34,8 @@ class FeedSettingsController extends Controller
             'daily_post_limit' => 'required|integer|min:1|max:100',
             'daily_status_limit' => 'required|integer|min:1|max:50',
             'status_duration_minutes' => 'required|integer|min:1|max:10080', // max 1 week
+            'photo_status_duration_minutes' => 'nullable|integer|min:1|max:10080',
+            'video_status_duration_minutes' => 'nullable|integer|min:1|max:10080',
         ]);
 
         $settings = FeedSetting::getInstance();

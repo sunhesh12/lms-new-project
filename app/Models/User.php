@@ -67,9 +67,13 @@ class User extends Authenticatable
         return $this->hasOne(Faculty::class);
     }
 
+    //     public function conversations()
+    // {
+    //     return $this->belongsToMany(Conversation::class, 'participants');
+    // }
         public function conversations()
     {
-        return $this->belongsToMany(Conversation::class, 'participants');
+        return $this->belongsToMany(\App\Models\Conversation::class, 'participants', 'user_id', 'conversation_id')->withTimestamps();
     }
 
     public function messages()
@@ -82,9 +86,9 @@ class User extends Authenticatable
         return $this->hasMany(Event::class);
     }
 
-        public function quizAttempts()
+    public function quizAttempts()
     {
-        return $this->hasMany(quiz_attempt::class);
+        return $this->hasMany(QuizAttempt::class);
     }
 
     // Role checks

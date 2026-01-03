@@ -241,6 +241,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Admin: Manage statuses
     Route::get('/statuses', [App\Http\Controllers\Admin\StatusController::class, 'index'])->name('statuses.index');
     Route::delete('/statuses/{status}', [App\Http\Controllers\Admin\StatusController::class, 'destroy'])->name('statuses.destroy');
+    // Admin: Manage posts (separate from statuses)
+    Route::get('/posts', [App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts.index');
+    Route::delete('/posts/{post}', [App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 
