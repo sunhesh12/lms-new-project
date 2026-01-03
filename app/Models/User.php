@@ -35,6 +35,16 @@ class User extends Authenticatable
 
     protected $appends = ['avatar_url', 'role'];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
     public function getAvatarUrlAttribute()
     {
         if (!$this->profile_pic || $this->profile_pic === 'profile/default.png') {
@@ -131,5 +141,26 @@ class User extends Authenticatable
                 })
                 ->count();
         });
+    }
+
+    /**
+     * Generate a new two-factor authentication code.
+     * The code expires in 10 minutes.
+     */
+    public function generateTwoFactorCode()
+    {
+        $this->two_factor_code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $this->two_factor_expires_at = now()->addMinutes(10);
+        $this->save();
+    }
+
+    /**
+     * Reset the two-factor authentication code.
+     */
+    public function resetTwoFactorCode()
+    {
+        $this->two_factor_code = null;
+        $this->two_factor_expires_at = null;
+        $this->save();
     }
 }
