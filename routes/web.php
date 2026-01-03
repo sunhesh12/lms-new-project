@@ -57,7 +57,7 @@ Route::prefix('modules')->group(function () {
 
 Route::post("/assignments/{assignmentId}/update", [AssignmentController::class, 'update'])->name("assignment.update");
 Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 'delete'])->name("assignment.delete");
-Route::post("/assignments/{assignmentId}/submit", [AssignmentController::class, 'submit'])->name("assignment.submit");
+// Submission route moved to auth middleware group below (line 187)
 Route::post("/assignments/{assignmentId}/reset", [AssignmentController::class, 'reset'])->name("assignment.reset");
 
 // Grading Routes
@@ -185,7 +185,7 @@ Route::middleware('auth')->group(function () {
     // Enrollment Routes
     Route::post('/modules/{moduleId}/enroll', [App\Http\Controllers\ModuleEnrollmentController::class, 'store'])->name('module.enroll');
     Route::delete('/modules/{moduleId}/enrollments/{registrationId}', [App\Http\Controllers\ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
-    Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
+    Route::post('/assignments/{assignmentId}/submit', [App\Http\Controllers\AssignmentController::class, 'submit'])->name('assignments.submit');
 
     // Quiz Management
     Route::post('/quizzes', [App\Http\Controllers\QuizController::class, 'store'])->name('quizzes.store');

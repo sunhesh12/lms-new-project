@@ -6,16 +6,13 @@ import {
     faAngleUp,
     faBookOpen,
     faEdit,
-    faFile,
     faTrashCan,
     faUpload,
-    faVideo,
-    faImage,
     faClock,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./css/topic.module.css";
 import Button from "../Input/Button";
-import LinkChip from "../Links/LinkChip";
+import ResourceViewer from "../Resource/ResourceViewer";
 
 export default function Topic({
     topicName,
@@ -100,33 +97,19 @@ export default function Topic({
                     {/* Resources Section with Rich Media */}
                     <div className={styles.resourcesContainer}>
                         {resources && resources.length > 0 ? (
-                            resources.map((resource) => {
-                                const ext = resource.url.split('.').pop().toLowerCase();
-                                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
-                                const isVideo = ['mp4', 'webm', 'ogg'].includes(ext);
-
-                                return (
-                                    <div key={resource.id} className="mb-4 p-3 bg-gray-50 rounded border border-gray-200">
-                                        <div className="mb-2 font-medium">{resource.caption}</div>
-                                        {isImage ? (
-                                            <img src={`/storage/uploads/resources/${resource.url}`} alt={resource.caption} className="max-w-full h-auto rounded shadow-sm" style={{ maxHeight: '300px' }} />
-                                        ) : isVideo ? (
-                                            <video controls className="max-w-full rounded shadow-sm" style={{ maxHeight: '300px' }}>
-                                                <source src={`/storage/uploads/resources/${resource.url}`} type={`video/${ext}`} />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        ) : (
-                                            <LinkChip
-                                                fileIcon={faFile}
-                                                url={resource.url}
-                                                fileName={resource.url.split("/").at(-1)}
-                                            />
-                                        )}
-                                    </div>
-                                );
-                            })
+                            resources
+                                .filter(resource => !resource.is_deleted)
+                                .map((resource) => (
+                                    <ResourceViewer
+                                        key={resource.id}
+                                        resource={resource}
+                                        basePath="/storage/uploads/resources"
+                                    />
+                                ))
                         ) : (
-                            <div className="text-gray-400 italic">No resources available</div>
+                            <div className="text-gray-400 italic" role="status" aria-live="polite">
+                                No resources available
+                            </div>
                         )}
                     </div>
                 </div>
