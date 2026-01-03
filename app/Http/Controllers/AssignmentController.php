@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AssignmentController extends Controller
 {
@@ -19,45 +20,103 @@ class AssignmentController extends Controller
             abort(403);
         }
 
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:50',
-            'description' => 'required|string|max:100',
-            'started' => 'required|date_format:Y-m-d H:i:s|after_or_equal:now',
-            'deadline' => 'required|date_format:Y-m-d H:i:s|after_or_equal:now|after:started',
-            'resource_file' => 'required|file',
-            'resource_caption' => 'required|string|max:50',
-            'topic_id' => 'nullable|exists:topics,id',
+        // Log incoming request for debugging
+        Log::info('Assignment creation request', [
+            'module_id' => $moduleId,
+            'user_id' => auth()->id(),
+            'request_data' => $request->except(['resource_file']),
         ]);
 
         try {
-            $currentModule = Module::find($moduleId);
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:50',
+                'description' => 'required|string|max:100',
+                'started' => 'required|date_format:Y-m-d H:i:s',
+                'deadline' => 'required|date_format:Y-m-d H:i:s|after:started',
+                'resource_file' => 'required|file',
+                'resource_caption' => 'required|string|max:50',
+                'topic_id' => 'nullable|exists:topics,id',
+            ]);
 
-            if (!$currentModule) {
-                return redirect()->back(404)->with('success', false)->with('error', 'Module not found');
-            }
+            Log::info('Validation passed', ['validated_data' => $validatedData]);
 
+            $uploadedFileName = null;
+            $filePath = null;
+
+            $currentModule = Module::findOrFail($moduleId);
+
+            // Prepare file upload
             $filePath = Storage::disk('public')->path('/uploads/resources/');
+<<<<<<< HEAD
             $fileName = $validatedData['resource_file']->getClientOriginalName();
 
             if (file_exists($filePath . $fileName)) {
                  unlink($filePath . $fileName);
+=======
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+>>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
             }
 
-            $validatedData['resource_file']->move($filePath, $fileName);
+            // Sanitize filename
+            $originalFileName = $validatedData['resource_file']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $uploadedFileName = time() . '_' . $sanitizedFileName;
 
-            $assignment = $currentModule->assignments()->create([
-                'title' => $validatedData['title'],
-                'started' => $validatedData['started'],
-                'description' => $validatedData['description'],
-                'deadline' => $validatedData['deadline'],
-                'topic_id' => $validatedData['topic_id'] ?? null,
-                'is_deleted' => false,
+            // Use database transaction to ensure data consistency
+            $result = DB::transaction(function () use ($validatedData, $filePath, $uploadedFileName, $currentModule) {
+                // Move uploaded file
+                if (!$validatedData['resource_file']->move($filePath, $uploadedFileName)) {
+                    throw new Exception('Failed to move uploaded file');
+                }
+
+                Log::info('File uploaded successfully', ['filename' => $uploadedFileName]);
+
+                // Create assignment
+                $assignment = $currentModule->assignments()->create([
+                    'title' => $validatedData['title'],
+                    'started' => $validatedData['started'],
+                    'description' => $validatedData['description'],
+                    'deadline' => $validatedData['deadline'],
+                    'topic_id' => $validatedData['topic_id'] ?? null,
+                    'is_deleted' => false,
+                ]);
+
+                Log::info('Assignment created', ['assignment_id' => $assignment->id]);
+
+                // Create resource for the assignment
+                $resource = Resource::create([
+                    'url' => $uploadedFileName,
+                    'caption' => $validatedData['resource_caption'],
+                    'assignment_id' => $assignment->id,
+                ]);
+
+                Log::info('Resource created', ['resource_id' => $resource->id]);
+
+                return ['assignment' => $assignment, 'resource' => $resource];
+            });
+
+            Log::info('Assignment creation completed successfully', [
+                'assignment_id' => $result['assignment']->id,
+                'resource_id' => $result['resource']->id
             ]);
 
-            $resource = $assignment->resources()->create([
-                'url' => $fileName,
-                'caption' => $validatedData['resource_caption'],
+            return redirect()->back()
+                ->with('success', true)
+                ->with('message', 'Successfully created an assignment');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Clean up uploaded file if validation fails
+            if (isset($uploadedFileName) && isset($filePath) && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            
+            Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'module_id' => $moduleId,
             ]);
+<<<<<<< HEAD
 
             // Notify all enrolled students
             $students = $currentModule->students()->with('user')->get()->pluck('user');
@@ -66,6 +125,41 @@ class AssignmentController extends Controller
             return redirect()->back()->with('success', true)->with('message', 'Successfully created an assignment');
         } catch (Exception $error) {
             return redirect()->back()->with('success', false)->with('message', 'Internal server error');
+=======
+            
+            throw $e; // Re-throw to let Laravel handle validation errors
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Clean up uploaded file if module not found
+            if (isset($uploadedFileName) && isset($filePath) && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            
+            Log::error('Module not found', ['module_id' => $moduleId]);
+            
+            return redirect()->back()
+                ->with('success', false)
+                ->with('error', 'Module not found');
+        } catch (Exception $e) {
+            // Clean up uploaded file on any error
+            if (isset($uploadedFileName) && isset($filePath) && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            
+            // Log error for debugging
+            Log::error('Assignment creation failed', [
+                'module_id' => $moduleId,
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->with('success', false)
+                ->with('error', 'Failed to create assignment: ' . $e->getMessage())
+                ->withInput();
+>>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
         }
     }
 
@@ -77,58 +171,133 @@ class AssignmentController extends Controller
         }
 
         $validatedData = $request->validate([
-            'resource_file' => 'required|file|max:10240', // 10MB limit
+            'resource_file' => 'required|file|max:10240|mimes:pdf,doc,docx,txt,zip,rar,ppt,pptx,xls,xlsx', // 10MB limit with file type validation
             'resource_caption' => 'nullable|string|max:100',
         ]);
 
+        $uploadedFileName = null;
+        $filePath = null;
+
         try {
-            $assignment = Assignment::findOrFail($assignmentId);
-            
-            // File upload
-            $filePath = Storage::disk('public')->path('/uploads/submissions/');
-            $fileName = time() . '_' . $validatedData['resource_file']->getClientOriginalName();
-            $validatedData['resource_file']->move($filePath, $fileName);
-
-            // Create resource for the submission
-            $resource = Resource::create([
-                'url' => $fileName,
-                'caption' => $validatedData['resource_caption'] ?? 'Submission: ' . $user->name,
-            ]);
-
-            // Check if student already has a submission for this assignment
-            $existingSubmission = Submission::where('student_id', $user->id)
-                ->where('assignment_id', $assignment->id)
+            // Check if assignment exists and is not soft-deleted
+            $assignment = Assignment::where('id', $assignmentId)
                 ->where('is_deleted', false)
-                ->first();
+                ->firstOrFail();
 
-            if ($existingSubmission) {
-                // Update existing submission (soft delete old resource if needed)
-                if ($existingSubmission->resource) {
-                    $existingSubmission->resource->is_deleted = true;
-                    $existingSubmission->resource->save();
-                }
-                
-                // Update submission with new resource
-                $existingSubmission->resource_id = $resource->id;
-                $existingSubmission->grade = null; // Reset grade on resubmission
-                $existingSubmission->feedback = null; // Reset feedback on resubmission
-                $existingSubmission->save();
-            } else {
-                // Create new submission record
-                Submission::create([
-                    'student_id' => $user->id,
-                    'assignment_id' => $assignment->id,
-                    'resource_id' => $resource->id,
-                    'is_deleted' => false,
-                ]);
+            // Validate assignment has started
+            if (!$assignment->hasStarted()) {
+                return redirect()->back()->with('error', 'Assignment has not started yet.');
             }
 
+<<<<<<< HEAD
             // Notify student of successful submission
             $user->notify(new \App\Notifications\AssignmentSubmittedNotification($assignment));
+=======
+            // Validate assignment deadline has not passed
+            if ($assignment->isPastDeadline()) {
+                return redirect()->back()->with('error', 'Assignment deadline has passed.');
+            }
+
+            // Check if student is enrolled in the module
+            $module = $assignment->module;
+            if (!$module) {
+                return redirect()->back()->with('error', 'Assignment module not found.');
+            }
+
+            $isEnrolled = $module->students()->where('students.user_id', $user->id)->exists();
+            if (!$isEnrolled) {
+                abort(403, 'You are not enrolled in this module.');
+            }
+
+            // Prepare file upload
+            $filePath = Storage::disk('public')->path('/uploads/submissions/');
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+            }
+
+            // Sanitize filename to prevent path traversal and injection
+            $originalFileName = $validatedData['resource_file']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $uploadedFileName = time() . '_' . $sanitizedFileName;
+
+            // Use database transaction to ensure data consistency
+            DB::transaction(function () use ($validatedData, $filePath, $uploadedFileName, $user, $assignment) {
+                // Move uploaded file
+                $validatedData['resource_file']->move($filePath, $uploadedFileName);
+
+                // Create resource for the submission
+                $resource = Resource::create([
+                    'url' => $uploadedFileName,
+                    'caption' => $validatedData['resource_caption'] ?? 'Submission: ' . $user->name,
+                ]);
+
+                // Check if student already has a submission for this assignment
+                $existingSubmission = Submission::where('student_id', $user->id)
+                    ->where('assignment_id', $assignment->id)
+                    ->where('is_deleted', false)
+                    ->first();
+
+                if ($existingSubmission) {
+                    // Update existing submission (soft delete old resource if needed)
+                    if ($existingSubmission->resource) {
+                        $existingSubmission->resource->is_deleted = true;
+                        $existingSubmission->resource->save();
+                    }
+                    
+                    // Update submission with new resource
+                    $existingSubmission->resource_id = $resource->id;
+                    $existingSubmission->grade = null; // Reset grade on resubmission
+                    $existingSubmission->feedback = null; // Reset feedback on resubmission
+                    $existingSubmission->save();
+
+                    // Link resource to submission
+                    $resource->submission_id = $existingSubmission->id;
+                    $resource->save();
+                } else {
+                    // Create new submission record
+                    $submission = Submission::create([
+                        'student_id' => $user->id,
+                        'assignment_id' => $assignment->id,
+                        'resource_id' => $resource->id,
+                        'is_deleted' => false,
+                    ]);
+
+                    // Link resource to submission
+                    $resource->submission_id = $submission->id;
+                    $resource->save();
+                }
+            });
+>>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
 
             return redirect()->back()->with('message', 'Assignment submitted successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Clean up uploaded file if validation fails
+            if ($uploadedFileName && $filePath && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            throw $e;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Clean up uploaded file if assignment not found
+            if ($uploadedFileName && $filePath && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            return redirect()->back()->with('error', 'Assignment not found.');
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Failed to submit assignment: ' . $e->getMessage());
+            // Clean up uploaded file on any error
+            if ($uploadedFileName && $filePath && file_exists($filePath . $uploadedFileName)) {
+                @unlink($filePath . $uploadedFileName);
+            }
+            
+            // Log error for debugging
+            Log::error('Assignment submission failed: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'assignment_id' => $assignmentId,
+                'exception' => $e
+            ]);
+            
+            return redirect()->back()->with('error', 'Failed to submit assignment. Please try again.');
         }
     }
 

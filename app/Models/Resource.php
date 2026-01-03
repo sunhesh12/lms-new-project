@@ -16,6 +16,8 @@ class Resource extends Model
     protected $fillable = [
         'id',
         'topic_id',
+        'assignment_id',
+        'submission_id',
         'url',
         'caption',
         'is_deleted',
@@ -39,7 +41,7 @@ class Resource extends Model
 
     public function submission()
     {
-        return $this->belongsTo(Submission::class, 'resource_id', 'id');
+        return $this->belongsTo(Submission::class, 'submission_id', 'id');
     }
 
     public function assignment()

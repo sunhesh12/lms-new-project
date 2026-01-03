@@ -55,14 +55,37 @@ class ModuleController extends Controller
             abort(403);
         }
 
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:100',
             'credit_value' => 'required|integer|min:0',
             'maximum_students' => 'required|integer|min:0',
             'description' => 'required|string|max:500',
+            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max
+            'enrollment_key' => 'nullable|string|max:50',
         ]);
 
-        $module = Module::create($request->all());
+        // Handle cover image upload if provided
+        if ($request->hasFile('cover_image_url')) {
+            $filePath = Storage::disk('public')->path('/uploads/modules/');
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+            }
+
+            // Sanitize and create unique filename
+            $originalFileName = $validatedData['cover_image_url']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $fileName = time() . '_' . $sanitizedFileName;
+
+            // Move uploaded file
+            $validatedData['cover_image_url']->move($filePath, $fileName);
+            $validatedData['cover_image_url'] = $fileName;
+        } else {
+            $validatedData['cover_image_url'] = null;
+        }
+
+        $module = Module::create($validatedData);
 
         return redirect()->route('module.show', $module->id)->with('message', 'Module created successfully');
     }
@@ -166,24 +189,46 @@ class ModuleController extends Controller
             'credit_value' => 'integer|min:0',
             'maximum_students' => 'integer|min:0',
             'description' => 'string|max:500',
-            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'cover_image_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max
             'enrollment_key' => 'nullable|string|max:50',
         ]);
 
         $module = Module::findOrFail($moduleId);
+        $oldCoverImage = $module->cover_image_url;
 
         // If the request contains a file
         if ($request->hasFile('cover_image_url')) {
             $filePath = Storage::disk('public')->path('/uploads/modules/');
+<<<<<<< HEAD
             $fileName = $validatedData['cover_image_url']->getClientOriginalName();
 
             // Delete old image if exists
             if ($module->cover_image_url && file_exists($filePath . $fileName)) {
                 unlink($filePath . $fileName); 
+=======
+            
+            // Ensure directory exists
+            if (!file_exists($filePath)) {
+                mkdir($filePath, 0755, true);
+>>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
             }
 
-            $request->cover_image_url->move($filePath, $fileName);
+            // Sanitize and create unique filename
+            $originalFileName = $validatedData['cover_image_url']->getClientOriginalName();
+            $sanitizedFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalFileName);
+            $fileName = time() . '_' . $sanitizedFileName;
+
+            // Delete old image if exists
+            if ($oldCoverImage && file_exists($filePath . $oldCoverImage)) {
+                @unlink($filePath . $oldCoverImage);
+            }
+
+            // Move uploaded file
+            $validatedData['cover_image_url']->move($filePath, $fileName);
             $validatedData['cover_image_url'] = $fileName;
+        } else {
+            // If no file is uploaded, don't update the cover_image_url field
+            unset($validatedData['cover_image_url']);
         }
 
         $module->update($validatedData);
