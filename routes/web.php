@@ -203,6 +203,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/api/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/api/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
+    // Social Feed Routes
+    Route::get('/feed', [App\Http\Controllers\FeedController::class, 'index'])->name('feed.index');
+    Route::post('/feed/posts', [App\Http\Controllers\FeedController::class, 'store'])->name('feed.posts.store');
+    Route::delete('/feed/posts/{post}', [App\Http\Controllers\FeedController::class, 'destroy'])->name('feed.posts.destroy');
+    Route::post('/feed/posts/{post}/share', [App\Http\Controllers\FeedController::class, 'share'])->name('feed.posts.share');
+
+    Route::post('/feed/posts/{post}/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('feed.comments.store');
+    Route::delete('/comments/{comment}', [App\Http\Controllers\CommentController::class, 'destroy'])->name('feed.comments.destroy');
+
+    Route::post('/feed/posts/{post}/react', [App\Http\Controllers\ReactionController::class, 'toggle'])->name('feed.posts.react');
+
+    // Status Routes
+    Route::get('/statuses', [App\Http\Controllers\StatusController::class, 'index'])->name('statuses.index');
+    Route::post('/statuses', [App\Http\Controllers\StatusController::class, 'store'])->name('statuses.store');
+    Route::get('/statuses/{status}', [App\Http\Controllers\StatusController::class, 'show'])->name('statuses.show');
+    Route::delete('/statuses/{status}', [App\Http\Controllers\StatusController::class, 'destroy'])->name('statuses.destroy');
+});
+
+// Admin Routes
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'index'])->name('feed-settings.index');
+    Route::put('/feed-settings', [App\Http\Controllers\Admin\FeedSettingsController::class, 'update'])->name('feed-settings.update');
 });
 
 

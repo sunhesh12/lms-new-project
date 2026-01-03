@@ -199,19 +199,12 @@ class ModuleController extends Controller
         // If the request contains a file
         if ($request->hasFile('cover_image_url')) {
             $filePath = Storage::disk('public')->path('/uploads/modules/');
-<<<<<<< HEAD
-            $fileName = $validatedData['cover_image_url']->getClientOriginalName();
-
-            // Delete old image if exists
-            if ($module->cover_image_url && file_exists($filePath . $fileName)) {
-                unlink($filePath . $fileName); 
-=======
             
             // Ensure directory exists
             if (!file_exists($filePath)) {
                 mkdir($filePath, 0755, true);
->>>>>>> 04a6f7e72420f37764580f73b313aecdc5a92b40
             }
+
 
             // Sanitize and create unique filename
             $originalFileName = $validatedData['cover_image_url']->getClientOriginalName();

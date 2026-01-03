@@ -8,3 +8,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 \Illuminate\Support\Facades\Schedule::command('assignments:send-reminders')->daily();
+\Illuminate\Support\Facades\Schedule::command('statuses:clean')->everyMinute();
