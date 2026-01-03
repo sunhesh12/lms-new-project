@@ -71,12 +71,15 @@
 /* Color accents based on type if needed */
 .notificationCard.success {
     border-left: 4px solid #10b981;
+    background-color: #ecfdf5;
 }
 
 .notificationCard.error {
     border-left: 4px solid #ef4444;
+    background-color: #fef2f2;
 }
 
 .notificationCard.noting {
     border-left: 4px solid #3b82f6;
+    background-color: #eff6ff;
 }

@@ -85,6 +85,9 @@ class ModuleEnrollmentController extends Controller
         if ($isAdminEnrollment) {
             return redirect()->back()->with('message', 'Student enrolled successfully');
         } else {
+             // Notify user
+             $user->notify(new \App\Notifications\CourseEnrolledNotification($module));
+             
             return redirect()->route('module.show', $moduleId)->with('message', 'Successfully enrolled in module!');
         }
     }

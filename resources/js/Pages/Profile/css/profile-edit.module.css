@@ -1,10 +1,10 @@
 .pageHeader {
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
     font-weight: 800;
     color: #1e293b;
     letter-spacing: -0.025em;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .container {
@@ -18,99 +18,78 @@
 .innerContainer {
     margin-left: auto;
     margin-right: auto;
-    max-width: 64rem;
-    /* Reduced width for better focus */
+    max-width: 80rem;
+    /* 1280px */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
 }
 
-@media (min-width: 768px) {
-    .innerContainer {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        gap: 2rem;
-        align-items: flex-start;
-    }
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
-    /* Sidebar Navigation */
-    .sidebar {
-        width: 280px;
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        position: sticky;
-        top: 2rem;
-    }
+.tabBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    .tabBtn {
-        display: flex;
-        align-items: center;
-        gap: 0.875rem;
-        padding: 0.875rem 1.25rem;
-        border-radius: 0.75rem;
-        font-size: 0.9375rem;
-        font-weight: 600;
-        color: #64748b;
-        /* slate-500 */
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        width: 100%;
-        text-align: left;
-    }
+.tabBtn:hover {
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateX(4px);
+}
 
-    .tabBtn:hover {
-        background: rgba(255, 255, 255, 0.4);
-        color: #1e293b;
-        transform: translateX(4px);
-    }
+.activeTab {
+    background: white !important;
+    color: #2563eb !important;
+    /* blue-600 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
 
-    .activeTab {
-        background: white !important;
-        color: #1e293b !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
-        transform: translateX(4px);
-    }
+.activeTab .icon {
+    color: #2563eb;
+}
 
-    .activeTab .icon {
-        color: #3b82f6;
-        /* blue-500 */
-    }
+.icon {
+    transition: color 0.2s;
+}
 
-    .icon {
-        transition: color 0.2s ease;
-    }
-
-    /* Content Area */
-    .contentArea {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        max-width: calc(100% - 312px);
-    }
+.contentArea {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeIn 0.4s ease-out;
 }
 
 .sectionCard {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 1.5rem;
     padding: 2.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
-        0 10px 15px -3px rgba(0, 0, 0, 0.03),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-    border-radius: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
 }
 
 .maxWidthXl {
-    max-width: 32rem;
+    max-width: 36rem;
     width: 100%;
 }
 
@@ -121,7 +100,42 @@
     align-items: start;
 }
 
-@media (max-width: 900px) {
+/* Responsive Adjustments */
+@media (min-width: 1024px) {
+    .innerContainer {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 3rem;
+    }
+
+    .sidebar {
+        width: 18rem;
+        /* 288px */
+        flex-shrink: 0;
+        position: sticky;
+        top: 6rem;
+    }
+}
+
+@media (max-width: 1023px) {
+    .sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        width: 100%;
+    }
+
+    .tabBtn {
+        white-space: nowrap;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .tabBtn:hover {
+        transform: translateY(-2px);
+    }
+}
+
+@media (max-width: 768px) {
     .grid2 {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -130,66 +144,12 @@
     .sectionCard {
         padding: 1.5rem;
     }
-}
 
-/* The following styles are from the provided change, but need to be placed correctly */
-/* The original .sectionCard, .maxWidthXl, and .grid2 rules were already present.
-   The change provided new definitions for them, which should replace the old ones.
-   The media queries for .innerContainer, .sidebar, .tabBtn, .contentArea, .grid2
-   and the @keyframes fadeIn are new and should be added. */
-
-/* Replacing existing .sectionCard, .maxWidthXl, .grid2 with new definitions */
-.sectionCard {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-    padding: 2.5rem;
-    animation: fadeIn 0.4s ease forwards;
-}
-
-.maxWidthXl {
-    max-width: 36rem;
-}
-
-.grid2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-}
-
-@media (max-width: 1024px) {
-    .innerContainer {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 0.5rem;
-        position: static;
-    }
-
-    .tabBtn {
-        flex-shrink: 0;
-        width: auto;
-    }
-
-    .contentArea {
-        max-width: 100%;
+    .pageHeader {
+        font-size: 1.5rem;
     }
 }
 
-@media (max-width: 640px) {
-    .grid2 {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;

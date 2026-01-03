@@ -46,6 +46,11 @@ class HandleInertiaRequests extends Middleware
                     'unreadChatCount' => $request->user()->unreadChatCount(),
                 ] : null,
             ],
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }

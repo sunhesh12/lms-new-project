@@ -40,7 +40,7 @@ class AssignmentController extends Controller
             $fileName = $validatedData['resource_file']->getClientOriginalName();
 
             if (file_exists($filePath . $fileName)) {
-                // unlink($filePath . $fileName);
+                 unlink($filePath . $fileName);
             }
 
             $validatedData['resource_file']->move($filePath, $fileName);
@@ -58,6 +58,10 @@ class AssignmentController extends Controller
                 'url' => $fileName,
                 'caption' => $validatedData['resource_caption'],
             ]);
+
+            // Notify all enrolled students
+            $students = $currentModule->students()->with('user')->get()->pluck('user');
+            \Illuminate\Support\Facades\Notification::send($students, new \App\Notifications\AssignmentCreatedNotification($assignment));
 
             return redirect()->back()->with('success', true)->with('message', 'Successfully created an assignment');
         } catch (Exception $error) {
@@ -118,6 +122,9 @@ class AssignmentController extends Controller
                     'is_deleted' => false,
                 ]);
             }
+
+            // Notify student of successful submission
+            $user->notify(new \App\Notifications\AssignmentSubmittedNotification($assignment));
 
             return redirect()->back()->with('message', 'Assignment submitted successfully!');
         } catch (Exception $e) {

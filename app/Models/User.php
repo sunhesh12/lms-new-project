@@ -24,6 +24,8 @@ class User extends Authenticatable
         'user_dob',
         'faculty_id',
         'course_id',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     protected $hidden = [

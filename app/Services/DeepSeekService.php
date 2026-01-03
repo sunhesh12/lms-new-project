@@ -51,16 +51,26 @@ PROMPT;
                     ?? "I couldn't generate a response this time.";
             }
 
+            if ($response->status() === 401) {
+                 Log::error('DeepSeek API Error: Unauthorized (Invalid Key)');
+                 return "Configuration Error: The AI API key is invalid. Please contact the administrator.";
+            }
+
+            if ($response->status() === 429) {
+                 Log::error('DeepSeek API Error: Rate Limit Exceeded');
+                 return "The AI is currently busy (Rate Limit). Please try again later.";
+            }
+
             Log::error('DeepSeek API error', [
                 'status' => $response->status(),
                 'body'   => $response->body(),
             ]);
 
-            return "The AI service is temporarily unavailable. Please try again.";
+            return "The AI service is temporarily unavailable (Status: " . $response->status() . ").";
 
         } catch (\Throwable $e) {
             Log::error('DeepSeek exception', ['error' => $e->getMessage()]);
-            return "An internal error occurred while processing your request.";
+            return "An internal error occurred.";
         }
     }
 }

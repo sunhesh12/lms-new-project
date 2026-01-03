@@ -179,7 +179,7 @@ class ModuleController extends Controller
 
             // Delete old image if exists
             if ($module->cover_image_url && file_exists($filePath . $fileName)) {
-                // unlink($filePath . $fileName); // Keep for safety or implement proper deletion
+                unlink($filePath . $fileName); 
             }
 
             $request->cover_image_url->move($filePath, $fileName);

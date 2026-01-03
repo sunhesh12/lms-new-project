@@ -43,7 +43,7 @@ export default function Dashboard({ notifications = [], frequent_modules = [] })
             <Head title="Dashboard" />
 
             <div className={styles["dashboard-main"]}>
-                <header className={styles.mb8}>
+                <header className={styles["mb-8"]}>
                     <h1 className={styles["dashboard-greeting"]}>
                         {getGreeting()}, <span>{formatName(User?.name)}</span>.
                         <Sparkles className={styles["title-icon"]} size={28} style={{ marginLeft: '10px' }} />
@@ -56,7 +56,7 @@ export default function Dashboard({ notifications = [], frequent_modules = [] })
 
                         {/* Frequent Modules Section */}
                         {frequent_modules.length > 0 && (
-                            <section className={`${styles["glass-card"]} ${styles.mb8}`}>
+                            <section className={`${styles["glass-card"]} ${styles["mb-8"]}`}>
                                 <h2 className={styles["section-title"]}>
                                     <BookOpen className={styles["title-icon"]} size={20} />
                                     {User.role === 'admin' ? "Popular System Modules" : "My Active Modules"}
@@ -100,7 +100,7 @@ export default function Dashboard({ notifications = [], frequent_modules = [] })
 
                     {/* Right Column: Notifications/Updates */}
                     <aside className={styles.sideColumn}>
-                        <div className={`${styles[".glass-card-right"]} ${styles["notifications-wrapper"]}`}>
+                        <div className={`${styles["glass-card-right"]} ${styles["notifications-wrapper"]}`}>
                             <h2 className={styles["section-title"]}>
                                 <Bell className={styles["title-icon"]} size={20} />
                                 Recent Updates

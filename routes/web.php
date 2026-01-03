@@ -15,9 +15,9 @@ use Illuminate\Http\Request;
 
 
 // All the routes related modules
-Route::prefix('modules')->group(function () {
+Route::middleware(['auth'])->prefix('modules')->group(function () {
     Route::get('/', [ModuleController::class, 'index'])->name('modules.index');
-    Route::post('/', [ModuleController::class, 'create'])->name('module.create'); //->middleware('auth');
+    Route::post('/', [ModuleController::class, 'create'])->name('module.create');
     
     // Student Quiz Page (specific route must come before parameterizedmoduleId)
     Route::get('/quiz', [App\Http\Controllers\QuizController::class, 'page'])->name('modules.quiz');
@@ -26,23 +26,23 @@ Route::prefix('modules')->group(function () {
     Route::get('/browse', [ModuleController::class, 'browse'])->name('modules.browse');
 
     Route::prefix('/{moduleId}')->group(function () {
-        Route::get('/', [ModuleController::class, 'show'])->name('module.show'); //->middleware('auth');
+        Route::get('/', [ModuleController::class, 'show'])->name('module.show');
         Route::get('/join', [ModuleController::class, 'joinPage'])->name('module.join_page');
         Route::post('/', [ModuleController::class, 'update'])->name('module.update');
         Route::delete('/', [ModuleController::class, 'destroy'])->name('module.delete');
 
         // For creating new topics for a module
-        Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create"); //->middleware('auth
+        Route::post('/topics/create', [TopicController::class, 'create'])->name("topic.create");
         Route::post('/topics/{topicId}', [TopicController::class, 'update'])->name("topic.update");
-        Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete"); //->middleware('auth
-        Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset"); //->middleware('auth
+        Route::delete('/topics/{topicId}', [TopicController::class, 'destroy'])->name("topic.delete");
+        Route::post('/topics/{topicId}/reset', [TopicController::class, 'reset'])->name("topic.reset");
 
         Route::get('/assignments/{assignmentId}', function ($moduleId, $assignmentId) {
             return Inertia::render('Modules/Assignment', [
                 'moduleId' => $moduleId,
                 'assignmentId' => $assignmentId
             ]);
-        }); //->middleware('auth');
+        });
 
         // For creating new assignments for a module
         Route::post("/assignments/create", [AssignmentController::class, 'create'])->name("assignment.create");
@@ -53,7 +53,6 @@ Route::prefix('modules')->group(function () {
         Route::delete('/enrollments/all', [ModuleEnrollmentController::class, 'destroyAll'])->name('module.unenroll-all');
     });
 });
-//->middleware('auth');
 
 Route::post("/assignments/{assignmentId}/update", [AssignmentController::class, 'update'])->name("assignment.update");
 Route::post("/assignments/{assignmentId}/delete", [AssignmentController::class, 'delete'])->name("assignment.delete");
@@ -100,7 +99,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.submit');
 
-Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+    Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', \App\Http\Middleware\TwoFactorMiddleware::class]);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'index'])->name('two-factor.index');
+    Route::post('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'store'])->name('two-factor.store');
+    Route::get('verify-2fa/resend', [App\Http\Controllers\TwoFactorController::class, 'resend'])->name('two-factor.resend');
+});
 
 
 
