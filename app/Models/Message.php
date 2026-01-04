@@ -13,6 +13,7 @@ class Message extends Model
 
     protected $casts = [
         'deleted_by' => 'array',
+        'body' => 'encrypted',
     ];
 
     protected $appends = ['attachment_url'];

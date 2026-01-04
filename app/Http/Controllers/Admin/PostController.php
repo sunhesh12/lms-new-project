@@ -19,37 +19,25 @@ class PostController extends Controller
 
         $postsQuery = Post::with(['user', 'attachments'])->orderBy('created_at', 'desc');
 
-        if ($query) {
-            $postsQuery->where(function($q) use ($query) {
-                $q->where('content', 'like', "%{$query}%")
-                  ->orWhereHas('user', function($uq) use ($query) {
-                      $uq->where('name', 'like', "%{$query}%")
-                         ->orWhere('email', 'like', "%{$query}%");
-                  });
+        $posts = $postsQuery->get()
+            ->filter(function ($post) use ($query) {
+                if (empty($query))
+                    return true;
+                $user = $post->user;
+                return stripos($post->content, $query) !== false ||
+                    ($user && (stripos($user->name, $query) !== false || stripos($user->email, $query) !== false));
             });
-        }
 
-        if ($fromDate) {
-            $fromTime = $fromTime ?: '00:00';
-            try {
-                $from = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$fromDate} {$fromTime}");
-                $postsQuery->where('created_at', '>=', $from);
-            } catch (\Exception $e) {
-                // ignore
-            }
-        }
-
-        if ($toDate) {
-            $toTime = $toTime ?: '23:59';
-            try {
-                $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$toDate} {$toTime}");
-                $postsQuery->where('created_at', '<=', $to);
-            } catch (\Exception $e) {
-                // ignore
-            }
-        }
-
-        $posts = $postsQuery->paginate(20)->appends($request->only(['q', 'from_date', 'from_time', 'to_date', 'to_time']));
+        $total = $posts->count();
+        $page = $request->query('page', 1);
+        $perPage = 20;
+        $posts = new \Illuminate\Pagination\LengthAwarePaginator(
+            $posts->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return Inertia::render('Admin/Posts', [
             'posts' => $posts,

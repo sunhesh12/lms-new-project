@@ -27,13 +27,18 @@ class Module extends Model
         'cover_image_url',
     ];
 
+    protected $casts = [
+        'is_deleted' => 'boolean',
+        'enrollment_key' => 'encrypted',
+    ];
+
     // Auto-generate UUID when creating
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            if (! $model->id) {
+            if (!$model->id) {
                 $model->id = (string) Str::uuid();
             }
         });

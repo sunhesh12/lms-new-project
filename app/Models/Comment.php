@@ -16,6 +16,10 @@ class Comment extends Model
         'parent_id',
     ];
 
+    protected $casts = [
+        'content' => 'encrypted',
+    ];
+
     protected $with = ['user']; // Eager load user by default
 
     public function user()

@@ -5,20 +5,20 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class DeepSeekService
+class GroqService
 {
     protected string $apiKey;
-    protected string $baseUrl = 'https://api.deepseek.com/chat/completions';
+    protected string $baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
     public function __construct()
     {
-        $this->apiKey = (string) config('services.deepseek.key', '');
+        $this->apiKey = (string) config('services.groq.key', '');
     }
 
     public function generateResponse(string $prompt): string
     {
         if (empty($this->apiKey)) {
-            Log::error('DeepSeek API key is missing.');
+            Log::error('Groq API key is missing.');
             return "System configuration error. Please contact the administrator.";
         }
 
@@ -31,19 +31,19 @@ Do not give direct answers to assignments without explanation.
 If the question is non-academic, politely redirect to educational topics.
 PROMPT;
 
-            $response = Http::timeout(20)
+            $response = Http::timeout(25)
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type' => 'application/json',
                 ])
                 ->post($this->baseUrl, [
-                    'model' => 'deepseek-chat',
+                    'model' => 'llama-3.3-70b-versatile',
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
                         ['role' => 'user', 'content' => $prompt],
                     ],
                     'temperature' => 0.7,
-                    'max_tokens' => 800,
+                    'max_tokens' => 1024,
                 ]);
 
             if ($response->successful()) {
@@ -52,16 +52,16 @@ PROMPT;
             }
 
             if ($response->status() === 401) {
-                Log::error('DeepSeek API Error: Unauthorized (Invalid Key)');
-                return "Configuration Error: The AI API key is invalid. Please contact the administrator.";
+                Log::error('Groq API Error: Unauthorized (Invalid Key)');
+                return "Configuration Error: The Groq API key is invalid.";
             }
 
             if ($response->status() === 429) {
-                Log::error('DeepSeek API Error: Rate Limit Exceeded');
+                Log::error('Groq API Error: Rate Limit Exceeded');
                 return "The AI is currently busy (Rate Limit). Please try again later.";
             }
 
-            Log::error('DeepSeek API error', [
+            Log::error('Groq API error', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
@@ -69,7 +69,7 @@ PROMPT;
             return "The AI service is temporarily unavailable (Status: " . $response->status() . ").";
 
         } catch (\Throwable $e) {
-            Log::error('DeepSeek exception', ['error' => $e->getMessage()]);
+            Log::error('Groq exception', ['error' => $e->getMessage()]);
             return "An internal error occurred.";
         }
     }

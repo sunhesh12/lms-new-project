@@ -50,7 +50,11 @@ return [
     ],
 
     'ai' => [
-        'provider' => env('AI_PROVIDER', 'deepseek'),
+        'provider' => env('AI_PROVIDER', 'groq'),
+    ],
+
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
     ],
 
 ];

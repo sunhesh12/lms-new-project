@@ -15,32 +15,32 @@ class ModuleEnrollmentController extends Controller
         // return Inertia::render('Modules/Join');
         $user = auth()->user();
         $module = Module::findOrFail($moduleId);
-        
+
         // Determine if this is admin/lecturer adding a student or self-enrollment
         $isAdminEnrollment = $request->student_id && ($user->isAdmin() || $user->isLecturer());
-        
+
         // STEP 1: Validate enrollment key FIRST (for self-enrollment only)
         if (!$isAdminEnrollment && !empty($module->enrollment_key)) {
             // Check if key already validated in session
             $sessionKey = "module_{$moduleId}_key_validated";
-            
+
             if (!session($sessionKey)) {
                 // Validate enrollment key before doing anything else
                 $request->validate([
                     'enrollment_key' => 'required|string'
                 ]);
-                
+
                 if ($request->enrollment_key !== $module->enrollment_key) {
                     return redirect()->back()->withErrors([
                         'enrollment_key' => 'Invalid enrollment key. Please try again.'
                     ]);
                 }
-                
+
                 // Store validated key in session so we don't ask again
                 session([$sessionKey => true]);
             }
         }
-        
+
         // STEP 2: Determine student ID
         if ($isAdminEnrollment) {
             // Admin/lecturer enrolling a specific student
@@ -59,7 +59,7 @@ class ModuleEnrollmentController extends Controller
         if (!$studentId) {
             return redirect()->back()->with('error', 'Student ID is required');
         }
-        
+
         // STEP 3: Check if already enrolled
         $existing = ModuleEnrollment::where('module_id', $moduleId)
             ->where('student_id', $studentId)
@@ -68,7 +68,7 @@ class ModuleEnrollmentController extends Controller
         if ($existing) {
             return redirect()->back()->with('message', 'Already enrolled in this module');
         }
-        
+
         // STEP 4: Check capacity
         if ($module->maximum_students > 0 && $module->students()->count() >= $module->maximum_students) {
             return redirect()->back()->with('error', 'Module is full. No seats available.');
@@ -85,9 +85,9 @@ class ModuleEnrollmentController extends Controller
         if ($isAdminEnrollment) {
             return redirect()->back()->with('message', 'Student enrolled successfully');
         } else {
-             // Notify user
-             $user->notify(new \App\Notifications\CourseEnrolledNotification($module));
-             
+            // Notify user
+            $user->notify(new \App\Notifications\CourseEnrolledNotification($module));
+
             return redirect()->route('module.show', $moduleId)->with('message', 'Successfully enrolled in module!');
         }
     }
@@ -130,20 +130,28 @@ class ModuleEnrollmentController extends Controller
 
         $query = $request->query('query', '');
         $module = Module::findOrFail($moduleId);
-        
+
         // Get IDs of already enrolled students
         $enrolledStudentIds = $module->students()->pluck('students.id');
-        
+
         // Search students NOT already enrolled
+        // Since name and email are encrypted, we fetch all non-enrolled students and filter in memory
+        // This is viable for 14 users but would need a search index for large datasets.
         $availableStudents = student::with('user')
             ->whereNotIn('id', $enrolledStudentIds)
-            ->whereHas('user', function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
+            ->get()
+            ->filter(function ($student) use ($query) {
+                if (empty($query))
+                    return true;
+                $user = $student->user;
+                if (!$user)
+                    return false;
+
+                return stripos($user->name, $query) !== false ||
+                    stripos($user->email, $query) !== false;
             })
-            ->limit(50)
-            ->get();
-        
+            ->values();
+
         return response()->json($availableStudents);
     }
 }

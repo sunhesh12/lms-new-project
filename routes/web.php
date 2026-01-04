@@ -20,10 +20,10 @@ use App\Http\Controllers\Admin\AiProviderController;
 Route::middleware(['auth'])->prefix('modules')->group(function () {
     Route::get('/', [ModuleController::class, 'index'])->name('modules.index');
     Route::post('/', [ModuleController::class, 'create'])->name('module.create');
-    
+
     // Student Quiz Page (specific route must come before parameterizedmoduleId)
     Route::get('/quiz', [App\Http\Controllers\QuizController::class, 'page'])->name('modules.quiz');
-    
+
     // Browse All Modules Page
     Route::get('/browse', [ModuleController::class, 'browse'])->name('modules.browse');
 
@@ -101,7 +101,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'submit'])->name('register.submit');
 
-    Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', \App\Http\Middleware\TwoFactorMiddleware::class]);
+Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', \App\Http\Middleware\TwoFactorMiddleware::class]);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'index'])->name('two-factor.index');
@@ -115,7 +115,7 @@ Route::middleware(['auth'])->group(function () {
 // // Protected routes (requires authentication)
 // Route::middleware('auth:sanctum')->group(function () {
 //     Route::apiResource('events', EventController::class);
-    
+
 //     // Or if you prefer explicit routes:
 //     Route::get('/events', [EventController::class, 'index']);
 //     Route::post('/events', [EventController::class, 'store']);
@@ -149,19 +149,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{conversation}', [App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
     Route::get('/ai-assistant', [App\Http\Controllers\ChatController::class, 'aiAssistant'])->name('ai.assistant');
     Route::post('/ai-assistant/set-provider', [App\Http\Controllers\AiPreferenceController::class, 'store'])->name('ai.preference.store');
-    
+
     // expose enabled providers list to authenticated users
     Route::get('/admin/ai-providers/list', [App\Http\Controllers\Admin\AiProviderController::class, 'list'])->name('admin.ai-providers.list');
     Route::post('/profile/update-picture', [App\Http\Controllers\ProfileController::class, 'updatePicture'])->name('profile.update-picture');
     Route::get('/api/students/search', function (Request $request) {
-        $query = $request->query('query');
+        $query = $request->query('query', '');
         return \App\Models\student::with('user')
-            ->whereHas('user', function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
+            ->get()
+            ->filter(function ($student) use ($query) {
+                $user = $student->user;
+                if (!$user)
+                    return false;
+                if (empty($query))
+                    return true;
+                return stripos($user->name, $query) !== false ||
+                    stripos($user->email, $query) !== false;
             })
-            ->limit(50)
-            ->get();
+            ->take(50)
+            ->values();
     })->name('students.search');
 
     // Search for available students (not enrolled in a specific module)
@@ -187,18 +193,24 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/api/lecturers/search', function (Request $request) {
-        $query = $request->query('query');
+        $query = $request->query('query', '');
         return \App\Models\lecture::with('user')
-            ->whereHas('user', function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
+            ->get()
+            ->filter(function ($lecture) use ($query) {
+                $user = $lecture->user;
+                if (!$user)
+                    return false;
+                if (empty($query))
+                    return true;
+                return stripos($user->name, $query) !== false ||
+                    stripos($user->email, $query) !== false;
             })
-            ->limit(50)
-            ->get();
+            ->take(50)
+            ->values();
     })->name('lecturers.search');
 
     Route::post('/modules/{module}/staff', [App\Http\Controllers\ModuleController::class, 'manageStaff'])->name('modules.staff.manage');
-    
+
     // Enrollment Routes
     Route::post('/modules/{moduleId}/enroll', [App\Http\Controllers\ModuleEnrollmentController::class, 'store'])->name('module.enroll');
     Route::delete('/modules/{moduleId}/enrollments/{registrationId}', [App\Http\Controllers\ModuleEnrollmentController::class, 'destroy'])->name('module.unenroll');
@@ -259,19 +271,19 @@ use App\Http\Controllers\QuizController;
 
 
 Route::middleware(['auth'])->group(function () {
-    
+
     // Get all quizzes
     Route::get('/quizzes', [QuizController::class, 'index']);
-    
+
     // Get specific quiz with questions
     Route::get('/quizzes/{id}', [QuizController::class, 'show']);
-    
+
     // Submit quiz attempt
     Route::post('/quizzes/{id}/submit', [QuizController::class, 'submit']);
-    
+
     // Get quiz results
     Route::get('/quiz-attempts/{attemptId}/results', [QuizController::class, 'results']);
-    
+
     // Get user's quiz history
     Route::get('/quiz-history', [QuizController::class, 'history']);
 });
