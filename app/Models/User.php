@@ -20,6 +20,18 @@ class User extends Authenticatable
                 $user->email_bindex = self::generateBlindIndex($user->email);
             }
         });
+
+        static::creating(function ($user) {
+            if (empty($user->profile_pic) || $user->profile_pic === 'profile/default.png') {
+                $defaults = [
+                    'profile/student_m.png',
+                    'profile/student_f.png',
+                    'profile/lecturer_m.png',
+                    'profile/lecturer_f.png'
+                ];
+                $user->profile_pic = $defaults[array_rand($defaults)];
+            }
+        });
     }
 
     public static function generateBlindIndex($value)
@@ -71,7 +83,7 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        if (!$this->profile_pic || $this->profile_pic === 'profile/default.png') {
+        if (!$this->profile_pic) {
             return null;
         }
         return asset('storage/' . $this->profile_pic);
