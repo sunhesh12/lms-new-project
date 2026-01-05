@@ -13,9 +13,6 @@ class Assignment extends Model
 {
     use HasUuids;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
-
     protected $fillable = [
         'title',
         'description',
@@ -35,20 +32,6 @@ class Assignment extends Model
     protected $hidden = [
         'is_deleted',
     ];
-
-    /**
-     * Boot the model.
-     */
-   protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (! $model->id) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
 
     /**
      * Get the module that owns the assignment.

@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasUuids;
 
     protected static function boot()
     {
@@ -42,8 +43,6 @@ class User extends Authenticatable
     }
 
     protected $table = 'users'; // or your custom table
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     protected $fillable = [
         'name',

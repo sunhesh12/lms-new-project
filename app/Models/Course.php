@@ -3,16 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Course extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use \Illuminate\Database\Eloquent\Factories\HasFactory, HasUuids;
 
     protected $table = 'courses';
-
-    // UUID primary key
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
@@ -20,18 +17,6 @@ class Course extends Model
         'description',
         'faculty_id',
     ];
-
-    // Auto-generate UUID when creating
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (! $model->id) {
-                $model->id = (string) \Illuminate\Support\Str::uuid();
-            }
-        });
-    }
 
     public function faculty()
     {

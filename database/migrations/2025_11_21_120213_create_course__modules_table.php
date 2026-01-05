@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('course_modules', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('id')->primary();
 
             // Define foreign key columns first
             $table->uuid('course_id');

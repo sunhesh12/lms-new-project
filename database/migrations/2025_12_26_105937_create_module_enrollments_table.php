@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('module_enrollments', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('id')->primary();
             $table->uuid('student_id');
             $table->uuid('module_id');
             $table->string('status')->default('active'); // active, pending, etc.

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -42,14 +43,16 @@ class UsersTableSeeder extends Seeder
             ];
         }
 
-        DB::table('users')->insert($users);
+        foreach ($users as $userData) {
+            User::create($userData);
+        }
 
         // Check if test user exists
         $testUserEmail = 'abc@gmail.com';
         $existingUser = DB::table('users')->where('email', $testUserEmail)->first();
 
         if (!$existingUser) {
-            DB::table('users')->insert([
+            User::create([
                 'name' => 'Test User',
                 'email' => $testUserEmail,
                 'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
@@ -59,8 +62,6 @@ class UsersTableSeeder extends Seeder
                 'status' => 'active',
                 'faculty_id' => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
                 'password' => Hash::make('password123'),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'course_id' => $faker->randomElement($courseIds),
             ]);
         }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Faculty;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,35 +14,27 @@ class FacultySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('faculties')->insert([
+        $faculties = [
             [
-                'id' => Str::uuid(),
                 'fac_name' => 'Faculty of Engineering',
-                'theme'    => 'blue',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'theme' => 'blue',
             ],
             [
-                'id' => Str::uuid(),
                 'fac_name' => 'Faculty of Management Studies',
-                'theme'    => 'green',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'theme' => 'green',
             ],
             [
-                'id' => Str::uuid(),
                 'fac_name' => 'Faculty of Applied Sciences',
-                'theme'    => 'orange',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'theme' => 'orange',
             ],
             [
-                'id' => Str::uuid(),
                 'fac_name' => 'Faculty of Humanities and Social Sciences',
-                'theme'    => 'purple',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'theme' => 'purple',
             ],
-        ]);
+        ];
+
+        foreach ($faculties as $faculty) {
+            Faculty::create($faculty);
+        }
     }
 }
