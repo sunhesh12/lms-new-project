@@ -22,7 +22,8 @@ class ModuleEnrollmentController extends Controller
         // STEP 1: Validate enrollment key FIRST (for self-enrollment only)
         if (!$isAdminEnrollment && !empty($module->enrollment_key)) {
             // Check if key already validated in session
-            $sessionKey = "module_{$moduleId}_key_validated";
+            $sessionKey = "module_
+            {$moduleId}_key_validated";
 
             if (!session($sessionKey)) {
                 // Validate enrollment key before doing anything else
