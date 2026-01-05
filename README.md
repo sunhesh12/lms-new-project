@@ -41,9 +41,14 @@ Ensure you have the following installed:
 
 ### 🔹 Automatic Setup (Recommended)
 
-Run the automated setup script:
+**Linux / macOS / Git Bash:**
 ```bash
-bash setup.sh
+./setup.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\setup.ps1
 ```
 
 ### 🔹 Manual Setup
