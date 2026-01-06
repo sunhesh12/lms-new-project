@@ -98,12 +98,12 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
-Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'submit'])->name('register.submit');
+Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'store'])->name('register.submit');
 
-Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', \App\Http\Middleware\TwoFactorMiddleware::class]);
+Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard')->middleware(['auth', 'verified', \App\Http\Middleware\TwoFactorMiddleware::class]);
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'index'])->name('two-factor.index');
     Route::post('verify-2fa', [App\Http\Controllers\TwoFactorController::class, 'store'])->name('two-factor.store');
     Route::get('verify-2fa/resend', [App\Http\Controllers\TwoFactorController::class, 'resend'])->name('two-factor.resend');

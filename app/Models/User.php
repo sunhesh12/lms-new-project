@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasUuids, HasFactory;
 

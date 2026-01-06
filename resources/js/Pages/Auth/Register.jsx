@@ -99,7 +99,7 @@ export default function Register() {
                         </div>
 
                         <div className={styles.signUpBtnWrapper}>
-                            <Button disabled={processing}>Sign Up</Button>
+                            <Button type="submit" disabled={processing}>Sign Up</Button>
                         </div>
 
                         <span>

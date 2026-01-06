@@ -70,12 +70,18 @@ class LoginController extends Controller
                 'password' => 'Password is incorrect.'
             ]);
         } else {
+            // ---------------------------
+            // 6. Check Email Verification
+            // ---------------------------
+            if (!$user->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
 
             // Clear attempts after success
             RateLimiter::clear($key);
 
             // ---------------------------
-            // 6. Login User
+            // 7. Login User
             // ---------------------------
             Auth::login($user, $request->remember);
 
