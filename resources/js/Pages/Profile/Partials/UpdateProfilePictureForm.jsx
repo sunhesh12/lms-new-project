@@ -41,7 +41,7 @@ export default function UpdateProfilePictureForm({ className = '' }) {
             <div className={styles.profilePicSection}>
                 <div className={styles.avatarWrapper} onClick={triggerFileInput}>
                     <img
-                        src={user.avatar_url || "/profile/default.png"}
+                        src={user.avatar_url || "/profile_assets/default.png"}
                         alt={user.name}
                         className={styles.avatarLarge}
                         onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`; }}

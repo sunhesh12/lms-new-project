@@ -28,7 +28,12 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'user_phone_no' => fake()->numerify('07########'),
-            'profile_pic' => 'profile/default.png',
+            'profile_pic' => fake()->randomElement([
+                'profile/student_m.png',
+                'profile/student_f.png',
+                'profile/lecturer_m.png',
+                'profile/lecturer_f.png'
+            ]),
             'user_dob' => fake()->date('Y-m-d'),
             'address' => fake()->address(),
             'password' => static::$password ??= Hash::make('password'),

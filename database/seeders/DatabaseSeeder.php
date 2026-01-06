@@ -14,15 +14,18 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             StudentsTableSeeder::class,
             LecturersTableSeeder::class,
-            AdminUserSeeder::class,      // Added AdminUserSeeder
+            AdminUserSeeder::class,
             AIAssistantSeeder::class,
             ModuleSeeder::class,
+            CourseModuleSeeder::class,
             TopicSeeder::class,
             ResourceSeeder::class,
             ChatSeeder::class,
             EventSeeder::class,
             QuizSeeder::class,
             StatusSeeder::class,
+            FeedSettingsSeeder::class,
+            DummyAssignmentSeeder::class,
         ]);
     }
 }

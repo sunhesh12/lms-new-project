@@ -37,6 +37,12 @@ else
     php artisan migrate:fresh --seed
 fi
 
+# 4.5 Docker Option
+read -p "Do you want to prepare Docker configuration? (y/n): " use_docker
+if [ "$use_docker" = "y" ]; then
+    echo "🐳 Docker files are ready. Run 'docker-compose up -d' to start."
+fi
+
 # 5. Storage link
 echo "🔗 Linking storage..."
 php artisan storage:link

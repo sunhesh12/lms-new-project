@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class User extends Authenticatable
 {
-    use Notifiable, HasUuids;
+    use Notifiable, HasUuids, HasFactory;
 
     protected static function boot()
     {
