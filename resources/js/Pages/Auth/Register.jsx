@@ -8,7 +8,7 @@ import TextInput from "@/components/Input/TextInput";
 import Button from "@/components/Input/Button";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 
-export default function Register() {
+export default function Register({ flash }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -20,15 +20,28 @@ export default function Register() {
     const submit = (e) => {
         e.preventDefault();
         post(route("register.submit"), {
-            onFinish: () => reset("password"),
+            onSuccess: () => reset("password", "password_confirmation"),
         });
     };
 
     return (
         <GuestLayout>
+            <Head title="Sign Up" />
             <div className={styles.loginPage}>
                 <div className={styles.loginFormContainer}>
                     <h1>Sign Up</h1>
+
+                    {flash?.success && (
+                        <div className={styles.successMessage}>
+                            {flash.success}
+                        </div>
+                    )}
+
+                    {flash?.error && (
+                        <div className={styles.errorMessage}>
+                            {flash.error}
+                        </div>
+                    )}
 
                     <form onSubmit={submit} className={styles.loginForm}>
                         <TextInput

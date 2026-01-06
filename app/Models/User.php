@@ -10,10 +10,21 @@ use Illuminate\Support\Facades\Log;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Notifications\VerifyEmailCustom;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasUuids, HasFactory;
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmailCustom);
+    }
 
     protected static function boot()
     {

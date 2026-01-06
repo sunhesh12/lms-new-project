@@ -53,6 +53,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false))->with('success', 'Registration successful! Please check your email for a verification link.');
     }
 }

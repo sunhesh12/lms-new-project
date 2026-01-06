@@ -35,7 +35,7 @@
     color: black;
 }
 
-.errorBox {
+.errorBox, .errorMessage {
     background: #ffe5e5;
     border-left: 4px solid #ff3b3b;
     color: #b80000;
@@ -44,6 +44,19 @@
     margin-bottom: 15px;
     font-size: 14px;
     font-weight: 500;
+    width: 100%;
+}
+
+.successMessage {
+    background: #e6ffed;
+    border-left: 4px solid #28a745;
+    color: #155724;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
 }
 
 .inputError {
