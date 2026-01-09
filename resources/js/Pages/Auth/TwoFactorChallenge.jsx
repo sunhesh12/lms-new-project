@@ -67,13 +67,13 @@ export default function TwoFactorChallenge({ status }) {
                             </Link>
                         </div>
                     </div>
+                </form>
 
-                    <form method="POST" action={route('logout')} className="mt-4">
-                        <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')} />
-                        <button type="submit" className={styles.logoutLink} style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}>
-                            Logout
-                        </button>
-                    </form>
+                <form method="POST" action={route('logout')} className="mt-4">
+                    <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')} />
+                    <button type="submit" className={styles.logoutLink} style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        Logout
+                    </button>
                 </form>
             </div>
         </div>

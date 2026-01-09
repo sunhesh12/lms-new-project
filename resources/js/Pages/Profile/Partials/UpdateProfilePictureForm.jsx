@@ -44,7 +44,6 @@ export default function UpdateProfilePictureForm({ className = '' }) {
                         src={user.avatar_url || "/profile_assets/default.png"}
                         alt={user.name}
                         className={styles.avatarLarge}
-                        onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`; }}
                     />
                     <div className={styles.uploadOverlay}>
                         <Camera size={32} />

@@ -37,10 +37,9 @@ export default function SideNavBarFooter({ isOpen }) {
 
         <Link href="/profile" className={style["user-profile-card"]}>
           <img
-            src={user?.avatar_url || "/images/default-avatar.png"} // Fallback or user avatar
+            src={user?.avatar_url} // Always provided by backend fallback
             alt="Profile"
             className={style.avatar}
-            onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=" + (user?.name || "User") + "&background=random"; }}
           />
           {isOpen && (
             <div className={style["user-info"]}>
