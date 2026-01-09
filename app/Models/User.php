@@ -41,7 +41,7 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         if (!$this->profile_pic || $this->profile_pic === 'profile/default.png') {
-            return null;
+            return asset('images/default-avatar.png');
         }
         return asset('storage/' . $this->profile_pic);
     }

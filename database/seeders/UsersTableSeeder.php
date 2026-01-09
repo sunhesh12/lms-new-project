@@ -30,7 +30,7 @@ class UsersTableSeeder extends Seeder
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
                 'user_phone_no' => $faker->numerify('07########'), // SL-style phone number
-                'profile_pic' => 'profile/default.png',
+                'profile_pic' => null,
                 'user_dob' => $faker->date('Y-m-d'),
                 'address' => $faker->address(),
                 'status' => $i % 2 == 0 ? 'blocked' : 'active',
@@ -53,7 +53,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'Test User',
                 'email' => $testUserEmail,
                 'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
-                'profile_pic' => 'profile/default.png',
+                'profile_pic' => null,
                 'user_dob' => $faker->date('Y-m-d'),
                 'address' => $faker->address(),
                 'status' => 'active',
