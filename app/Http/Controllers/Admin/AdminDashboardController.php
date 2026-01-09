@@ -32,7 +32,7 @@ class AdminDashboardController extends Controller
             ->orderBy('students_count', 'desc')
             ->limit(5)
             ->get()
-            ->map(function($module) {
+            ->map(function ($module) {
                 return [
                     'id' => $module->id,
                     'name' => $module->name,
@@ -57,7 +57,9 @@ class AdminDashboardController extends Controller
             $ungradedAssignments = \App\Models\Assignment::whereIn('module_id', $moduleIds)
                 ->withCount('submissions')
                 ->get()
-                ->filter(function($a) { return $a->submissions_count > 0; });
+                ->filter(function ($a) {
+                    return $a->submissions_count > 0;
+                });
 
             foreach ($ungradedAssignments as $assignment) {
                 $notifications[] = [
@@ -78,10 +80,11 @@ class AdminDashboardController extends Controller
                 ->get();
 
             foreach ($upcomingEvents as $event) {
+                $dateFormatted = $event->date instanceof \Carbon\Carbon ? $event->date->format('M d') : \Carbon\Carbon::parse($event->date)->format('M d');
                 $notifications[] = [
                     'id' => 'event_' . $event->id,
                     'topic' => 'Event',
-                    'message' => "{$event->title} on {$event->date->format('M d')}",
+                    'message' => "{$event->title} on {$dateFormatted}",
                     'type' => 'noting',
                     'link' => '/calendar',
                     'date' => $event->date,
@@ -90,16 +93,16 @@ class AdminDashboardController extends Controller
         }
 
         // --- Chart Data Aggregation ---
-        
+
         // 1. User Registration Trend (Last 30 days)
         $registrations = User::selectRaw('DATE(created_at) as date, count(*) as count')
             ->where('created_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
-        
-        $registrationTrends = $registrations->map(function($reg) {
-            return ['date' => $reg->date, 'count' => (int)$reg->count];
+
+        $registrationTrends = $registrations->map(function ($reg) {
+            return ['date' => $reg->date, 'count' => (int) $reg->count];
         });
 
         // 2. Role Distribution
@@ -113,7 +116,7 @@ class AdminDashboardController extends Controller
         $modulesPerCourse = Course::withCount('modules')
             ->limit(10)
             ->get()
-            ->map(function($course) {
+            ->map(function ($course) {
                 return ['course' => $course->title, 'count' => $course->modules_count];
             });
 
@@ -176,11 +179,11 @@ class AdminDashboardController extends Controller
     {
         // Load relationships
         $user->load(['student.enrolledModules.module', 'lecture.modules', 'systemAdmin']);
-        
+
         // Format enrolled modules for student if they are a student
         $enrolledModules = [];
         if ($user->isStudent() && $user->student) {
-            $enrolledModules = $user->student->enrolledModules->map(function($module) {
+            $enrolledModules = $user->student->enrolledModules->map(function ($module) {
                 return [
                     'id' => $module->id,
                     'name' => $module->name,
@@ -211,9 +214,14 @@ class AdminDashboardController extends Controller
 
     public function updateUser(Request $request, User $user)
     {
+        // Generate blind index for unique validation check
+        $emailBindex = User::generateBlindIndex($request->email);
+        $request->merge(['email_bindex' => $emailBindex]);
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email',
+            'email_bindex' => 'unique:users,email_bindex,' . $user->id,
             'address' => 'nullable|string',
             'user_phone_no' => 'nullable|string',
             'user_dob' => 'nullable|date',
@@ -230,7 +238,7 @@ class AdminDashboardController extends Controller
             'user_phone_no' => $request->user_phone_no,
             'user_dob' => $request->user_dob,
             'status' => $request->status,
-            'can_upload_feed' => $request->has('can_upload_feed') ? (bool)$request->can_upload_feed : true,
+            'can_upload_feed' => $request->has('can_upload_feed') ? (bool) $request->can_upload_feed : true,
             'upload_blocked_until' => $request->upload_blocked_until ? \Carbon\Carbon::parse($request->upload_blocked_until) : null,
         ]);
 

@@ -41,7 +41,7 @@ export default function UpdateProfilePictureForm({ className = '' }) {
             <div className={styles.profilePicSection}>
                 <div className={styles.avatarWrapper} onClick={triggerFileInput}>
                     <img
-                        src={user.avatar_url} // Always provided by backend fallback
+                        src={user.avatar_url || "/profile_assets/default.png"}
                         alt={user.name}
                         className={styles.avatarLarge}
                     />

@@ -6,10 +6,10 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/web.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/web.php',
         apiPrefix: 'api',  // Add this line to ensure /api prefix!
-        commands: __DIR__.'/../routes/console.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Optional: Set alias for easier use in routes
         $middleware->alias([
-            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'twofactor' => \App\Http\Middleware\TwoFactorMiddleware::class,
         ]);

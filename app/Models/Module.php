@@ -4,17 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Str;
 
 class Module extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = 'modules';
-
-    // UUID SUPPORT
-    public $incrementing = false;   // because id is UUID
-    protected $keyType = 'string';  // UUID stored as string
 
     protected $fillable = [
         'id',
@@ -27,17 +24,12 @@ class Module extends Model
         'cover_image_url',
     ];
 
-    // Auto-generate UUID when creating
-    protected static function boot()
-    {
-        parent::boot();
+    protected $casts = [
+        'is_deleted' => 'boolean',
+        'enrollment_key' => 'encrypted',
+    ];
 
-        static::creating(function ($model) {
-            if (! $model->id) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
+    // Auto-generate UUID when creating
 
     public function topics()
     {

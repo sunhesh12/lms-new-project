@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Str;
 
 class Topic extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = 'topics';
-
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
@@ -24,17 +22,6 @@ class Topic extends Model
         'is_announcement',
         'type'
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
 
     public function module()
     {

@@ -79,7 +79,7 @@ export default function Login({ status, canResetPassword }) {
                         )}
 
                         <div>
-                            <Button disabled={processing}>Login</Button>
+                            <Button type="submit" disabled={processing}>Login</Button>
                         </div>
 
                         <span>

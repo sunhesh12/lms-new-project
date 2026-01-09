@@ -20,36 +20,36 @@ class AdminUserSeeder extends Seeder
 
         $admins = [
             [
-                'id' => (string) Str::uuid(),
                 'name' => 'Main Admin',
                 'email' => 'admin@lms.com',
                 'password' => Hash::make('admin123'),
                 'user_phone_no' => '0712345678',
-                'profile_pic' => null,
+                'profile_pic' => 'profile/admin_m.png',
                 'user_dob' => '1990-01-01',
                 'address' => 'LMS Headquarters',
                 'status' => 'active',
                 'faculty_id' => $facultyId,
                 'course_id' => $courseId,
+                'email_verified_at' => now(),
             ],
             [
-                'id' => (string) Str::uuid(),
                 'name' => 'Support Admin',
                 'email' => 'support@lms.com',
                 'password' => Hash::make('support123'),
                 'user_phone_no' => '0777654321',
-                'profile_pic' => null,
+                'profile_pic' => 'profile/admin_f.png',
                 'user_dob' => '1995-05-05',
                 'address' => 'Support Office',
                 'status' => 'active',
                 'faculty_id' => $facultyId,
                 'course_id' => $courseId,
+                'email_verified_at' => now(),
             ],
         ];
 
         foreach ($admins as $adminData) {
             $user = User::where('email', $adminData['email'])->first();
-            
+
             if (!$user) {
                 $user = User::create($adminData);
             }

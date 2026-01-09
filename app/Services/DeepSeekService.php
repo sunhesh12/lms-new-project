@@ -12,7 +12,7 @@ class DeepSeekService
 
     public function __construct()
     {
-        $this->apiKey = config('services.deepseek.key', '');
+        $this->apiKey = (string) config('services.deepseek.key', '');
     }
 
     public function generateResponse(string $prompt): string
@@ -34,7 +34,7 @@ PROMPT;
             $response = Http::timeout(20)
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Content-Type'  => 'application/json',
+                    'Content-Type' => 'application/json',
                 ])
                 ->post($this->baseUrl, [
                     'model' => 'deepseek-chat',
@@ -52,18 +52,18 @@ PROMPT;
             }
 
             if ($response->status() === 401) {
-                 Log::error('DeepSeek API Error: Unauthorized (Invalid Key)');
-                 return "Configuration Error: The AI API key is invalid. Please contact the administrator.";
+                Log::error('DeepSeek API Error: Unauthorized (Invalid Key)');
+                return "Configuration Error: The AI API key is invalid. Please contact the administrator.";
             }
 
             if ($response->status() === 429) {
-                 Log::error('DeepSeek API Error: Rate Limit Exceeded');
-                 return "The AI is currently busy (Rate Limit). Please try again later.";
+                Log::error('DeepSeek API Error: Rate Limit Exceeded');
+                return "The AI is currently busy (Rate Limit). Please try again later.";
             }
 
             Log::error('DeepSeek API error', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
 
             return "The AI service is temporarily unavailable (Status: " . $response->status() . ").";

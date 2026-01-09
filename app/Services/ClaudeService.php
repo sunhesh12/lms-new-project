@@ -12,7 +12,7 @@ class ClaudeService
 
     public function __construct()
     {
-        $this->apiKey = config('services.claude.key', env('CLAUDE_API_KEY', ''));
+        $this->apiKey = (string) (config('services.claude.key') ?? env('CLAUDE_API_KEY', ''));
     }
 
     public function generateResponse(string $prompt): string

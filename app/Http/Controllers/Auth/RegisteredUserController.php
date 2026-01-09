@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\PortalUser;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,22 +30,29 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Generate blind index for unique validation
+        $emailBindex = User::generateBlindIndex($request->email);
+        $request->merge(['email_bindex' => $emailBindex]);
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.PortalUser::class,
+            'email' => 'required|string|lowercase|email|max:255',
+            'email_bindex' => 'unique:users,email_bindex',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = PortalUser::create([
+        $user = User::create([
+            'id' => (string) \Illuminate\Support\Str::uuid(),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => 'active',
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        Auth::login($user, $request->boolean('remember'));
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false))->with('success', 'Registration successful! Please check your email for a verification link.');
     }
 }

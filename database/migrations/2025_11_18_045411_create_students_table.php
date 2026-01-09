@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('id')->primary();
             $table->string('academic_year');
             //$table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuId('user_id')->constrained('users')->onDelete('cascade');

@@ -17,26 +17,27 @@ class LoginController extends Controller
         return Inertia::render('Auth/Login');
     }
 
-  public function login(Request $request)
-{
-    // ---------------------------
-    // 1. Validate Required Fields
-    // ---------------------------
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|min:5|max:50',
-        'remember' => 'boolean'
-    ]);
+    public function login(Request $request)
+    {
+        // ---------------------------
+        // 1. Validate Required Fields
+        // ---------------------------
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:5|max:50',
+            'remember' => 'boolean'
+        ]);
 
-    // ---------------------------
-    // 2. Rate Limiting
-    // ---------------------------
+        // ---------------------------
+        // 2. Rate Limiting
+        // ---------------------------
 
-    $key = $this->Rate_Limiting($request);
+        $key = $this->Rate_Limiting($request);
     // ---------------------------
     // 3. Check If User Exists
     // ---------------------------
-    $user = User::where('email', $request->email)->first();
+    // Use blind index for optimized search of encrypted email
+    $user = User::where('email_bindex', User::generateBlindIndex($request->email))->first();
 
     if (!$user) {
         RateLimiter::hit($key, 60);
@@ -46,74 +47,79 @@ class LoginController extends Controller
         ]);
     }
 
-    // ---------------------------
-    // 4. Check If User Is Blocked
-    // ---------------------------
-    else if ($user->status === 'blocked') {
+        // ---------------------------
+        // 4. Check If User Is Blocked
+        // ---------------------------
+        else if ($user->status === 'blocked') {
 
-        RateLimiter::hit($key, 60); // count attempt
+            RateLimiter::hit($key, 60); // count attempt
 
-        throw ValidationException::withMessages([
-            'email' => 'Your account has been blocked. Please contact support.'
-        ]);
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been blocked. Please contact support.'
+            ]);
+        }
+
+        // ---------------------------
+        // 5. Check Password
+        // ---------------------------
+        else if (!Hash::check($request->password, $user->password)) {
+
+            RateLimiter::hit($key, 60);
+
+            throw ValidationException::withMessages([
+                'password' => 'Password is incorrect.'
+            ]);
+        } else {
+            // ---------------------------
+            // 6. Check Email Verification
+            // ---------------------------
+            if (!$user->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
+
+            // Clear attempts after success
+        RateLimiter::clear($key);
+
+        // ---------------------------
+        // 7. Login User
+        // ---------------------------
+        Auth::login($user, $request->remember);
+
+        $user->generateTwoFactorCode();
+
+        // Send email
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
+        } catch (\Exception $e) {
+            // Log error but continue
+            \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
+        }
+
+        $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
+
+        return redirect()->route('two-factor.index')->withCookie($cookie);
+    }
     }
 
-    // ---------------------------
-    // 5. Check Password
-    // ---------------------------
-    else if (!Hash::check($request->password, $user->password)) {
+    public function Rate_Limiting(Request $request)
+    {
+        $key = strtolower($request->email) . '|' . $request->ip();
 
-        RateLimiter::hit($key, 60);
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
 
-        throw ValidationException::withMessages([
-            'password' => 'Password is incorrect.'
-        ]);
+            throw ValidationException::withMessages([
+                'email' => "Too many attempts. Try again in $seconds seconds."
+            ]);
+        }
+
+        return $key;
     }
 
-    else{
-
-    // Clear attempts after success
-    RateLimiter::clear($key);
-
-    // ---------------------------
-    // 6. Login User
-    // ---------------------------
-    Auth::login($user, $request->remember);
-
-    $user->generateTwoFactorCode();
-
-    // Send email
-    try {
-        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
-    } catch (\Exception $e) {
-        // Log error but continue
-        \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
-    }
-
-    $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
-
-    return redirect()->route('two-factor.index')->withCookie($cookie);
-    }
-}
-
-public function Rate_Limiting(Request $request){
-    $key = strtolower($request->email) . '|' . $request->ip();
-
-    if (RateLimiter::tooManyAttempts($key, 5)) {
-        $seconds = RateLimiter::availableIn($key);
-
-        throw ValidationException::withMessages([
-            'email' => "Too many attempts. Try again in $seconds seconds."
-        ]);
-    }
-
-    return $key;
-}
 
 
 
-
-public function logout(Request $request)
+    public function logout(Request $request)
     {
         Auth::logout();
 
@@ -128,7 +134,7 @@ public function logout(Request $request)
     public function dashboard()
     {
         $user = Auth::user();
-        
+
         // 1. Check for upcoming personal events within 2 days
         $upcomingEvents = \App\Models\Event::where('user_id', $user->id)
             ->where('date', '>=', now()->toDateString())
@@ -144,9 +150,10 @@ public function logout(Request $request)
                 ->exists();
 
             if (!$alreadyNotified) {
+                $dateFormatted = $event->date instanceof \Carbon\Carbon ? $event->date->format('M d') : \Carbon\Carbon::parse($event->date)->format('M d');
                 $user->notify(new \App\Notifications\SystemNotification([
                     'topic' => 'Upcoming Event',
-                    'message' => "Reminder: {$event->title} is scheduled for {$event->date->format('M d')} at {$event->start_time}",
+                    'message' => "Reminder: {$event->title} is scheduled for {$dateFormatted} at {$event->start_time}",
                     'type' => 'noting',
                     'link' => route('calendar'), // Adjust route if named differently
                     'event_id' => $event->id,
@@ -167,9 +174,10 @@ public function logout(Request $request)
                 ->exists();
 
             if (!$alreadyNotified) {
+                $dateFormatted = $event->date instanceof \Carbon\Carbon ? $event->date->format('M d') : \Carbon\Carbon::parse($event->date)->format('M d');
                 $user->notify(new \App\Notifications\SystemNotification([
                     'topic' => 'Public Event',
-                    'message' => "Public Event: {$event->title} by {$event->user->name} on {$event->date->format('M d')}",
+                    'message' => "Public Event: {$event->title} by {$event->user->name} on {$dateFormatted}",
                     'type' => 'noting',
                     'link' => route('calendar'),
                     'event_id' => $event->id,
@@ -184,7 +192,7 @@ public function logout(Request $request)
         if ($notifications->isEmpty() && $user->isStudent()) {
             $student = $user->student;
             $enrolledModuleIds = \App\Models\ModuleEnrollment::where('student_id', $student->id)->pluck('module_id');
-            
+
             $upcomingAssignments = \App\Models\Assignment::whereIn('module_id', $enrolledModuleIds)
                 ->where('deadline', '>', now())
                 ->where('deadline', '<', now()->addDays(14))

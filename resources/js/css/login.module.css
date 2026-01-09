@@ -4,73 +4,79 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--white);
+    background-color: var(--bg-main);
 }
 
 .loginFormContainer {
     height: auto;
-    background-color: var(--whiteop);
+    background-color: var(--bg-surface);
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
-    ;
+    border-radius: 12px;
     align-items: center;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    ;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     padding: 40px 40px;
     gap: 10px;
-    width: 50%;
+    width: 450px;
+    max-width: 90%;
 }
 
 .loginForm {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    border-radius: 10px;
-    width: 60%;
+    width: 100%;
 }
 
 .registerLink {
     font-weight: bold;
-    color: black;
+    color: var(--primary);
+    text-decoration: none;
 }
 
-.errorBox {
-    background: #ffe5e5;
-    border-left: 4px solid #ff3b3b;
-    color: #b80000;
+.registerLink:hover {
+    color: var(--primary-hover);
+}
+
+.errorBox,
+.errorMessage {
+    background: var(--error-subtle);
+    border-left: 4px solid var(--error);
+    color: var(--error);
     padding: 10px 15px;
     border-radius: 6px;
     margin-bottom: 15px;
     font-size: 14px;
     font-weight: 500;
+    width: 100%;
+}
+
+.successMessage {
+    background: var(--success-subtle);
+    border-left: 4px solid var(--success);
+    color: var(--success);
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
 }
 
 .inputError {
-    color: #d60000;
+    color: var(--error);
     font-size: 13px;
     margin-top: 5px;
 }
 
 .inputErrorBorder {
-    border-color: #ff3b3b !important;
-}
-
-.rememberMe {
-    margin-top: 1rem;
-    display: block;
-}
-
-.rememberMeLabel {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+    border-color: var(--error) !important;
 }
 
 .rememberMeText {
     margin-left: 0.5rem;
     font-size: 0.875rem;
-    color: #4b5563;
+    color: var(--text-secondary);
 }
 
 .wFull {

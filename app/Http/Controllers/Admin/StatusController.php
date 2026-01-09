@@ -19,38 +19,25 @@ class StatusController extends Controller
 
         $statusesQuery = Status::with('user')->orderBy('created_at', 'desc');
 
-        if ($query) {
-            $statusesQuery->where(function($q) use ($query) {
-                $q->where('content', 'like', "%{$query}%")
-                  ->orWhereHas('user', function($uq) use ($query) {
-                      $uq->where('name', 'like', "%{$query}%")
-                         ->orWhere('email', 'like', "%{$query}%");
-                  });
+        $statuses = $statusesQuery->get()
+            ->filter(function ($status) use ($query) {
+                if (empty($query))
+                    return true;
+                $user = $status->user;
+                return stripos($status->content, $query) !== false ||
+                    ($user && (stripos($user->name, $query) !== false || stripos($user->email, $query) !== false));
             });
-        }
 
-        // Date/time filtering: combine date and time where provided
-        if ($fromDate) {
-            $fromTime = $fromTime ?: '00:00';
-            try {
-                $from = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$fromDate} {$fromTime}");
-                $statusesQuery->where('created_at', '>=', $from);
-            } catch (\Exception $e) {
-                // ignore invalid format
-            }
-        }
-
-        if ($toDate) {
-            $toTime = $toTime ?: '23:59';
-            try {
-                $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$toDate} {$toTime}");
-                $statusesQuery->where('created_at', '<=', $to);
-            } catch (\Exception $e) {
-                // ignore invalid format
-            }
-        }
-
-        $statuses = $statusesQuery->paginate(20)->appends($request->only(['q', 'from_date', 'from_time', 'to_date', 'to_time']));
+        $total = $statuses->count();
+        $page = $request->query('page', 1);
+        $perPage = 20;
+        $statuses = new \Illuminate\Pagination\LengthAwarePaginator(
+            $statuses->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return Inertia::render('Admin/Statuses', [
             'statuses' => $statuses,

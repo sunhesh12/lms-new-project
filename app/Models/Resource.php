@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Str;
 
 class Resource extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
-    protected $keyType = 'string';        // UUID stored as string
-    public $incrementing = false;         // NOT auto-incrementing
+    // UUID stored as string
 
     protected $fillable = [
         'id',
@@ -22,17 +22,6 @@ class Resource extends Model
         'caption',
         'is_deleted',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
 
     public function topic()
     {

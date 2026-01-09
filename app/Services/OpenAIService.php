@@ -12,7 +12,7 @@ class OpenAIService
 
     public function __construct()
     {
-        $this->apiKey = config('services.openai.key', env('OPENAI_API_KEY', ''));
+        $this->apiKey = (string) (config('services.openai.key') ?? env('OPENAI_API_KEY', ''));
     }
 
     public function generateResponse(string $prompt): string

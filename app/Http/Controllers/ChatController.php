@@ -18,9 +18,9 @@ class ChatController extends Controller
             abort(401);
         }
         $aiUuid = '00000000-0000-0000-0000-000000000000';
-        
+
         $this->ensureAiConversation($user, $aiUuid);
-        
+
         $conversation = $user->conversations()
             ->where('type', 'private')
             ->whereHas('participants', function ($q) use ($aiUuid) {
@@ -38,7 +38,7 @@ class ChatController extends Controller
         ]);
     }
 
-    
+
 
     public function index()
     {
@@ -58,13 +58,16 @@ class ChatController extends Controller
     {
         abort_unless($conversation->users->contains(Auth::id()), 403);
 
-        $conversation->load(['messages' => function($query) {
-             $query->where(function ($q) {
-                 $q->whereNull('deleted_by')
-                   ->orWhereJsonDoesntContain('deleted_by', Auth::id());
-             })->with(['user', 'replyTo.user']);
-        }, 'users']);
-        
+        $conversation->load([
+            'messages' => function ($query) {
+                $query->where(function ($q) {
+                    $q->whereNull('deleted_by')
+                        ->orWhereJsonDoesntContain('deleted_by', Auth::id());
+                })->with(['user', 'replyTo.user']);
+            },
+            'users'
+        ]);
+
         // Mark as read immediately when opening
         $this->markAsReadInternal($conversation);
 
@@ -90,31 +93,36 @@ class ChatController extends Controller
         }
 
         return $user->conversations()
-            ->with(['messages' => function($query) use ($user) {
-                $query->where(function ($q) use ($user) {
+            ->with([
+                'messages' => function ($query) use ($user) {
+                    $query->where(function ($q) use ($user) {
                         $q->whereNull('deleted_by')
-                          ->orWhereJsonDoesntContain('deleted_by', $user->id);
+                            ->orWhereJsonDoesntContain('deleted_by', $user->id);
                     })
-                    ->latest()
-                    ->limit(1);
-            }])
-            ->with(['users', 'participants' => function($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
+                        ->latest()
+                        ->limit(1);
+                }
+            ])
+            ->with([
+                'users',
+                'participants' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                }
+            ])
             ->get()
             ->map(function ($conversation) use ($user) {
                 $participant = $conversation->participants->first();
                 $lastReadAt = $participant ? $participant->last_read_at : '1970-01-01';
-                
+
                 $conversation->unread_count = $conversation->messages()
                     ->where('created_at', '>', $lastReadAt ?? '1970-01-01')
                     ->where('user_id', '!=', $user->id)
                     ->where(function ($query) use ($user) {
                         $query->whereNull('deleted_by')
-                              ->orWhereJsonDoesntContain('deleted_by', $user->id);
+                            ->orWhereJsonDoesntContain('deleted_by', $user->id);
                     })
                     ->count();
-                    
+
                 return $conversation;
             })
             ->sortByDesc(fn($c) => $c->messages->first()?->created_at ?? $c->created_at)
@@ -137,6 +145,12 @@ class ChatController extends Controller
             ->exists();
 
         if (!$exists) {
+            // Check if AI user exists in users table to prevent integrity constraint violation
+            if (!\App\Models\User::where('id', $aiUuid)->exists()) {
+                \Illuminate\Support\Facades\Log::warning("AI Assistant user ($aiUuid) does not exist in the users table.");
+                return;
+            }
+
             $conversation = \App\Models\Conversation::create(['type' => 'private']);
             $conversation->participants()->create(['user_id' => $user->id]);
             $conversation->participants()->create(['user_id' => $aiUuid]);
@@ -186,7 +200,7 @@ class ChatController extends Controller
         $message->load(['user', 'replyTo.user']);
         // Ensure appends are present for broadcast
         $message->append('attachment_url');
-        
+
         broadcast(new \App\Events\MessageSent($message))->toOthers();
 
         // Check if message is for the AI Assistant
@@ -211,7 +225,7 @@ class ChatController extends Controller
 
                     $aiMessage->load(['user', 'replyTo.user']);
                     $aiMessage->append('attachment_url');
-                    
+
                     // Broadcast the AI response
                     broadcast(new \App\Events\MessageSent($aiMessage));
                 }
@@ -226,15 +240,19 @@ class ChatController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        
-        $usersQuery = \App\Models\User::where('id', '!=', Auth::id());
 
-        if (!empty($query)) {
-            $usersQuery->where('name', 'like', "%{$query}%");
-        }
-
-        $users = $usersQuery->limit(20)
-            ->get(['id', 'name', 'email', 'profile_pic']);
+        // Since name and email are encrypted, we fetch users and filter in memory.
+        // For performance with 14 users this is fine.
+        $users = \App\Models\User::where('id', '!=', Auth::id())
+            ->get(['id', 'name', 'email', 'profile_pic'])
+            ->filter(function ($user) use ($query) {
+                if (empty($query))
+                    return true;
+                return stripos($user->name, $query) !== false ||
+                    stripos($user->email, $query) !== false;
+            })
+            ->take(20)
+            ->values();
 
         return response()->json($users);
     }
@@ -242,7 +260,7 @@ class ChatController extends Controller
     public function checkConversation(Request $request)
     {
         $userId = $request->input('user_id');
-        
+
         // Check for existing private conversation
         $conversation = Conversation::where('type', 'private')
             ->whereHas('participants', function ($q) use ($userId) {
@@ -289,10 +307,10 @@ class ChatController extends Controller
     public function deleteForEveryone(\App\Models\Message $message)
     {
         abort_unless($message->user_id === Auth::id(), 403);
-        
+
         $conversationId = $message->conversation_id;
         $messageId = $message->id;
-        
+
         $message->delete(); // Soft delete
 
         broadcast(new \App\Events\MessageDeleted($messageId, $conversationId))->toOthers();
@@ -302,16 +320,16 @@ class ChatController extends Controller
 
     public function deleteForMe(\App\Models\Message $message)
     {
-         abort_unless($message->conversation->users->contains(Auth::id()), 403);
-         
-         $deletedBy = $message->deleted_by ?? [];
-         if (!in_array(Auth::id(), $deletedBy)) {
-             $deletedBy[] = Auth::id();
-             $message->deleted_by = $deletedBy;
-             $message->save();
-         }
-         
-         return response()->json(['success' => true]);
+        abort_unless($message->conversation->users->contains(Auth::id()), 403);
+
+        $deletedBy = $message->deleted_by ?? [];
+        if (!in_array(Auth::id(), $deletedBy)) {
+            $deletedBy[] = Auth::id();
+            $message->deleted_by = $deletedBy;
+            $message->save();
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function deleteMultiple(Request $request)
@@ -324,14 +342,14 @@ class ChatController extends Controller
         $messages = \App\Models\Message::whereIn('id', $request->message_ids)->get();
 
         foreach ($messages as $message) {
-             if ($message->conversation->users->contains(Auth::id())) {
-                 $deletedBy = $message->deleted_by ?? [];
-                 if (!in_array(Auth::id(), $deletedBy)) {
-                     $deletedBy[] = Auth::id();
-                     $message->deleted_by = $deletedBy;
-                     $message->save();
-                 }
-             }
+            if ($message->conversation->users->contains(Auth::id())) {
+                $deletedBy = $message->deleted_by ?? [];
+                if (!in_array(Auth::id(), $deletedBy)) {
+                    $deletedBy[] = Auth::id();
+                    $message->deleted_by = $deletedBy;
+                    $message->save();
+                }
+            }
         }
 
         return response()->json(['success' => true]);

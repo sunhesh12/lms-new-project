@@ -3,7 +3,6 @@ import styles from "./css/button.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMemo } from "react";
 import colors from "@/lib/colors";
-import { color } from "motion";
 
 export default function Button({
     children,
@@ -18,45 +17,45 @@ export default function Button({
         const bgColor = noBackground
             ? colors.transparent
             : backgroundColor === "primary"
-            ? colors.black
-            : backgroundColor === "secondary"
-            ? colors.blue
-            : backgroundColor === "tertiary"
-            ? colors.orange
-            : backgroundColor === "delete"
-            ? colors.red : backgroundColor === "white" ? colors.white
-            : colors.black;
+                ? colors.black
+                : backgroundColor === "secondary"
+                    ? colors.blue
+                    : backgroundColor === "tertiary"
+                        ? colors.orange
+                        : backgroundColor === "delete"
+                            ? colors.red : backgroundColor === "white" ? colors.white
+                                : colors.black;
 
         const fgColor = noBackground
             ? (backgroundColor === "primary"
                 ? colors.black
                 : backgroundColor === "secondary"
-                ? colors.blue
-                : backgroundColor === "tertiary"
-                ? colors.orange
-                : backgroundColor === "delete"
-                ? colors.red
-                : backgroundColor === "white" ? colors.white : colors.black)
+                    ? colors.blue
+                    : backgroundColor === "tertiary"
+                        ? colors.orange
+                        : backgroundColor === "delete"
+                            ? colors.red
+                            : backgroundColor === "white" ? colors.white : colors.black)
             : backgroundColor === "primary"
-            ? colors.white
-            : backgroundColor === "secondary"
-            ? colors.white
-            : backgroundColor === "tertiary"
-            ? colors.black
-            : backgroundColor === "delete"
-            ? colors.white
-            : colors.white;
+                ? colors.white
+                : backgroundColor === "secondary"
+                    ? colors.white
+                    : backgroundColor === "tertiary"
+                        ? colors.black
+                        : backgroundColor === "delete"
+                            ? colors.white
+                            : colors.white;
 
         const borderColor =
             backgroundColor === "primary"
                 ? colors.black
                 : backgroundColor === "secondary"
-                ? colors.blue
-                : backgroundColor === "tertiary"
-                ? colors.orange
-                : backgroundColor === "delete"
-                ? colors.red
-                : backgroundColor === "white" ? colors.white : colors.black;
+                    ? colors.blue
+                    : backgroundColor === "tertiary"
+                        ? colors.orange
+                        : backgroundColor === "delete"
+                            ? colors.red
+                            : backgroundColor === "white" ? colors.white : colors.black;
 
         const fontSize =
             size === "large" ? "1.25rem" : size === "small" ? "0.8rem" : "1rem";

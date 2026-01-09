@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\student;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
@@ -30,6 +31,8 @@ class StudentsTableSeeder extends Seeder
             ];
         }
 
-        DB::table('students')->insert($students);
+        foreach ($students as $studentData) {
+            student::create($studentData);
+        }
     }
 }

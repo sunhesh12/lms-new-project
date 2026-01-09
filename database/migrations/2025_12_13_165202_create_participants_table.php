@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('participants', function (Blueprint $table) {
-            $table->uuid('uuid')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('uuid')->primary();
             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
             $table->foreignUuId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('role', ['admin', 'member'])->default('member');

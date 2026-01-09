@@ -1,8 +1,7 @@
-/* Side Navbar Container */
 .sideNavBar {
     background-color: var(--accent);
     /* Dark background */
-    color: #9ca3af;
+    color: var(--text-muted);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -11,7 +10,7 @@
     overflow: visible;
     /* Allow toggle button to overlap */
     position: relative;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid var(--glass-dark-border);
 }
 
 /* Header Section */
@@ -57,14 +56,14 @@
 .sideNavBar-header-title {
     font-size: 14px;
     font-weight: 700;
-    color: white;
+    color: var(--text-on-primary);
     margin: 0;
     line-height: 1.2;
 }
 
 .sideNavBar-header-sub-title {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--text-muted);
     margin: 0;
 }
 
@@ -92,16 +91,26 @@
     padding: 0 12px;
     overflow-y: auto;
     margin-top: 10px;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+.nav-section::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
 }
 
 .nav-label {
     font-size: 11px;
     text-transform: uppercase;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-bottom: 12px;
     padding-left: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
+    opacity: 0.7;
 }
 
 .nav-list {
@@ -119,7 +128,7 @@
     gap: 12px;
     padding: 10px 12px;
     border-radius: 8px;
-    color: #9ca3af;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
@@ -128,21 +137,21 @@
 }
 
 .nav-item:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-on-primary);
+    background-color: var(--bg-dark-highlight);
 }
 
 .nav-item.active {
     background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: var(--text-on-primary);
     font-weight: 600;
-    border-left: 3px solid white;
+    border-left: 3px solid var(--text-on-primary);
 }
 
 /* Footer Section */
 .sideNavBar-footer {
     padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--glass-dark-border);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -154,7 +163,7 @@
     gap: 12px;
     padding: 10px 12px;
     border-radius: 8px;
-    color: #9ca3af;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
@@ -163,7 +172,7 @@
 }
 
 .settings-link:hover {
-    color: white;
+    color: var(--text-on-primary);
 }
 
 .sideNavBar.minimized .settings-link {
@@ -177,7 +186,7 @@
     gap: 12px;
     padding: 12px;
     border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: var(--bg-dark-highlight);
     margin-top: 10px;
     text-decoration: none;
     overflow: hidden;
@@ -199,7 +208,7 @@
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    background-color: #374151;
+    background-color: var(--bg-dark-surface);
     min-width: 36px;
 }
 
@@ -212,7 +221,7 @@
 .user-name {
     font-size: 13px;
     font-weight: 600;
-    color: white;
+    color: var(--text-on-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -220,7 +229,7 @@
 
 .user-email {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -239,7 +248,7 @@
     right: -2px;
     width: 8px;
     height: 8px;
-    background-color: #ef4444;
+    background-color: var(--error);
     border-radius: 50%;
     border: 2px solid var(--accent);
 }
@@ -253,7 +262,7 @@
 }
 
 .nav-count-badge {
-    background-color: #ef4444;
+    background-color: var(--error);
     color: white;
     font-size: 10px;
     font-weight: 700;
@@ -272,9 +281,9 @@
     width: 24px;
     height: 24px;
     background-color: var(--accent);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-dark-border);
     border-radius: 50%;
-    color: #9ca3af;
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -285,8 +294,8 @@
 }
 
 .sidebar-toggle-tab:hover {
-    color: white;
-    background-color: #374151;
+    color: var(--text-on-primary);
+    background-color: var(--bg-dark-surface);
     transform: scale(1.1);
 }
 

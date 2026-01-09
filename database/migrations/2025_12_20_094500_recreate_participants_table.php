@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::dropIfExists('participants');
 
         Schema::create('participants', function (Blueprint $table) {
-            $table->uuid('uuid')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('uuid')->primary();
             // Use simple foreignId for conversation_id (bigint)
             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
             // Use foreignUuId for user_id (char/uuid)

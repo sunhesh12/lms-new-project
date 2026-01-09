@@ -74,13 +74,13 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Delete old picture if exists
-        if ($user->profile_pic && $user->profile_pic !== 'profile/default.png') {
+        if ($user->profile_pic && !str_contains($user->profile_pic, 'default.png')) {
             Storage::disk('public')->delete($user->profile_pic);
         }
 
         // Store new picture
         $path = $request->file('profile_pic')->store('profile_pics', 'public');
-        
+
         $user->update([
             'profile_pic' => $path
         ]);

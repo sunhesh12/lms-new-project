@@ -20,6 +20,7 @@ class Status extends Model
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'content' => 'encrypted',
     ];
 
     protected $appends = ['is_expired'];
@@ -86,7 +87,7 @@ class Status extends Model
                 'user_id' => $userId,
                 'viewed_at' => Carbon::now(),
             ]);
-            
+
             $this->increment('views_count');
         }
     }

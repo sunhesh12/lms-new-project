@@ -7,7 +7,7 @@ use App\Http\Requests\AddPortalUserRequest;
 use App\Http\Controllers\PortalUserController;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\SignInRequest;
-use App\Models\PortalUser;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class AuthController extends Controller
     public function signin(SignInRequest $request)
     {
         try {
-            $user = PortalUser::where('email', $request->input('email'))->first();
+            $user = User::where('email_bindex', User::generateBlindIndex($request->input('email')))->first();
 
             if ($user && Hash::check($request->input('password'), $user->password)) {
                 $token = $user->createToken('auth_token')->plainTextToken;
@@ -78,18 +78,17 @@ class AuthController extends Controller
 
         // Create a new user
         try {
-            $user = PortalUser::create([
-                'full_name' => $full_name,
-                'age' => $age,
+            $user = User::create([
+                'id' => (string) \Illuminate\Support\Str::uuid(),
+                'name' => $full_name, // Map full_name to name
                 'email' => $email,
-                'mobile_no' => $mobile,
+                'user_phone_no' => $mobile, // Map mobile_no to user_phone_no
                 'address' => $address,
-                //'Institution' => $institution,
-                'profile_picture' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5PABjXc17cjIMOibECLM7ppDwMmiDg6Dw&s',
-                'password' => $password,
+                'password' => Hash::make($password),
                 'role' => 'student',
-                'status' => $status,
-                'course_id' => $course_id
+                'status' => 'active',
+                'course_id' => $course_id,
+                'user_dob' => null, // age is provided, but user_dob is the field in User
             ]);
 
             // Generate a personal access token for the user

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +31,7 @@ class UsersTableSeeder extends Seeder
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
                 'user_phone_no' => $faker->numerify('07########'), // SL-style phone number
-                'profile_pic' => null,
+                'profile_pic' => $faker->randomElement(['profile/student_m.png', 'profile/student_f.png', 'profile/admin_m.png', 'profile/admin_f.png']),
                 'user_dob' => $faker->date('Y-m-d'),
                 'address' => $faker->address(),
                 'status' => $i % 2 == 0 ? 'blocked' : 'active',
@@ -39,29 +40,31 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'course_id' => $faker->randomElement($courseIds), // Assuming courses table has IDs 1–3
+                'email_verified_at' => now(),
             ];
         }
 
-        DB::table('users')->insert($users);
+        foreach ($users as $userData) {
+            \App\Models\User::create($userData);
+        }
 
         // Check if test user exists
         $testUserEmail = 'abc@gmail.com';
-        $existingUser = DB::table('users')->where('email', $testUserEmail)->first();
+        $existingUser = \App\Models\User::where('email', $testUserEmail)->first();
 
         if (!$existingUser) {
-            DB::table('users')->insert([
+            \App\Models\User::create([
                 'name' => 'Test User',
                 'email' => $testUserEmail,
                 'user_phone_no' => $faker->numerify('0705085269'), // SL-style phone number
-                'profile_pic' => null,
+                'profile_pic' => 'profile/student_m.png',
                 'user_dob' => $faker->date('Y-m-d'),
                 'address' => $faker->address(),
                 'status' => 'active',
                 'faculty_id' => $faker->randomElement($facultysIds),   // Assuming faculties table has IDs 1–4
-                'password' => Hash::make('password123'),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
                 'course_id' => $faker->randomElement($courseIds),
+                'email_verified_at' => now(),
             ]);
         }
 

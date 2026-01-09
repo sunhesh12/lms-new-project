@@ -4,15 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class lecture extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
     protected $table = 'lectures'; // Validated from migration
-    
-    // UUID Support
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
@@ -21,16 +18,6 @@ class lecture extends Model
         'lecture_type',
         'user_id',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) \Illuminate\Support\Str::uuid();
-            }
-        });
-    }
 
     public function user()
     {
