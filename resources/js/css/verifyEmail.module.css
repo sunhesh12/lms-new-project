@@ -1,0 +1,217 @@
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.pageContainer {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #eef2ff, #f8fafc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.pageContainer::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: var(--primary);
+    filter: blur(100px);
+    opacity: 0.1;
+    top: -50px;
+    right: -50px;
+    border-radius: 50%;
+}
+
+.pageContainer::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: #6366f1;
+    filter: blur(120px);
+    opacity: 0.08;
+    bottom: -100px;
+    left: -100px;
+    border-radius: 50%;
+}
+
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    width: 100%;
+    max-width: 460px;
+    padding: 3rem;
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    border: var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.iconBox {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.iconContainer {
+    padding: 1.25rem;
+    background: rgba(99, 102, 241, 0.08);
+    /* Slightly more visible */
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    width: 2.5rem;
+    /* Reverting to a larger size */
+    height: 2.5rem;
+    color: #6366f1;
+    /* Brand indigo */
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+}
+
+.description {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.successMessage {
+    background: var(--success-subtle);
+    border: 1px solid rgba(22, 163, 74, 0.2);
+    color: var(--success);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.primaryBtn {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    border: none !important;
+    border-radius: 1rem !important;
+    padding: 1rem 2rem !important;
+    font-weight: 700 !important;
+    color: white !important;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.4) !important;
+    filter: brightness(1.1);
+}
+
+.primaryBtn:active {
+    transform: translateY(0);
+}
+
+.primaryBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.logoutBtn {
+    background: transparent !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 1rem !important;
+    padding: 0.875rem 2rem !important;
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease !important;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.logoutBtn:hover {
+    background: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+    color: #e11d48 !important;
+    transform: translateY(-1px);
+}
+
+.logoutBtn:active {
+    transform: translateY(0);
+}
+
+.logoutLink {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    opacity: 0.6;
+    display: inline-block;
+    align-self: center;
+}
+
+.logoutLink:hover {
+    color: var(--error);
+    opacity: 1;
+    transform: scale(1.05);
+}

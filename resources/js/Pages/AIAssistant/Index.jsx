@@ -11,19 +11,6 @@ export default function Index({ auth, conversation }) {
     const [selected, setSelected] = useState(auth.user?.ai_provider || null);
     const [ack, setAck] = useState(false);
 
-    const TOP_PROVIDERS = [
-        { identifier: 'openai', name: 'OpenAI (GPT)' },
-        { identifier: 'gemini', name: 'Google Gemini' },
-        { identifier: 'claude', name: 'Anthropic Claude' },
-        { identifier: 'microsoft', name: 'Microsoft Azure OpenAI' },
-        { identifier: 'cohere', name: 'Cohere' },
-        { identifier: 'mistral', name: 'Mistral AI' },
-        { identifier: 'stability', name: 'Stability AI' },
-        { identifier: 'aleph', name: 'Aleph Alpha' },
-        { identifier: 'baidu', name: 'Baidu Ernie' },
-        { identifier: 'deepseek', name: 'DeepSeek' },
-    ];
-
     useEffect(() => {
         // fetch enabled providers for selection
         (async () => {
@@ -31,26 +18,17 @@ export default function Index({ auth, conversation }) {
                 const res = await (await fetch('/admin/ai-providers/list')).json();
                 // only include enabled admin providers and mark their source
                 const admin = (res || [])
-                    .filter(p => p.enabled)
                     .map(p => ({ identifier: p.identifier, name: p.name, id: p.id, source: 'admin' }));
 
-                // Start with top providers, then append admin-only providers (avoid duplicates)
-                const merged = TOP_PROVIDERS.map(p => ({ ...p, source: 'builtin' }));
-                admin.forEach(a => {
-                    const idx = merged.findIndex(m => m.identifier === a.identifier);
-                    if (idx === -1) merged.push(a);
-                    else merged[idx] = { ...merged[idx], ...a };
-                });
-
-                setProviders(merged);
+                setProviders(admin);
             } catch (e) {
                 console.error('Failed to load AI providers', e);
-                setProviders(TOP_PROVIDERS.map(p => ({ ...p, source: 'builtin' })));
+                setProviders([]);
             }
         })();
     }, []);
 
-    
+
 
     const savePreference = async (provider) => {
         try {
@@ -97,7 +75,7 @@ export default function Index({ auth, conversation }) {
                         </div>
                     </div>
 
-                    <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div className={style.providerSelectWrapper}>
                             <select value={selected || ''} onChange={(e) => savePreference(e.target.value)} className={style.providerSelect}>
                                 <option value="">Default</option>

@@ -35,7 +35,19 @@ class SystemNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+                    ->subject($this->data['topic'] ?? 'System Notification')
+                    ->line($this->data['message'])
+                    ->action('View Details', url($this->data['link'] ?? '/dashboard'))
+                    ->line('Thank you for using our application!');
     }
 
     /**

@@ -43,8 +43,14 @@ class NewPasswordController extends Controller
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
+        // We need to use the blind index to find the user because emails are encrypted.
+        $blindIndex = \App\Models\User::generateBlindIndex($request->email);
+
+        $credentials = $request->only('password', 'password_confirmation', 'token');
+        $credentials['email_bindex'] = $blindIndex;
+
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $credentials,
             function ($user) use ($request) {
                 $user->forceFill([
                     'password' => Hash::make($request->password),

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email Address</title>
+    <title>{{ $title ?? 'Reset Password' }}</title>
     <style>
         body {
             margin: 0;
@@ -93,16 +93,6 @@
             color: #64748b;
         }
 
-        .social-links {
-            margin-bottom: 24px;
-        }
-
-        . सोशल-लिंक {
-            margin: 0 10px;
-            color: #94a3b8;
-            text-decoration: none;
-        }
-
         .divider {
             height: 1px;
             background-color: #e2e8f0;
@@ -130,23 +120,23 @@
     <div class="wrapper">
         <div class="container">
             <div class="header">
-                <h1>LMS PLATFORM</h1>
+                <h1>{{ $header ?? 'LMS Platform' }}</h1>
             </div>
             <div class="content">
-                <p>Hello <strong>{{ $name }}</strong>,</p>
-                <p>Welcome to our professional learning community! To secure your account and unlock path to excellence, please verify your email address by clicking the button below.</p>
+                <p>Hello,</p>
+                <p>{{ $introMessage ?? 'You are receiving this email because we received a password reset request for your account.' }}</p>
 
                 <div class="button-container">
-                    <a href="{{ $url }}" class="button">Verify My Account</a>
+                    <a href="{{ $actionUrl }}" class="button">{{ $actionText ?? 'Reset Password' }}</a>
                 </div>
 
-                <p>This verification link ensures that only you can access your profile and academic resources. If you didn't create this account, you can safely ignore this message.</p>
+                <p>{{ $subMessage ?? 'If you did not request a password reset, no further action is required.' }}</p>
                 
                 <div class="divider"></div>
                 
                 <p style="font-size: 14px; margin-bottom: 8px;">If the button doesn't work, copy and paste this link:</p>
                 <div class="url-box">
-                    <a href="{{ $url }}">{{ $url }}</a>
+                    <a href="{{ $actionUrl }}">{{ $actionUrl }}</a>
                 </div>
             </div>
             <div class="footer">

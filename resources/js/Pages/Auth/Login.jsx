@@ -1,6 +1,6 @@
 import Checkbox from "@/components/Input/Checkbox";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
 import CustomLink from "@/components/Links/Link";
 import styles from "@/css/login.module.css";
 import TextInput from "@/components/Input/TextInput";
@@ -57,26 +57,29 @@ export default function Login({ status, canResetPassword }) {
                             }
                         />
 
-                        <div className={styles.rememberMe}>
-                            <label className={styles.rememberMeLabel}>
-                                <Checkbox
-                                    name="remember"
-                                    checked={data.remember}
-                                    onChange={(e) =>
-                                        setData("remember", e.target.checked)
-                                    }
-                                />
-                                <span className={styles.rememberMeText}>
-                                    Remember me
-                                </span>
-                            </label>
-                        </div>
+                        <div className={styles.authOptions}>
+                            <div className={styles.rememberMe}>
+                                <label className={styles.rememberMeLabel}>
+                                    <Checkbox
+                                        name="remember"
+                                        checked={data.remember}
+                                        onChange={(e) =>
+                                            setData("remember", e.target.checked)
+                                        }
+                                    />
+                                    <span className={styles.rememberMeText}>
+                                        Remember me
+                                    </span>
+                                </label>
+                            </div>
 
-                        {canResetPassword && (
-                            <CustomLink href={route("password.request")}>
+                            <Link
+                                href={route("password.request")}
+                                className={styles.forgotPasswordLink}
+                            >
                                 Forgot your password?
-                            </CustomLink>
-                        )}
+                            </Link>
+                        </div>
 
                         <div>
                             <Button type="submit" disabled={processing}>Login</Button>

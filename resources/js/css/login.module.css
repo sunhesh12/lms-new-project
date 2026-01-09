@@ -86,3 +86,28 @@
 .signUpBtnWrapper {
     margin-top: 1rem;
 }
+
+.authOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.rememberMe {
+    display: flex;
+    align-items: center;
+}
+
+.forgotPasswordLink {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.forgotPasswordLink:hover {
+    color: var(--primary);
+}

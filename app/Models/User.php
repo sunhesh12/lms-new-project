@@ -7,6 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +16,7 @@ use App\Notifications\VerifyEmailCustom;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable, HasUuids, HasFactory;
+    use Notifiable, HasUuids, HasFactory, HasApiTokens;
 
     /**
      * Send the email verification notification.
@@ -24,6 +26,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyEmailCustom);
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     protected static function boot()
@@ -37,14 +50,9 @@ class User extends Authenticatable implements MustVerifyEmail
         });
 
         static::creating(function ($user) {
-            if (empty($user->profile_pic) || $user->profile_pic === 'profile/default.png') {
-                $defaults = [
-                    'profile/student_m.png',
-                    'profile/student_f.png',
-                    'profile/lecturer_m.png',
-                    'profile/lecturer_f.png'
-                ];
-                $user->profile_pic = $defaults[array_rand($defaults)];
+            // Ensure new users have no profile picture set, so the accessor uses the default
+            if (empty($user->profile_pic)) {
+                $user->profile_pic = null;
             }
         });
     }
