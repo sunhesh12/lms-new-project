@@ -48,7 +48,7 @@ class AIAssistantSeeder extends Seeder
                 'email' => 'ai.assistant@lms.system',
                 'password' => Hash::make(Str::random(32)),
                 'status' => 'active',
-                'profile_pic' => 'profile/ai-bot.png',
+                'profile_pic' => 'profile/ai_bot.png',
                 'user_phone_no' => '0000000000',
                 'user_dob' => '2000-01-01',
                 'address' => 'System Core',

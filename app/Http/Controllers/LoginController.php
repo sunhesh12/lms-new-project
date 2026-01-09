@@ -33,19 +33,19 @@ class LoginController extends Controller
         // ---------------------------
 
         $key = $this->Rate_Limiting($request);
-        // ---------------------------
-        // 3. Check If User Exists
-        // ---------------------------
-        // Use blind index for optimized search of encrypted email
-        $user = User::where('email_bindex', User::generateBlindIndex($request->email))->first();
+    // ---------------------------
+    // 3. Check If User Exists
+    // ---------------------------
+    // Use blind index for optimized search of encrypted email
+    $user = User::where('email_bindex', User::generateBlindIndex($request->email))->first();
 
-        if (!$user) {
-            RateLimiter::hit($key, 60);
+    if (!$user) {
+        RateLimiter::hit($key, 60);
 
-            throw ValidationException::withMessages([
-                'email' => 'No account found with this email.'
-            ]);
-        }
+        throw ValidationException::withMessages([
+            'email' => 'No account found with this email.'
+        ]);
+    }
 
         // ---------------------------
         // 4. Check If User Is Blocked
@@ -78,27 +78,27 @@ class LoginController extends Controller
             }
 
             // Clear attempts after success
-            RateLimiter::clear($key);
+        RateLimiter::clear($key);
 
-            // ---------------------------
-            // 7. Login User
-            // ---------------------------
-            Auth::login($user, $request->remember);
+        // ---------------------------
+        // 7. Login User
+        // ---------------------------
+        Auth::login($user, $request->remember);
 
-            $user->generateTwoFactorCode();
+        $user->generateTwoFactorCode();
 
-            // Send email
-            try {
-                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
-            } catch (\Exception $e) {
-                // Log error but continue
-                \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
-            }
-
-            $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
-
-            return redirect()->route('two-factor.index')->withCookie($cookie);
+        // Send email
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\TwoFactorCodeMail($user->two_factor_code));
+        } catch (\Exception $e) {
+            // Log error but continue
+            \Illuminate\Support\Facades\Log::error("Failed to send 2FA email: " . $e->getMessage());
         }
+
+        $cookie = cookie('user_email', $user->email, 60 * 24 * 7);
+
+        return redirect()->route('two-factor.index')->withCookie($cookie);
+    }
     }
 
     public function Rate_Limiting(Request $request)

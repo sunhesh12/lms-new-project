@@ -1,39 +1,59 @@
 :root {
-    --red: red;
-    --green: green;
-    --white: rgb(230, 230, 230);
-    --whiteop: rgb(255, 255, 255);
-    --black: black;
-    --poppinsFont: 'poppins';
-    --successNotify: #c0eab4;
-    --errorNotify: #ff4242;
-    --notingNotify: #e0e0e0;
-
-
-    /* side nav bar from Authenticate Layoute */
-    --sideNavBarWidth: 20%;
-
-    /* Official color scheme */
-    --black: #001219;
-    --blue: #005063;
-    --orange: #F7931E;
-    --red: #880808;
-
-    /* Semantic Aliases */
-    --primary: var(--blue);
-    --secondary: var(--orange);
-    --accent: var(--black);
-    
-    /* UI Variations */
+    /* 🎨 Core Brand Palette (Professional Theme) */
+    --primary: #005063;
     --primary-hover: #003d4c;
     --primary-light: #e6f0f2;
     --primary-subtle: #b3cbd1;
-    
-    --secondary-hover: #e08316;
-    
-    --text-main: var(--black);
-    --text-muted: #666666;
 
+    --secondary: #F7931E;
+    --secondary-hover: #e08316;
+
+    --accent: #001219;
+    --accent-dark: #000c11;
+
+    /* 🌑 Dark Mode / Deep Surfaces */
+    --bg-deep: #001219;
+    --bg-dark-surface: #001d29;
+    --bg-dark-highlight: rgba(255, 255, 255, 0.05);
+
+    /* ⚪ Light Mode / Surfaces */
+    --bg-main: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-muted: #f1f5f9;
+
+    /* 📄 Text Hierarchy */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-on-dark: #f8fafc;
+    --text-on-primary: #ffffff;
+
+    /* ✨ Glassmorphism System */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-blur: blur(12px);
+
+    --glass-dark-bg: rgba(0, 18, 25, 0.7);
+    --glass-dark-border: rgba(255, 255, 255, 0.1);
+
+    /* 🚦 Semantic Feedback */
+    --success: #10b981;
+    --success-subtle: #ecfdf5;
+    --error: #ef4444;
+    --error-subtle: #fef2f2;
+    --warning: #f59e0b;
+    --warning-subtle: #fffbeb;
+    --info: #3b82f6;
+    --info-subtle: #eff6ff;
+
+    /* 📐 Layout Constants */
+    --sideNavBarWidth: 260px;
+    --sideNavBarWidthCollapsed: 80px;
+    --headerHeight: 64px;
+
+    /* 🖋️ Typography */
+    --poppinsFont: 'Poppins', sans-serif;
+    --workSansFont: 'Work Sans', sans-serif;
 }
 
 * {

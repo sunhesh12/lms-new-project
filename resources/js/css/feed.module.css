@@ -1,17 +1,17 @@
 /* Glassmorphism Cards */
 .feed-card {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dark .feed-card {
-    background: rgba(30, 41, 59, 0.7);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: var(--glass-dark-bg);
+    border-color: var(--glass-dark-border);
 }
 
 .feed-card:hover {
@@ -43,8 +43,7 @@
 }
 
 .reaction-btn.liked {
-    color: #ef4444;
-    /* Tailwind red-500 */
+    color: var(--error);
 }
 
 .reaction-btn.liked svg {
@@ -53,11 +52,11 @@
 
 /* Comments */
 .comment-node {
-    border-left: 2px solid rgba(0, 0, 0, 0.1);
+    border-left: 2px solid var(--bg-muted);
 }
 
 .dark .comment-node {
-    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid var(--glass-dark-border);
 }
 
 /* Media Grid */
@@ -143,22 +142,22 @@
 .feed-header {
     font-weight: 600;
     font-size: 1.25rem;
-    color: #1f2937;
+    color: var(--text-primary);
     line-height: 1.25;
 }
 
 .dark .feed-header {
-    color: #e5e7eb;
+    color: var(--text-on-dark);
 }
 
 /* Create Post */
 .create-post-container {
     padding: 1rem;
-    background-color: white;
+    background-color: var(--bg-surface);
 }
 
 .dark .create-post-container {
-    background-color: #1f2937;
+    background-color: var(--bg-dark-surface);
 }
 
 @media (min-width: 640px) {
@@ -172,23 +171,23 @@
 }
 
 .textarea {
-    color: #111827;
+    color: var(--text-primary);
     font-size: 1.05rem;
     width: 100%;
     padding: 0.6rem 0.75rem;
     border-radius: 0.625rem;
-    background-color: #ffffff;
-    border: 1px solid #e6edf3;
-    box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--bg-muted);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
     resize: vertical;
     min-height: 64px;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .dark .textarea {
-    color: #e5e7eb;
-    background-color: rgba(17,24,39,0.6);
-    border-color: rgba(255,255,255,0.06);
+    color: var(--text-on-dark);
+    background-color: var(--bg-dark-highlight);
+    border-color: var(--glass-dark-border);
 }
 
 .textarea::placeholder {
@@ -198,7 +197,7 @@
 .textarea:focus {
     outline: none;
     border-color: #60a5fa;
-    box-shadow: 0 6px 18px rgba(59,130,246,0.08);
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.08);
 }
 
 .preview-box {
@@ -230,12 +229,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--bg-muted);
     padding-top: 0.75rem;
 }
 
 .dark .post-actions {
-    border-top-color: #374151;
+    border-top-color: var(--glass-dark-border);
 }
 
 .media-btn-group {
@@ -255,11 +254,11 @@
 }
 
 .media-btn:hover {
-    background-color: #f3f4f6;
+    background-color: var(--bg-muted);
 }
 
 .dark .media-btn:hover {
-    background-color: #374151;
+    background-color: var(--bg-dark-highlight);
 }
 
 .submit-btn {
@@ -267,8 +266,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #2563eb;
-    color: white;
+    background-color: var(--primary);
+    color: var(--text-on-primary);
     border-radius: 9999px;
     font-weight: 500;
     border: none;
@@ -277,7 +276,7 @@
 }
 
 .submit-btn:hover {
-    background-color: #1d4ed8;
+    background-color: var(--primary-hover);
 }
 
 .submit-btn:disabled {
@@ -314,11 +313,11 @@
 
 .user-name {
     font-weight: bold;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .dark .user-name {
-    color: #f3f4f6;
+    color: var(--text-on-dark);
 }
 
 .post-time {
@@ -335,7 +334,7 @@
 }
 
 .delete-btn:hover {
-    color: #ef4444;
+    color: var(--error);
 }
 
 .post-content {
@@ -354,7 +353,7 @@
 }
 
 .shared-post {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--bg-muted);
     border-radius: 0.5rem;
     padding: 1rem;
     margin-top: 0.75rem;
@@ -362,22 +361,22 @@
 }
 
 .dark .shared-post {
-    border-color: #374151;
-    background-color: rgba(17, 24, 39, 0.5);
+    border-color: var(--glass-dark-border);
+    background-color: var(--bg-dark-highlight);
 }
 
 .post-stats {
     display: flex;
     justify-content: space-between;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-bottom: 0.75rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--bg-muted);
 }
 
 .dark .post-stats {
-    border-bottom-color: #374151;
+    border-bottom-color: var(--glass-dark-border);
 }
 
 .action-bar {
@@ -406,11 +405,11 @@
 }
 
 .action-btn:hover {
-    background-color: #f3f4f6;
+    background-color: var(--bg-muted);
 }
 
 .dark .action-btn:hover {
-    background-color: #374151;
+    background-color: var(--bg-dark-highlight);
 }
 
 .share-form {
@@ -445,8 +444,8 @@
 
 .share-submit {
     padding: 0.25rem 0.75rem;
-    background-color: #2563eb;
-    color: white;
+    background-color: var(--primary);
+    color: var(--text-on-primary);
     font-size: 0.75rem;
     border-radius: 9999px;
     border: none;
@@ -454,7 +453,7 @@
 }
 
 .share-submit:hover {
-    background-color: #1d4ed8;
+    background-color: var(--primary-hover);
 }
 
 .share-submit:disabled {
@@ -465,12 +464,12 @@
 .comment-section {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--bg-muted);
     animation: fadeIn 0.2s ease-in-out;
 }
 
 .dark .comment-section {
-    border-top-color: #374151;
+    border-top-color: var(--glass-dark-border);
 }
 
 @keyframes fadeIn {
@@ -498,17 +497,17 @@
 
 .comment-input {
     width: 100%;
-    background-color: #f3f4f6;
+    background-color: var(--bg-muted);
     border: none;
     border-radius: 9999px;
     padding: 0.5rem 1rem;
     padding-right: 2.5rem;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .dark .comment-input {
-    background-color: #111827;
-    color: #e5e7eb;
+    background-color: var(--bg-dark-surface);
+    color: var(--text-on-dark);
 }
 
 .comment-input:focus {
@@ -520,7 +519,7 @@
     right: 0.5rem;
     top: 0.375rem;
     padding: 0.25rem;
-    color: #2563eb;
+    color: var(--primary);
     background: none;
     border: none;
     cursor: pointer;
@@ -531,11 +530,11 @@
 }
 
 .comment-submit:hover {
-    background-color: #dbeafe;
+    background-color: var(--primary-light);
 }
 
 .dark .comment-submit:hover {
-    background-color: #1f2937;
+    background-color: var(--bg-dark-highlight);
 }
 
 .comment-submit:disabled {
@@ -554,7 +553,7 @@
 }
 
 .comment-bubble {
-    background-color: #f3f4f6;
+    background-color: var(--bg-muted);
     border-radius: 1rem;
     padding: 0.5rem 1rem;
     display: inline-block;
@@ -562,18 +561,18 @@
 }
 
 .dark .comment-bubble {
-    background-color: #111827;
+    background-color: var(--bg-dark-surface);
 }
 
 .comment-author {
     font-weight: bold;
     font-size: 0.875rem;
     display: block;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .dark .comment-author {
-    color: #f3f4f6;
+    color: var(--text-on-dark);
 }
 
 .comment-text {
@@ -606,7 +605,7 @@
 }
 
 .comment-delete:hover {
-    color: #ef4444;
+    color: var(--error);
 }
 
 .w-full {
@@ -646,12 +645,12 @@
 .status-item .avatar {
     width: 56px;
     height: 56px;
-    border: 2px solid #f3f4f6;
+    border: 2px solid var(--bg-muted);
     padding: 2px;
 }
 
 .status-unviewed-count {
-    background: #ef4444;
+    background: var(--error);
     color: white;
     font-size: 0.7rem;
     padding: 0.15rem 0.4rem;
@@ -661,7 +660,7 @@
 }
 
 .modal-overlay {
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
 }
 
 .modal-content {
@@ -678,8 +677,8 @@
 
 .btn {
     padding: 0.5rem 0.75rem;
-    background: #2563eb;
-    color: white;
+    background: var(--primary);
+    color: var(--text-on-primary);
     border-radius: 0.375rem;
     border: none;
     cursor: pointer;
