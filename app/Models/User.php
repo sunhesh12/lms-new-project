@@ -82,6 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'can_upload_feed',
         'upload_blocked_until',
         'email_bindex',
+        'last_seen_at',
     ];
 
     protected $hidden = [
@@ -98,9 +99,20 @@ class User extends Authenticatable implements MustVerifyEmail
         'user_phone_no' => 'encrypted',
         'user_dob' => 'encrypted',
         'address' => 'encrypted',
+        'last_seen_at' => 'datetime',
     ];
 
-    protected $appends = ['avatar_url', 'role'];
+    protected $appends = ['avatar_url', 'role', 'online', 'last_seen'];
+
+    public function getOnlineAttribute()
+    {
+        return $this->last_seen_at && $this->last_seen_at->diffInMinutes(now()) < 5;
+    }
+
+    public function getLastSeenAttribute()
+    {
+        return $this->last_seen_at; // Alias for frontend consistency if needed, or just rely on last_seen_at
+    }
 
     public function getAvatarUrlAttribute()
     {

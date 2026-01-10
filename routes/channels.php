@@ -12,3 +12,9 @@ Broadcast::channel('chat.{conversationId}', function (User $user, $conversationI
     $conversation = Conversation::find($conversationId);
     return $conversation && $conversation->users->contains($user->id);
 });
+
+Broadcast::channel('online', function ($user) {
+    if (Auth::check()) {
+        return $user->toArray();
+    }
+});

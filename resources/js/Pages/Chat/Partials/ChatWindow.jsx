@@ -25,7 +25,7 @@ import style from '@/css/chatwindow.module.css';
 
 const AI_UUID = '00000000-0000-0000-0000-000000000000';
 
-export default function ChatWindow({ user, conversation, onBack, isStandalone = false }) {
+export default function ChatWindow({ user, conversation, onBack, isStandalone = false, onlineUsers }) {
     const [messages, setMessages] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
@@ -356,32 +356,33 @@ export default function ChatWindow({ user, conversation, onBack, isStandalone = 
                         {!selectionMode && (() => {
                             const otherUser = conversation.users?.find(u => u.id !== user.id);
                             if (!otherUser) return null;
+                            const isOnline = onlineUsers && onlineUsers.has(otherUser.id);
 
                             return (
-                                <div className={`${style.headerStatus} ${otherUser.online ? style.onlineStatus : ''}`}>
-                                    <span className={`${style.statusDot} ${otherUser.online ? style.onlineDot : ''}`} />
-                                    {otherUser.online ? 'Online' : (otherUser.last_seen ? `Last seen ${new Date(otherUser.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Offline')}
+                                <div className={`${style.headerStatus} ${isOnline ? style.onlineStatus : ''}`}>
+                                    <span className={`${style.statusDot} ${isOnline ? style.onlineDot : ''}`} />
+                                    {isOnline ? 'Online' : (otherUser.last_seen ? `Last seen ${new Date(otherUser.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Offline')}
                                 </div>
                             );
                         })()}
                     </div>
-                </div>
 
-                <div className="flex items-center gap-1">
-                    {selectionMode ? (
-                        <>
-                            <button className={style.iconBtn} onClick={() => setSelectionMode(false)} title="Cancel">
-                                <X size={20} />
+                    <div className="flex items-center gap-1">
+                        {selectionMode ? (
+                            <>
+                                <button className={style.iconBtn} onClick={() => setSelectionMode(false)} title="Cancel">
+                                    <X size={20} />
+                                </button>
+                                <button className={`${style.iconBtn} ${style.deleteBtn}`} title="Delete Selected">
+                                    <Trash2 size={20} />
+                                </button>
+                            </>
+                        ) : (
+                            <button className={style.iconBtn}>
+                                <MoreVertical size={20} />
                             </button>
-                            <button className={`${style.iconBtn} ${style.deleteBtn}`} title="Delete Selected">
-                                <Trash2 size={20} />
-                            </button>
-                        </>
-                    ) : (
-                        <button className={style.iconBtn}>
-                            <MoreVertical size={20} />
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
 

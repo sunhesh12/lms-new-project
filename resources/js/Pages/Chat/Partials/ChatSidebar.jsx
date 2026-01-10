@@ -8,7 +8,7 @@ import style from '@/css/chatSidebar.module.css';
 
 const AI_UUID = '00000000-0000-0000-0000-000000000000';
 
-export default function ChatSidebar({ auth, conversations, selectedConversation, isMobile, showSidebar }) {
+export default function ChatSidebar({ auth, conversations, selectedConversation, isMobile, showSidebar, onlineUsers }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -24,6 +24,26 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
     useEffect(() => {
         setLocalConversations(conversations);
     }, [conversations]);
+
+    // Listen for new conversations / updates to list
+    useEffect(() => {
+        if (!auth.user || !window.Echo) return;
+
+        const channel = window.Echo.private(`App.Models.User.${auth.user.id}`)
+            .listen('ConversationUpdated', (e) => {
+                setLocalConversations(prev => {
+                    const updated = e.conversation;
+                    // Remove existing instance if any
+                    const filtered = prev.filter(c => c.id !== updated.id);
+                    // Add to top
+                    return [updated, ...filtered];
+                });
+            });
+
+        return () => {
+            window.Echo.leave(`App.Models.User.${auth.user.id}`);
+        };
+    }, [auth.user]);
 
     // Search Logic
     useEffect(() => {
@@ -100,7 +120,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                 if (window.Echo) window.Echo.leave(`chat.${id}`);
             });
         };
-    }, [conversations.length, selectedConversation?.id]);
+    }, [localConversations.length, selectedConversation?.id]); // Updated dependency to listen to new convos
 
     const startChat = (userId) => {
         axios.post(route('conversations.check'), { user_id: userId })
@@ -149,6 +169,7 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
     const renderConversation = (conversation) => {
         const otherUser = getOtherUser(conversation);
         const isAi = otherUser?.id === AI_UUID;
+        const isOnline = otherUser && onlineUsers && onlineUsers.has(otherUser.id);
 
         return (
             <Link
@@ -168,7 +189,8 @@ export default function ChatSidebar({ auth, conversations, selectedConversation,
                             }
                             return getConversationName(conversation).charAt(0).toUpperCase();
                         })()}
-                        <span className={style.statusDot}></span>
+                        {/* Only show dot if NOT AI and is online */}
+                        {!isAi && isOnline && <span className={`${style.statusDot} ${style.onlineDot}`}></span>}
                     </div>
                     <div className={style.convContent}>
                         <div className={style.convTop}>

@@ -203,6 +203,13 @@ class ChatController extends Controller
 
         broadcast(new \App\Events\MessageSent($message))->toOthers();
 
+        // Broadcast ConversationUpdated to all participants to move conversation to top of list
+        foreach ($conversation->users as $participant) {
+            broadcast(new \App\Events\ConversationUpdated($conversation->load(['messages' => function($q) {
+                $q->latest()->limit(1);
+            }, 'users']), $participant->id));
+        }
+
         // Check if message is for the AI Assistant
         $aiUuid = '00000000-0000-0000-0000-000000000000';
         if ($conversation->users->contains($aiUuid) && Auth::id() !== $aiUuid) {
