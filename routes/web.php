@@ -125,7 +125,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::delete('/events/{event}', [EventController::class, 'destroy']);
 // });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
     // Events API Resource routes
     Route::get('/events', [EventController::class, 'index'])->name('api.events.index');
     Route::post('/events', [EventController::class, 'store'])->name('api.events.store');

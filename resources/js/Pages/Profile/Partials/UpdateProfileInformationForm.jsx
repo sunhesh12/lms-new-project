@@ -88,6 +88,18 @@ export default function UpdateProfileInformation({
                             <span className={styles.dataValue}>{user.user_dob || 'Not provided'}</span>
                         </div>
                     </div>
+
+                    <div className={styles.grid2}>
+                        <div className={styles.dataGroup}>
+                            <span className={styles.dataLabel}>Index Number</span>
+                            <span className={styles.dataValue}>{user.index_number || 'Not provided'}</span>
+                        </div>
+
+                        <div className={styles.dataGroup}>
+                            <span className={styles.dataLabel}>Registration Number</span>
+                            <span className={styles.dataValue}>{user.registration_number || 'Not provided'}</span>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <form onSubmit={submit} className={styles.formGroup}>
@@ -155,6 +167,19 @@ export default function UpdateProfileInformation({
                                     onChange={(e) => setData('user_dob', e.target.value)}
                                     error={errors.user_dob}
                                 />
+                            </div>
+                        </div>
+
+                        {/* Read-only fields - shown in both view and edit modes */}
+                        <div className={styles.grid2}>
+                            <div className={styles.dataGroup}>
+                                <span className={styles.dataLabel}>Index Number</span>
+                                <span className={styles.dataValue}>{user.index_number || 'Not provided'}</span>
+                            </div>
+
+                            <div className={styles.dataGroup}>
+                                <span className={styles.dataLabel}>Registration Number</span>
+                                <span className={styles.dataValue}>{user.registration_number || 'Not provided'}</span>
                             </div>
                         </div>
 

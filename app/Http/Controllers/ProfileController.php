@@ -31,6 +31,8 @@ class ProfileController extends Controller
             'address' => 'nullable|string|max:255',
             'user_phone_no' => 'nullable|string|max:20',
             'user_dob' => 'nullable|string|max:20',
+            'index_number' => 'nullable|string|max:255',
+            'registration_number' => 'nullable|string|max:255',
         ]);
 
         $request->user()->fill($request->all());

@@ -83,6 +83,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'upload_blocked_until',
         'email_bindex',
         'last_seen_at',
+        'index_number',
+        'registration_number',
     ];
 
     protected $hidden = [

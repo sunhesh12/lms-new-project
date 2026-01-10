@@ -207,6 +207,8 @@ class AdminDashboardController extends Controller
                 'user_phone_no' => $user->user_phone_no,
                 'user_dob' => $user->user_dob,
                 'avatar_url' => $user->avatar_url,
+                'index_number' => $user->index_number,
+                'registration_number' => $user->registration_number,
                 'enrolled_modules' => $enrolledModules,
             ]
         ]);
@@ -228,7 +230,9 @@ class AdminDashboardController extends Controller
             'status' => 'required|in:active,blocked',
             'can_upload_feed' => 'nullable|boolean',
             'upload_blocked_until' => 'nullable|date',
-            'role' => 'required|in:admin,lecturer,student'
+            'role' => 'required|in:admin,lecturer,student',
+            'index_number' => 'nullable|string|max:255',
+            'registration_number' => 'nullable|string|max:255',
         ]);
 
         $user->update([
@@ -240,6 +244,8 @@ class AdminDashboardController extends Controller
             'status' => $request->status,
             'can_upload_feed' => $request->has('can_upload_feed') ? (bool) $request->can_upload_feed : true,
             'upload_blocked_until' => $request->upload_blocked_until ? \Carbon\Carbon::parse($request->upload_blocked_until) : null,
+            'index_number' => $request->index_number,
+            'registration_number' => $request->registration_number,
         ]);
 
         // Update role if changed

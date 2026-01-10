@@ -28,6 +28,8 @@ export default function Edit({ managedUser }) {
         role: managedUser.role || "student",
         can_upload_feed: managedUser.can_upload_feed ?? true,
         upload_blocked_until: managedUser.upload_blocked_until || '',
+        index_number: managedUser.index_number || '',
+        registration_number: managedUser.registration_number || '',
     });
 
     const handleSubmit = (e) => {
@@ -170,6 +172,26 @@ export default function Edit({ managedUser }) {
                                     />
                                 </div>
 
+                                <div className={styles.inputGroup}>
+                                    <TextInput
+                                        label="Index Number"
+                                        className={styles.input}
+                                        value={data.index_number}
+                                        onChange={e => setData('index_number', e.target.value)}
+                                        error={errors.index_number}
+                                    />
+                                </div>
+
+                                <div className={styles.inputGroup}>
+                                    <TextInput
+                                        label="Registration Number"
+                                        className={styles.input}
+                                        value={data.registration_number}
+                                        onChange={e => setData('registration_number', e.target.value)}
+                                        error={errors.registration_number}
+                                    />
+                                </div>
+
                                 <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
                                     <TextInput
                                         label="Physical Address"
@@ -239,7 +261,7 @@ export default function Edit({ managedUser }) {
                         </div>
                     </div>
                 </form>
-            </div>
-        </AuthenticatedLayout>
+            </div >
+        </AuthenticatedLayout >
     );
 }

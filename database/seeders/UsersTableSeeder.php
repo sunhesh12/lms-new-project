@@ -41,6 +41,8 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
                 'course_id' => $faker->randomElement($courseIds), // Assuming courses table has IDs 1–3
                 'email_verified_at' => now(),
+                'index_number' => $faker->numerify('S/####/####'),
+                'registration_number' => $faker->numerify('REG-####-####'),
             ];
         }
 
@@ -65,6 +67,8 @@ class UsersTableSeeder extends Seeder
                 'password' => \Illuminate\Support\Facades\Hash::make('password123'),
                 'course_id' => $faker->randomElement($courseIds),
                 'email_verified_at' => now(),
+                'index_number' => 'S/2020/0001',
+                'registration_number' => 'REG-2020-0001',
             ]);
         }
 
