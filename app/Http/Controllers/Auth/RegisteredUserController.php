@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => 'active',
+            'profile_pic' => 'public\images\default-avatar.png',
         ]);
 
         event(new Registered($user));
